@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
 		DD4798FF1EAF256A005DE266 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4798FE1EAF256A005DE266 /* main.m */; };
 		DD4799021EAF256A005DE266 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799011EAF256A005DE266 /* AppDelegate.m */; };
 		DD4799051EAF256A005DE266 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799041EAF256A005DE266 /* ViewController.m */; };
@@ -15,6 +16,15 @@
 		DD47990D1EAF256B005DE266 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD47990B1EAF256B005DE266 /* LaunchScreen.storyboard */; };
 		DD4799181EAF256B005DE266 /* PacketProcessingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799171EAF256B005DE266 /* PacketProcessingTests.m */; };
 		DD4799231EAF256B005DE266 /* PacketProcessingUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799221EAF256B005DE266 /* PacketProcessingUITests.m */; };
+		DD4799311EAF2AD6005DE266 /* AddViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799301EAF2AD6005DE266 /* AddViewController.m */; };
+		DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = DD47993C1EAF34E3005DE266 /* PacketTunnelProvider.m */; };
+		DD4799411EAF34E3005DE266 /* PacketTunnel.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = DD4799371EAF34E3005DE266 /* PacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */; };
+		DD7C707E1EAF3AA0009AC7B1 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */; };
+		DD7C70801EAF3AB9009AC7B1 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */; };
+		DD7C70831EAF86CC009AC7B1 /* libMMWormhole.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */; };
+		DD7C70851EAF88BE009AC7B1 /* libMMWormhole.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */; };
+		DD7C70861EAF88C6009AC7B1 /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,9 +42,33 @@
 			remoteGlobalIDString = DD4798F91EAF256A005DE266;
 			remoteInfo = PacketProcessing;
 		};
+		DD47993F1EAF34E3005DE266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD4798F21EAF256A005DE266 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD4799361EAF34E3005DE266;
+			remoteInfo = PacketTunnel;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		DD4799451EAF34E3005DE266 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DD4799411EAF34E3005DE266 /* PacketTunnel.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0F5BD7753983FB9FE67C2669 /* Pods-PacketProcessing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.release.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.release.xcconfig"; sourceTree = "<group>"; };
+		1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PacketProcessing.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.debug.xcconfig"; sourceTree = "<group>"; };
 		DD4798FA1EAF256A005DE266 /* PacketProcessing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PacketProcessing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4798FE1EAF256A005DE266 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DD4799001EAF256A005DE266 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -51,6 +85,19 @@
 		DD47991E1EAF256B005DE266 /* PacketProcessingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PacketProcessingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4799221EAF256B005DE266 /* PacketProcessingUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PacketProcessingUITests.m; sourceTree = "<group>"; };
 		DD4799241EAF256B005DE266 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DD4799301EAF2AD6005DE266 /* AddViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddViewController.m; sourceTree = "<group>"; };
+		DD4799321EAF2B2A005DE266 /* AddViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AddViewController.h; path = ../AddViewController.h; sourceTree = "<group>"; };
+		DD4799371EAF34E3005DE266 /* PacketTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PacketTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD47993A1EAF34E3005DE266 /* PacketTunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketTunnel.entitlements; sourceTree = "<group>"; };
+		DD47993B1EAF34E3005DE266 /* PacketTunnelProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacketTunnelProvider.h; sourceTree = "<group>"; };
+		DD47993C1EAF34E3005DE266 /* PacketTunnelProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PacketTunnelProvider.m; sourceTree = "<group>"; };
+		DD47993E1EAF34E3005DE266 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TunnelInterface.m; sourceTree = "<group>"; };
+		DD7C707C1EAF3925009AC7B1 /* TunnelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TunnelInterface.h; sourceTree = "<group>"; };
+		DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		DD7C707F1EAF3AA0009AC7B1 /* PacketProcessing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketProcessing.entitlements; sourceTree = "<group>"; };
+		DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMMWormhole.a; path = "Pods/../build/Release-iphoneos/MMWormhole/libMMWormhole.a"; sourceTree = "<group>"; };
+		DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMMWormhole.a; path = "../../Library/Developer/Xcode/DerivedData/PacketProcessing-akexfjlbqamkvrbrklixejkunrlr/Build/Products/Debug-iphoneos/MMWormhole/libMMWormhole.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +105,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD7C70831EAF86CC009AC7B1 /* libMMWormhole.a in Frameworks */,
+				09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */,
+				DD7C707E1EAF3AA0009AC7B1 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,16 +125,49 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD4799341EAF34E3005DE266 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD7C70801EAF3AB9009AC7B1 /* NetworkExtension.framework in Frameworks */,
+				DD7C70851EAF88BE009AC7B1 /* libMMWormhole.a in Frameworks */,
+				DD7C70861EAF88C6009AC7B1 /* libPods-PacketProcessing.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		69C213698ECF3A6F553C6EB3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */,
+				0F5BD7753983FB9FE67C2669 /* Pods-PacketProcessing.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		8B31184B2AC9A9F2974CE0FF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */,
+				DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */,
+				DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */,
+				1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DD4798F11EAF256A005DE266 = {
 			isa = PBXGroup;
 			children = (
 				DD4798FC1EAF256A005DE266 /* PacketProcessing */,
 				DD4799161EAF256B005DE266 /* PacketProcessingTests */,
 				DD4799211EAF256B005DE266 /* PacketProcessingUITests */,
+				DD4799381EAF34E3005DE266 /* PacketTunnel */,
 				DD4798FB1EAF256A005DE266 /* Products */,
+				69C213698ECF3A6F553C6EB3 /* Pods */,
+				8B31184B2AC9A9F2974CE0FF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,6 +177,7 @@
 				DD4798FA1EAF256A005DE266 /* PacketProcessing.app */,
 				DD4799131EAF256B005DE266 /* PacketProcessingTests.xctest */,
 				DD47991E1EAF256B005DE266 /* PacketProcessingUITests.xctest */,
+				DD4799371EAF34E3005DE266 /* PacketTunnel.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,6 +185,9 @@
 		DD4798FC1EAF256A005DE266 /* PacketProcessing */ = {
 			isa = PBXGroup;
 			children = (
+				DD7C707F1EAF3AA0009AC7B1 /* PacketProcessing.entitlements */,
+				DD4799321EAF2B2A005DE266 /* AddViewController.h */,
+				DD4799301EAF2AD6005DE266 /* AddViewController.m */,
 				DD4799001EAF256A005DE266 /* AppDelegate.h */,
 				DD4799011EAF256A005DE266 /* AppDelegate.m */,
 				DD4799031EAF256A005DE266 /* ViewController.h */,
@@ -140,6 +227,27 @@
 			path = PacketProcessingUITests;
 			sourceTree = "<group>";
 		};
+		DD4799381EAF34E3005DE266 /* PacketTunnel */ = {
+			isa = PBXGroup;
+			children = (
+				DD47993B1EAF34E3005DE266 /* PacketTunnelProvider.h */,
+				DD47993C1EAF34E3005DE266 /* PacketTunnelProvider.m */,
+				DD47993E1EAF34E3005DE266 /* Info.plist */,
+				DD7C707C1EAF3925009AC7B1 /* TunnelInterface.h */,
+				DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */,
+				DD4799391EAF34E3005DE266 /* Supporting Files */,
+			);
+			path = PacketTunnel;
+			sourceTree = "<group>";
+		};
+		DD4799391EAF34E3005DE266 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DD47993A1EAF34E3005DE266 /* PacketTunnel.entitlements */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -147,13 +255,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD4799271EAF256B005DE266 /* Build configuration list for PBXNativeTarget "PacketProcessing" */;
 			buildPhases = (
+				C40E689E237CD56B55870E7A /* [CP] Check Pods Manifest.lock */,
 				DD4798F61EAF256A005DE266 /* Sources */,
 				DD4798F71EAF256A005DE266 /* Frameworks */,
 				DD4798F81EAF256A005DE266 /* Resources */,
+				DD4799451EAF34E3005DE266 /* Embed App Extensions */,
+				563C74B22AECB69AA5100CF6 /* [CP] Embed Pods Frameworks */,
+				ED7098BC8EA93C34CA148734 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DD4799401EAF34E3005DE266 /* PBXTargetDependency */,
 			);
 			name = PacketProcessing;
 			productName = PacketProcessing;
@@ -196,6 +309,23 @@
 			productReference = DD47991E1EAF256B005DE266 /* PacketProcessingUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		DD4799361EAF34E3005DE266 /* PacketTunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD4799421EAF34E3005DE266 /* Build configuration list for PBXNativeTarget "PacketTunnel" */;
+			buildPhases = (
+				DD4799331EAF34E3005DE266 /* Sources */,
+				DD4799341EAF34E3005DE266 /* Frameworks */,
+				DD4799351EAF34E3005DE266 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PacketTunnel;
+			productName = PacketTunnel;
+			productReference = DD4799371EAF34E3005DE266 /* PacketTunnel.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -208,7 +338,18 @@
 					DD4798F91EAF256A005DE266 = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = XLJ5QU99P4;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.NetworkExtensions = {
+								enabled = 1;
+							};
+							com.apple.VPNLite = {
+								enabled = 1;
+							};
+						};
 					};
 					DD4799121EAF256B005DE266 = {
 						CreatedOnToolsVersion = 8.3.2;
@@ -221,6 +362,19 @@
 						DevelopmentTeam = XLJ5QU99P4;
 						ProvisioningStyle = Automatic;
 						TestTargetID = DD4798F91EAF256A005DE266;
+					};
+					DD4799361EAF34E3005DE266 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = XLJ5QU99P4;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.NetworkExtensions = {
+								enabled = 1;
+							};
+							com.apple.VPNLite = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -240,6 +394,7 @@
 				DD4798F91EAF256A005DE266 /* PacketProcessing */,
 				DD4799121EAF256B005DE266 /* PacketProcessingTests */,
 				DD47991D1EAF256B005DE266 /* PacketProcessingUITests */,
+				DD4799361EAF34E3005DE266 /* PacketTunnel */,
 			);
 		};
 /* End PBXProject section */
@@ -269,7 +424,62 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD4799351EAF34E3005DE266 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		563C74B22AECB69AA5100CF6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C40E689E237CD56B55870E7A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		ED7098BC8EA93C34CA148734 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DD4798F61EAF256A005DE266 /* Sources */ = {
@@ -278,6 +488,7 @@
 			files = (
 				DD4799051EAF256A005DE266 /* ViewController.m in Sources */,
 				DD4799021EAF256A005DE266 /* AppDelegate.m in Sources */,
+				DD4799311EAF2AD6005DE266 /* AddViewController.m in Sources */,
 				DD4798FF1EAF256A005DE266 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +509,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD4799331EAF34E3005DE266 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */,
+				DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -310,6 +530,11 @@
 			isa = PBXTargetDependency;
 			target = DD4798F91EAF256A005DE266 /* PacketProcessing */;
 			targetProxy = DD47991F1EAF256B005DE266 /* PBXContainerItemProxy */;
+		};
+		DD4799401EAF34E3005DE266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD4799361EAF34E3005DE266 /* PacketTunnel */;
+			targetProxy = DD47993F1EAF34E3005DE266 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -355,9 +580,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Weiguang Hou (PVKPSEN75D)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = XLJ5QU99P4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -377,6 +604,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "88bbbdb1-6b49-4cb9-8a67-caf54930d074";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -404,9 +632,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Weiguang Hou (PVKPSEN75D)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = XLJ5QU99P4;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -419,6 +649,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "88bbbdb1-6b49-4cb9-8a67-caf54930d074";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -427,25 +658,43 @@
 		};
 		DD4799281EAF256B005DE266 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PacketProcessing/PacketProcessing.entitlements;
 				DEVELOPMENT_TEAM = XLJ5QU99P4;
 				INFOPLIST_FILE = PacketProcessing/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Release-iphoneos/MMWormhole",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "5c17cce8-5424-477e-8378-989cd3e42865";
+				PROVISIONING_PROFILE_SPECIFIER = PacketProcessing;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) \"${PODS_ROOT}/Headers/Public\" \"${PODS_ROOT}/Headers/Public/CocoaAsyncSocket\" \"${PODS_ROOT}/Headers/Public/MMWormhole\"";
 			};
 			name = Debug;
 		};
 		DD4799291EAF256B005DE266 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0F5BD7753983FB9FE67C2669 /* Pods-PacketProcessing.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PacketProcessing/PacketProcessing.entitlements;
 				DEVELOPMENT_TEAM = XLJ5QU99P4;
 				INFOPLIST_FILE = PacketProcessing/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Release-iphoneos/MMWormhole",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "5c17cce8-5424-477e-8378-989cd3e42865";
+				PROVISIONING_PROFILE_SPECIFIER = PacketProcessing;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) \"${PODS_ROOT}/Headers/Public\" \"${PODS_ROOT}/Headers/Public/CocoaAsyncSocket\" \"${PODS_ROOT}/Headers/Public/MMWormhole\"";
 			};
 			name = Release;
 		};
@@ -499,6 +748,53 @@
 			};
 			name = Release;
 		};
+		DD4799431EAF34E3005DE266 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = XLJ5QU99P4;
+				HEADER_SEARCH_PATHS = (
+					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public,
+					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole,
+					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket,
+				);
+				INFOPLIST_FILE = PacketTunnel/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/**";
+				"LIBRARY_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing.PacketTunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket";
+			};
+			name = Debug;
+		};
+		DD4799441EAF34E3005DE266 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = XLJ5QU99P4;
+				HEADER_SEARCH_PATHS = (
+					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public,
+					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole,
+					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket,
+				);
+				INFOPLIST_FILE = PacketTunnel/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/**";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing.PacketTunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -518,6 +814,7 @@
 				DD4799291EAF256B005DE266 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DD47992A1EAF256B005DE266 /* Build configuration list for PBXNativeTarget "PacketProcessingTests" */ = {
 			isa = XCConfigurationList;
@@ -526,6 +823,7 @@
 				DD47992C1EAF256B005DE266 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DD47992D1EAF256B005DE266 /* Build configuration list for PBXNativeTarget "PacketProcessingUITests" */ = {
 			isa = XCConfigurationList;
@@ -534,6 +832,16 @@
 				DD47992F1EAF256B005DE266 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD4799421EAF34E3005DE266 /* Build configuration list for PBXNativeTarget "PacketTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD4799431EAF34E3005DE266 /* Debug */,
+				DD4799441EAF34E3005DE266 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

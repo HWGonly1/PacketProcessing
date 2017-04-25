@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>PacketTunnel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -23,6 +28,11 @@
 			<true/>
 		</dict>
 		<key>DD47991D1EAF256B005DE266</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DD4799361EAF34E3005DE266</key>
 		<dict>
 			<key>primary</key>
 			<true/>
