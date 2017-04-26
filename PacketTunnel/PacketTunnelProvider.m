@@ -26,6 +26,7 @@
 
 - (void)startTunnelWithOptions:(NSDictionary *)options completionHandler:(void (^)(NSError *))completionHandler {
     
+    NSError *error = [TunnelInterface setupWithPacketTunnelFlow:self.packetFlow];
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     [self.wormhole passMessageObject:@"Start Tunnel" identifier:@"VPNStatus"];
     
@@ -46,6 +47,7 @@
         }
     }];
     [self.wormhole passMessageObject:@"Start Tunnel End" identifier:@"VPNStatus"];
+    [TunnelInterface processPackets];
     //NSError *error = [TunnelInterface setupWithPacketTunnelFlow:self.packetFlow];
     //if (error) {
     //    completionHandler(error);

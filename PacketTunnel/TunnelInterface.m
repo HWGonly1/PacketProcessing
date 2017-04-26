@@ -6,21 +6,18 @@
 //  Copyright © 2017年 HWG. All rights reserved.
 //
 
-//#import "TunnelInterface.h"
-//#import <netinet/ip.h>
-//#import "ipv4/lwip/ip4.h"
-//#import "lwip/udp.h"
-//#import "lwip/ip.h"
-//#import <arpa/inet.h>
-//#import "inet_chksum.h"
-//#import "tun2socks/tun2socks.h"
-//@import CocoaAsyncSocket;
-/*
-#define kTunnelInterfaceErrorDomain @"com.touchingapp.potatso.TunnelInterface"
+#import "TunnelInterface.h"
+#import "PacketHeader.h"
+#include <CocoaAsyncSocket/AsyncSocket.h>
+#include <CocoaAsyncSocket/AsyncUdpSocket.h>
+#include <CocoaAsyncSocket/GCDAsyncSocket.h>
+#include <CocoaAsyncSocket/GCDAsyncUdpSocket.h>
+#define kTunnelInterfaceErrorDomain @"com.hwg.PacketProcessing.TunnelInterface"
+
 
 @interface TunnelInterface () <GCDAsyncUdpSocketDelegate>
 @property (nonatomic) NEPacketTunnelFlow *tunnelPacketFlow;
-@property (nonatomic) NSMutableDictioAnary *udpSession;
+@property (nonatomic) NSMutableDictionary *udpSession;
 @property (nonatomic) GCDAsyncUdpSocket *udpSocket;
 @property (nonatomic) int readFd;
 @property (nonatomic) int writeFd;
@@ -63,16 +60,17 @@
         return [NSError errorWithDomain:kTunnelInterfaceErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"UDP bind fail(%@).", [error localizedDescription]]}];
     }
     
-    int fds[2];
+    /*int fds[2];
     if (pipe(fds) < 0) {
         return [NSError errorWithDomain:kTunnelInterfaceErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unable to pipe."}];
     }
     [TunnelInterface sharedInterface].readFd = fds[0];
     [TunnelInterface sharedInterface].writeFd = fds[1];
+     */
     return nil;
 }
 
-+ (void)startTun2Socks: (int)socksServerPort
++ (void)startTun2Socks: (int)socksServerPort{
 [NSThread detachNewThreadSelector:@selector(_startTun2Socks:) toTarget:[TunnelInterface sharedInterface] withObject:@(socksServerPort)];
 }
 
@@ -89,20 +87,18 @@
 
 + (void)processPackets {
     __weak typeof(self) weakSelf = self;
-    [[TunnelInterface sharedInterface].tunnelPacketFlow readPacketsWithCompletionHandler:^(NSArray<NSDas.data *> * _Nonnull packets, NSArray<NSNumber *> * _Nonnull protocols) {
+    [[TunnelInterface sharedInterface].tunnelPacketFlow readPacketsWithCompletionHandler:^(NSArray<NSData *> * _Nonnull packets, NSArray<NSNumber *> * _Nonnull protocols) {
         for (NSData *packet in packets) {
-            uint8_t *data = (uint8_t *)packet.bytes;
-            struct ip_hdr *iphdr = (struct ip_hdr *)data;
-            uint8_t proto = IPH_PROTO(iphdr);
-            if (proto == IP_PROTO_UDP) {
+            ip_hdr * iphdr=[[ip_hdr alloc] init:packet];
+            uint8_t proto = [iphdr getProtocol];
+            if (proto == 17) {
                 [[TunnelInterface sharedInterface] handleUDPPacket:packet];
-            }else if (proto == IP_PROTO_TCP) {
+            }else if (proto == 6) {
                 [[TunnelInterface sharedInterface] handleTCPPPacket:packet];
-            }c
+            }
         }
         [weakSelf processPackets];
     }];
-    
 }
 
 - (void)_startTun2Socks: (NSNumber *)socksServerPort {
@@ -131,11 +127,13 @@
 }
 
 - (void)handleTCPPPacket: (NSData *)packet {
-    uint8_t message[TunnelMTU+2];
-    memcpy(message + 2, packet.bytes, packet.length);
-    message[0] = packet.length / 256;
-    message[1] = packet.length % 256;
-    write(self.writeFd , message , packet.length + 2);
+    //uint8_t message[TunnelMTU+2];
+    //memcpy(message + 2, packet.bytes, packet.length);
+    //message[0] = packet.length / 256;
+    //message[1] = packet.length % 256;
+    //write(self.writeFd , message , packet.length + 2);
+    
+    
 }
 
 - (void)handleUDPPacket: (NSData *)packet {
@@ -215,7 +213,7 @@
     [TunnelInterface writePacket:outData];
 }
 
-struct ip_hdr *generateNewIPHeader(u8_t proto, ip_addr_p_t src, ip_addr_p_t dest, uint16_t total_len) {
+/*struct ip_hdr *generateNewIPHeader(u8_t proto, ip_addr_p_t src, ip_addr_p_t dest, uint16_t total_len) {
     struct ip_hdr *iphdr = malloc(sizeof(struct ip_hdr));
     IPH_VHL_SET(iphdr, 4, IP_HLEN / 4);
     IPH_TOS_SET(iphdr, 0);
@@ -229,7 +227,7 @@ struct ip_hdr *generateNewIPHeader(u8_t proto, ip_addr_p_t src, ip_addr_p_t dest
     IPH_CHKSUM_SET(iphdr, 0);
     IPH_CHKSUM_SET(iphdr, inet_chksum(iphdr, IP_HLEN));
     return iphdr;
-}
+}*/
 
 - (NSString *)strForHost: (int)host port: (int)port {
     return [NSString stringWithFormat:@"%d:%d",host, port];
@@ -238,4 +236,4 @@ struct ip_hdr *generateNewIPHeader(u8_t proto, ip_addr_p_t src, ip_addr_p_t dest
 
 
 @end
-*/
+

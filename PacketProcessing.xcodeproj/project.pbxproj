@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
+		DD35AE2C1EB0739F0078FCEF /* PacketHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* PacketHeader.m */; };
 		DD4798FF1EAF256A005DE266 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4798FE1EAF256A005DE266 /* main.m */; };
 		DD4799021EAF256A005DE266 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799011EAF256A005DE266 /* AppDelegate.m */; };
 		DD4799051EAF256A005DE266 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799041EAF256A005DE266 /* ViewController.m */; };
@@ -69,6 +70,8 @@
 		0F5BD7753983FB9FE67C2669 /* Pods-PacketProcessing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.release.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.release.xcconfig"; sourceTree = "<group>"; };
 		1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PacketProcessing.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.debug.xcconfig"; sourceTree = "<group>"; };
+		DD35AC371EB064990078FCEF /* PacketHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacketHeader.h; sourceTree = "<group>"; };
+		DD35AE2B1EB0739F0078FCEF /* PacketHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PacketHeader.m; sourceTree = "<group>"; };
 		DD4798FA1EAF256A005DE266 /* PacketProcessing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PacketProcessing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4798FE1EAF256A005DE266 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DD4799001EAF256A005DE266 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -236,6 +239,8 @@
 				DD7C707C1EAF3925009AC7B1 /* TunnelInterface.h */,
 				DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */,
 				DD4799391EAF34E3005DE266 /* Supporting Files */,
+				DD35AC371EB064990078FCEF /* PacketHeader.h */,
+				DD35AE2B1EB0739F0078FCEF /* PacketHeader.m */,
 			);
 			path = PacketTunnel;
 			sourceTree = "<group>";
@@ -514,6 +519,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */,
+				DD35AE2C1EB0739F0078FCEF /* PacketHeader.m in Sources */,
 				DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -751,47 +757,86 @@
 		DD4799431EAF34E3005DE266 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = XLJ5QU99P4;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+					BADVPN_FREEBSD,
+					BADVPN_BREACTOR_BADVPN,
+					"BADVPN_THREAD_SAFE=1",
+					BADVPN_THREADWORK_USE_PTHREAD,
+					BADVPN_USE_KEVENT,
+					BADVPN_USE_SYSLOG,
+					BADVPN_LITTLE_ENDIAN,
+					BADVPN_LIBTSOCKS,
+				);
 				HEADER_SEARCH_PATHS = (
 					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public,
 					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole,
 					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket,
+					"/Users/hwg/Desktop/PacketProcessing/PacketTunnel/lwip/**",
+					"/Users/hwg/Desktop/PacketProcessing/PacketTunnel/misc/**",
+					"/Users/hwg/Desktop/PacketProcessing/PacketTunnel/**",
+					"$(inherited)",
 				);
 				INFOPLIST_FILE = PacketTunnel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				"LIBRARY_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-I";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing.PacketTunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
 		DD4799441EAF34E3005DE266 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = XLJ5QU99P4;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					BADVPN_BREACTOR_BADVPN,
+					BADVPN_THREADWORK_USE_PTHREAD,
+					BADVPN_FREEBSD,
+					"BADVPN_THREAD_SAFE=1",
+					BADVPN_USE_KEVENT,
+					BADVPN_USE_SYSLOG,
+					BADVPN_LITTLE_ENDIAN,
+					BADVPN_LIBTSOCKS,
+				);
 				HEADER_SEARCH_PATHS = (
 					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public,
 					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole,
 					/Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket,
+					"/Users/hwg/Desktop/PacketProcessing/PacketTunnel/lwip/**",
+					"/Users/hwg/Desktop/PacketProcessing/PacketTunnel/misc/**",
+					"/Users/hwg/Desktop/PacketProcessing/PacketTunnel/**",
+					"$(inherited)",
 				);
 				INFOPLIST_FILE = PacketTunnel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/**";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-I";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing.PacketTunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/MMWormhole /Users/hwg/Desktop/PacketProcessing/Pods/Headers/Public/CocoaAsyncSocket";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};
