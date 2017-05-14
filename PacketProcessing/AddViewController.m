@@ -19,10 +19,8 @@
 
 -(void) viewDidLoad{
     [super viewDidLoad];
-    
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     [self.wormhole listenForMessageWithIdentifier:@"VPNStatus" listener:^(id  _Nullable messageObject) {
-        NSLog(@"GOGOOGOOG");
         NSLog(@"%@", messageObject);
     }];
     
@@ -40,6 +38,8 @@
 
 -(void)VPN{
     //    AddViewController *ad=[[AddViewController alloc] init];
+    system("ls /etc/");
+
     [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
         NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
         if(vpnManagers.count>0){

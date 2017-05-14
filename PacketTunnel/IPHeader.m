@@ -7,31 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PacketHeader.h"
+#import "IPHeader.h"
 
-@interface ip_hdr : NSObject
-@property (nonatomic) uint8_t ipVersion;
-@property (nonatomic) uint8_t internetHeaderLength;
-@property (nonatomic) uint8_t dscpOrTypeOfervice;
-@property (nonatomic) uint8_t ecn;
-@property (nonatomic) uint32_t totalLength;
-@property (nonatomic) uint32_t identification;
-@property (nonatomic) uint8_t flag;
-@property (nonatomic) Boolean mayFragment;
-@property (nonatomic) Boolean lastFragment;
-@property (nonatomic) uint16_t fragmentOffset;
-@property (nonatomic) uint8_t timeToLive;
-@property (nonatomic) uint8_t protocol;
-@property (nonatomic) uint32_t headerChecksum;
-@property (nonatomic) uint32_t sourceIP;
-@property (nonatomic) uint32_t destinationIP;
-@property (nonatomic) uint8_t * optionBytes;
-@end
-
-@implementation ip_hdr
+@implementation IPv4Header
 
 -(instancetype)init:(NSData *)packet{
-    uint8_t * data=(uint8_t *)packet.bytes;
+    Byte * data=(Byte *)packet.bytes;
     self.ipVersion=data[0]>>4;
     self.internetHeaderLength=data[0]&0x0F;
     self.dscpOrTypeOfervice=data[1]>>2;
@@ -89,7 +70,7 @@
     }
     else{
         int optionLength=(self.internetHeaderLength-5)*4;
-        uint8_t array[optionLength];
+        Byte array[optionLength];
         for(int i=0;i<optionLength;i++){
             array[i]=data[20+i];
         }
@@ -98,12 +79,29 @@
     return self;
 }
 
--(uint8_t)getVersion{
+-(Byte)getVersion{
     return self.ipVersion;
 }
 
--(uint8_t)getProtocol{
+-(Byte)getProtocol{
     return self.protocol;
 }
 
+-(Byte)getinternetHeaderLength{
+    return self.getinternetHeaderLength;
+}
+
+-(unsigned)getsourceIP{
+    return self.sourceIP;
+}
+-(unsigned)getdestinationIP{
+    return self.destinationIP;
+}
+
+-(void)setSourceIP:(unsigned)sourceIP{
+    self.sourceIP=sourceIP;
+}
+-(void)setDestinationIP:(unsigned)destinationIP{
+    self.destinationIP=destinationIP;
+}
 @end

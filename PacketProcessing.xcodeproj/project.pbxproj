@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
-		DD35AE2C1EB0739F0078FCEF /* PacketHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* PacketHeader.m */; };
+		DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */; };
+		DD35AE2C1EB0739F0078FCEF /* IPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* IPHeader.m */; };
+		DD35AE2F1EB09F740078FCEF /* UDPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2E1EB09F740078FCEF /* UDPHeader.m */; };
+		DD35AE311EB0E8F00078FCEF /* libCocoaAsyncSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */; };
 		DD4798FF1EAF256A005DE266 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4798FE1EAF256A005DE266 /* main.m */; };
 		DD4799021EAF256A005DE266 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799011EAF256A005DE266 /* AppDelegate.m */; };
 		DD4799051EAF256A005DE266 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799041EAF256A005DE266 /* ViewController.m */; };
@@ -20,6 +23,8 @@
 		DD4799311EAF2AD6005DE266 /* AddViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4799301EAF2AD6005DE266 /* AddViewController.m */; };
 		DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = DD47993C1EAF34E3005DE266 /* PacketTunnelProvider.m */; };
 		DD4799411EAF34E3005DE266 /* PacketTunnel.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = DD4799371EAF34E3005DE266 /* PacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DD52899F1EC2B57C0073A176 /* TCPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD52899E1EC2B57C0073A176 /* TCPHeader.m */; };
+		DD5289A11EC30C7C0073A176 /* Session.m in Sources */ = {isa = PBXBuildFile; fileRef = DD5289A01EC30C7C0073A176 /* Session.m */; };
 		DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */; };
 		DD7C707E1EAF3AA0009AC7B1 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */; };
 		DD7C70801EAF3AB9009AC7B1 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */; };
@@ -70,8 +75,13 @@
 		0F5BD7753983FB9FE67C2669 /* Pods-PacketProcessing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.release.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.release.xcconfig"; sourceTree = "<group>"; };
 		1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PacketProcessing.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.debug.xcconfig"; sourceTree = "<group>"; };
-		DD35AC371EB064990078FCEF /* PacketHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacketHeader.h; sourceTree = "<group>"; };
-		DD35AE2B1EB0739F0078FCEF /* PacketHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PacketHeader.m; sourceTree = "<group>"; };
+		DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCPPacketFactory.m; sourceTree = "<group>"; };
+		DD26E2CD1EC7DBAC00428426 /* TCPPacketFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCPPacketFactory.h; sourceTree = "<group>"; };
+		DD35AC371EB064990078FCEF /* IPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPHeader.h; sourceTree = "<group>"; };
+		DD35AE2B1EB0739F0078FCEF /* IPHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPHeader.m; sourceTree = "<group>"; };
+		DD35AE2D1EB09C5A0078FCEF /* UDPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDPHeader.h; sourceTree = "<group>"; };
+		DD35AE2E1EB09F740078FCEF /* UDPHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPHeader.m; sourceTree = "<group>"; };
+		DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaAsyncSocket.a; path = "../../Library/Developer/Xcode/DerivedData/PacketProcessing-akexfjlbqamkvrbrklixejkunrlr/Build/Products/Debug-iphoneos/CocoaAsyncSocket/libCocoaAsyncSocket.a"; sourceTree = "<group>"; };
 		DD4798FA1EAF256A005DE266 /* PacketProcessing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PacketProcessing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4798FE1EAF256A005DE266 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DD4799001EAF256A005DE266 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -95,6 +105,9 @@
 		DD47993B1EAF34E3005DE266 /* PacketTunnelProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacketTunnelProvider.h; sourceTree = "<group>"; };
 		DD47993C1EAF34E3005DE266 /* PacketTunnelProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PacketTunnelProvider.m; sourceTree = "<group>"; };
 		DD47993E1EAF34E3005DE266 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DD52899D1EC2B2D30073A176 /* TCPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCPHeader.h; sourceTree = "<group>"; };
+		DD52899E1EC2B57C0073A176 /* TCPHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCPHeader.m; sourceTree = "<group>"; };
+		DD5289A01EC30C7C0073A176 /* Session.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Session.m; sourceTree = "<group>"; };
 		DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TunnelInterface.m; sourceTree = "<group>"; };
 		DD7C707C1EAF3925009AC7B1 /* TunnelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TunnelInterface.h; sourceTree = "<group>"; };
 		DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
@@ -134,6 +147,7 @@
 			files = (
 				DD7C70801EAF3AB9009AC7B1 /* NetworkExtension.framework in Frameworks */,
 				DD7C70851EAF88BE009AC7B1 /* libMMWormhole.a in Frameworks */,
+				DD35AE311EB0E8F00078FCEF /* libCocoaAsyncSocket.a in Frameworks */,
 				DD7C70861EAF88C6009AC7B1 /* libPods-PacketProcessing.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -153,6 +167,7 @@
 		8B31184B2AC9A9F2974CE0FF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */,
 				DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */,
 				DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */,
 				DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */,
@@ -239,8 +254,15 @@
 				DD7C707C1EAF3925009AC7B1 /* TunnelInterface.h */,
 				DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */,
 				DD4799391EAF34E3005DE266 /* Supporting Files */,
-				DD35AC371EB064990078FCEF /* PacketHeader.h */,
-				DD35AE2B1EB0739F0078FCEF /* PacketHeader.m */,
+				DD35AC371EB064990078FCEF /* IPHeader.h */,
+				DD35AE2B1EB0739F0078FCEF /* IPHeader.m */,
+				DD35AE2D1EB09C5A0078FCEF /* UDPHeader.h */,
+				DD35AE2E1EB09F740078FCEF /* UDPHeader.m */,
+				DD52899D1EC2B2D30073A176 /* TCPHeader.h */,
+				DD52899E1EC2B57C0073A176 /* TCPHeader.m */,
+				DD5289A01EC30C7C0073A176 /* Session.m */,
+				DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */,
+				DD26E2CD1EC7DBAC00428426 /* TCPPacketFactory.h */,
 			);
 			path = PacketTunnel;
 			sourceTree = "<group>";
@@ -518,8 +540,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD35AE2F1EB09F740078FCEF /* UDPHeader.m in Sources */,
 				DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */,
-				DD35AE2C1EB0739F0078FCEF /* PacketHeader.m in Sources */,
+				DD5289A11EC30C7C0073A176 /* Session.m in Sources */,
+				DD52899F1EC2B57C0073A176 /* TCPHeader.m in Sources */,
+				DD35AE2C1EB0739F0078FCEF /* IPHeader.m in Sources */,
+				DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */,
 				DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -787,7 +813,7 @@
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				"LIBRARY_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-I";
+				OTHER_CFLAGS = "-l";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing.PacketTunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -829,7 +855,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-I";
+				OTHER_CFLAGS = "-l";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwg.PacketProcessing.PacketTunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

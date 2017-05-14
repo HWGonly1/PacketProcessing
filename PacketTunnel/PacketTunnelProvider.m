@@ -29,12 +29,18 @@
     NSError *error = [TunnelInterface setupWithPacketTunnelFlow:self.packetFlow];
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     [self.wormhole passMessageObject:@"Start Tunnel" identifier:@"VPNStatus"];
+    //NEIPv4Settings *ipv4Settings = [[NEIPv4Settings alloc]init];
     
-    NEIPv4Settings *ipv4Settings = [[NEIPv4Settings alloc] initWithAddresses:@[@"10.0.0.1"] subnetMasks:@[@"255.255.255.0"]];
+    NEIPv4Settings *ipv4Settings = [[NEIPv4Settings alloc] initWithAddresses:@[@"192.168.10.104"] subnetMasks:@[@"255.255.255.0"]];
     ipv4Settings.includedRoutes = @[[NEIPv4Route defaultRoute]];
-    NEPacketTunnelNetworkSettings *settings = [[NEPacketTunnelNetworkSettings alloc] initWithTunnelRemoteAddress:@"127.0.0.1"];
+    
+    NSMutableArray *excludedRoutes = [NSMutableArray array];
+    [excludedRoutes addObject:[[NEIPv4Route alloc] initWithDestinationAddress:@"220.181.111.188" subnetMask:@"255.255.255.0"]];
+    ipv4Settings.excludedRoutes=excludedRoutes;
+    NEPacketTunnelNetworkSettings *settings = [[NEPacketTunnelNetworkSettings alloc] initWithTunnelRemoteAddress:@"192.168.0.147"];
     settings.IPv4Settings = ipv4Settings;
     settings.MTU = @(TunnelMTU);
+    settings.DNSSettings=[[NEDNSSettings alloc] initWithServers:@[@"219.141.136.10" , @"8.8.8.8"]];
     [self setTunnelNetworkSettings:settings completionHandler:^(NSError * _Nullable error) {
         if (error) {
             if (completionHandler) {
