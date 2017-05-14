@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TCPPacketFactory.h"
-#import "IPHeader.h"
+#import "IPv4Header.h"
 #import "TCPHeader.h"
 @implementation TCPPacketHeader
 -(TCPHeader*)copyTCPHeader:(TCPHeader*)tcpheader{
@@ -22,9 +22,9 @@
 }
 
 -(NSData *) createFinAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient seqToClient:(int)seqToClient isfin:(bool)isfin isack:(bool)isack{
-    NSMutableData *buffer;
+    Byte buffer[];
     IPv4Header *ip=ipheader;
-    TCPHeader *tcp=tcpheader;
+    TCPHeader *tcp=[self copyTCPHeader:tcpheader];
     unsigned sourceIP=[ip getsourceIP];
     unsigned destIP=[ip getdestinationIP];
     unsigned sourcePort=[tcp getSourcePort];
@@ -35,6 +35,9 @@
     [ip setSourceIP:sourceIP];
     [tcp setDestinationPort:destPort];
     [tcp setSourcePort:sourcePort];
+    [tcp setAckNum:ackNumber];
+    [tcp setSequenceNumber:seqNumber];
+    
     return buffer;
 }
 @end

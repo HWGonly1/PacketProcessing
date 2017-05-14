@@ -9,6 +9,6 @@
 #ifndef TCPPacketFactory_h
 #define TCPPacketFactory_h
 #endif /* TCPPacketFactory_h */
-@interface TCPPacketHeader
+@interface TCPPacketHeader : NSObject 
 
 @end

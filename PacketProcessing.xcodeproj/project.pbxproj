@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
 		DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */; };
-		DD35AE2C1EB0739F0078FCEF /* IPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* IPHeader.m */; };
+		DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CF1EC8784000428426 /* IPPacketFactory.m */; };
+		DD35AE2C1EB0739F0078FCEF /* IPv4Header.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */; };
 		DD35AE2F1EB09F740078FCEF /* UDPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2E1EB09F740078FCEF /* UDPHeader.m */; };
 		DD35AE311EB0E8F00078FCEF /* libCocoaAsyncSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */; };
 		DD4798FF1EAF256A005DE266 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4798FE1EAF256A005DE266 /* main.m */; };
@@ -77,8 +78,10 @@
 		C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.debug.xcconfig"; sourceTree = "<group>"; };
 		DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCPPacketFactory.m; sourceTree = "<group>"; };
 		DD26E2CD1EC7DBAC00428426 /* TCPPacketFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCPPacketFactory.h; sourceTree = "<group>"; };
-		DD35AC371EB064990078FCEF /* IPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPHeader.h; sourceTree = "<group>"; };
-		DD35AE2B1EB0739F0078FCEF /* IPHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPHeader.m; sourceTree = "<group>"; };
+		DD26E2CE1EC8782E00428426 /* IPPacketFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPPacketFactory.h; sourceTree = "<group>"; };
+		DD26E2CF1EC8784000428426 /* IPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPPacketFactory.m; sourceTree = "<group>"; };
+		DD35AC371EB064990078FCEF /* IPv4Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPv4Header.h; sourceTree = "<group>"; };
+		DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPv4Header.m; sourceTree = "<group>"; };
 		DD35AE2D1EB09C5A0078FCEF /* UDPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDPHeader.h; sourceTree = "<group>"; };
 		DD35AE2E1EB09F740078FCEF /* UDPHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPHeader.m; sourceTree = "<group>"; };
 		DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaAsyncSocket.a; path = "../../Library/Developer/Xcode/DerivedData/PacketProcessing-akexfjlbqamkvrbrklixejkunrlr/Build/Products/Debug-iphoneos/CocoaAsyncSocket/libCocoaAsyncSocket.a"; sourceTree = "<group>"; };
@@ -254,15 +257,17 @@
 				DD7C707C1EAF3925009AC7B1 /* TunnelInterface.h */,
 				DD7C707A1EAF38F9009AC7B1 /* TunnelInterface.m */,
 				DD4799391EAF34E3005DE266 /* Supporting Files */,
-				DD35AC371EB064990078FCEF /* IPHeader.h */,
-				DD35AE2B1EB0739F0078FCEF /* IPHeader.m */,
+				DD35AC371EB064990078FCEF /* IPv4Header.h */,
+				DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */,
 				DD35AE2D1EB09C5A0078FCEF /* UDPHeader.h */,
 				DD35AE2E1EB09F740078FCEF /* UDPHeader.m */,
 				DD52899D1EC2B2D30073A176 /* TCPHeader.h */,
 				DD52899E1EC2B57C0073A176 /* TCPHeader.m */,
 				DD5289A01EC30C7C0073A176 /* Session.m */,
-				DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */,
 				DD26E2CD1EC7DBAC00428426 /* TCPPacketFactory.h */,
+				DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */,
+				DD26E2CE1EC8782E00428426 /* IPPacketFactory.h */,
+				DD26E2CF1EC8784000428426 /* IPPacketFactory.m */,
 			);
 			path = PacketTunnel;
 			sourceTree = "<group>";
@@ -544,7 +549,8 @@
 				DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */,
 				DD5289A11EC30C7C0073A176 /* Session.m in Sources */,
 				DD52899F1EC2B57C0073A176 /* TCPHeader.m in Sources */,
-				DD35AE2C1EB0739F0078FCEF /* IPHeader.m in Sources */,
+				DD35AE2C1EB0739F0078FCEF /* IPv4Header.m in Sources */,
+				DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */,
 				DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */,
 				DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */,
 			);
