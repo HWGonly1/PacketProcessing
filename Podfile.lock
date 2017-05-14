@@ -1,0 +1,17 @@
+PODS:
+  - CocoaAsyncSocket (7.2.2)
+  - MMWormhole (2.0.0):
+    - MMWormhole/Core (= 2.0.0)
+  - MMWormhole/Core (2.0.0)
+
+DEPENDENCIES:
+  - CocoaAsyncSocket
+  - MMWormhole (~> 2.0.0)
+
+SPEC CHECKSUMS:
+  CocoaAsyncSocket: 7ddbc667d52f23bf1d79988b53c61976b8ddbd24
+  MMWormhole: 0cd3fd35a9118b2e2d762b499f54eeaace0be791
+
+PODFILE CHECKSUM: 6f98d125d32d1357225bbf00a798a8a30eb08814
+
+COCOAPODS: 1.2.1
