@@ -10,13 +10,13 @@
 #define UDPHeader_h
 #endif /* UDPHeader_h */
 @interface UDPHeader : NSObject
-@property (nonatomic) unsigned sourcePort;
-@property (nonatomic) unsigned destinationPort;
-@property (nonatomic) unsigned length;
-@property (nonatomic) unsigned checksum;
+@property (nonatomic) int sourcePort;
+@property (nonatomic) int destinationPort;
+@property (nonatomic) int length;
+@property (nonatomic) int checksum;
 -(instancetype)init:(NSData *)packet;
--(unsigned)getsourcePort;
--(unsigned)getdestinationPort;
--(unsigned)getlength;
--(unsigned)getchecksum;
+-(int)getsourcePort;
+-(int)getdestinationPort;
+-(int)getlength;
+-(int)getchecksum;
 @end

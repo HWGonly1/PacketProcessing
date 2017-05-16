@@ -35,16 +35,16 @@
     
     return self;
 }
--(unsigned)getsourcePort{
+-(int)getsourcePort{
     return self.sourcePort;
 }
--(unsigned)getdestinationPort{
+-(int)getdestinationPort{
     return self.destinationPort;
 }
--(unsigned)getlength{
+-(int)getlength{
     return self.length;
 }
--(unsigned)getchecksum{
+-(int)getchecksum{
     return self.checksum;
 }
 

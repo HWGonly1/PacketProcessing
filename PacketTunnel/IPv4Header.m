@@ -12,12 +12,13 @@
 @implementation IPv4Header
 
 -(instancetype)init:(NSData *)packet{
-    Byte * data=(Byte *)packet.bytes;
+    Byte * data = (Byte *)[packet bytes];
+    
     self.ipVersion=data[0]>>4;
     self.internetHeaderLength=data[0]&0x0F;
     self.dscpOrTypeOfService=data[1]>>2;
     self.ecn=data[1]&0x03;
-    
+
     self.totalLength=0;
     self.totalLength|=data[2]&0xFF;
     self.totalLength<<=8;
@@ -79,7 +80,7 @@
     return self;
 }
 
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(unsigned)totalLength identification:(unsigned)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(unsigned)headerChecksum sourceIP:(unsigned)sourceIP destinationIP:(unsigned)destinationIP optionBytes:(Byte *)optionBytes{
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes{
     self.ipVersion=ipVersion;
     self.internetHeaderLength=internetHeaderLength;
     self.dscpOrTypeOfService=dscpOrTypeOfService;
@@ -120,15 +121,15 @@
     return self.ecn;
 }
 
--(unsigned)getTotalLength{
+-(int)getTotalLength{
     return self.totalLength;
 }
 
--(unsigned)getIPHeaderLength{
+-(int)getIPHeaderLength{
     return self.internetHeaderLength*4;
 }
 
--(unsigned)getIdentification{
+-(int)getIdentification{
     return self.identification;
 }
 
@@ -156,14 +157,14 @@
     return self.protocol;
 }
 
--(unsigned)getHeaderCheckSum{
+-(int)getHeaderCheckSum{
     return self.headerChecksum;
 }
 
--(unsigned)getsourceIP{
+-(int)getsourceIP{
     return self.sourceIP;
 }
--(unsigned)getdestinationIP{
+-(int)getdestinationIP{
     return self.destinationIP;
 }
 
@@ -172,71 +173,72 @@
 }
 
 -(void)setInternetHeaderLength:(Byte)internetHeaderLength{
-    self.internetHeaderLength=internetHeaderLength;
+    _internetHeaderLength=internetHeaderLength;
 }
 
 -(void)setDscpOrTypeOfService:(Byte)dscpOrTypeOfService{
-    self.dscpOrTypeOfService=dscpOrTypeOfService;
+    _dscpOrTypeOfService=dscpOrTypeOfService;
 }
 
 -(void)setEcn:(Byte)ecn{
-    self.ecn=ecn;
+    _ecn=ecn;
 }
 
--(void)setTotalLength:(unsigned)totalLength{
-    self.totalLength=totalLength;
+-(void)setTotalLength:(int)totalLength{
+    _totalLength=totalLength;
 }
 
--(void)setIdentification:(unsigned)identification{
-    self.identification=identification;
+-(void)setIdentification:(int)identification{
+    _identification=identification;
 }
 
 -(void)setFlag:(Byte)flag{
-    self.flag=flag;
+    _flag=flag;
 }
 
--(void)setMayFragment:(Boolean)mayFragment{
-    self.mayFragment=mayFragment;
+-(void)setMayFragment:(bool)mayFragment{
+    mayFragment=mayFragment;
     if(mayFragment){
-        self.flag |= 0x40;
+        _flag |= 0x40;
     }else{
-        self.flag &= 0xBF;
+        _flag &= 0xBF;
     }
 }
 
--(void)setLastFragment:(Boolean)lastFragment{
-    self.lastFragment=lastFragment;
+-(void)setLastFragment:(bool)lastFragment{
+    _lastFragment=lastFragment;
     if(lastFragment){
-        self.flag |= 0x20;
+        _flag |= 0x20;
     }else{
-        self.flag &= 0xDF;
+        _flag &= 0xDF;
     }
 }
 
 -(void)setFragmentOffset:(short)fragmentOffset{
-    self.fragmentOffset=fragmentOffset;
+    _fragmentOffset=fragmentOffset;
 }
 
 -(void)setTimeToLive:(Byte)timeToLive{
-    self.timeToLive=timeToLive;
+    _timeToLive=timeToLive;
 }
 
 -(void)setProtocol:(Byte)protocol{
-    self.protocol=protocol;
+    _protocol=protocol;
 }
 
--(void)setHeaderChecksum:(unsigned)headerChecksum{
-    self.headerChecksum=headerChecksum;
+-(void)setHeaderChecksum:(int)headerChecksum{
+    _headerChecksum=headerChecksum;
 }
 
--(void)setSourceIP:(unsigned)sourceIP{
-    self.sourceIP=sourceIP;
+-(void)setSourceIP:(int)sourceIP{
+    _sourceIP=sourceIP;
 }
--(void)setDestinationIP:(unsigned)destinationIP{
-    self.destinationIP=destinationIP;
+-(void)setDestinationIP:(int)destinationIP{
+    _destinationIP=destinationIP;
 }
 
 -(void)setOptionBytes:(Byte *)optionBytes{
-    self.optionBytes=optionBytes;
+    _optionBytes=optionBytes;
 }
+
 @end

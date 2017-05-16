@@ -21,14 +21,14 @@
     return tcp;
 }
 
--(NSData *) createFinAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient seqToClient:(int)seqToClient isfin:(bool)isfin isack:(bool)isack{
-    Byte buffer[];
+-(Byte *) createFinAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient seqToClient:(int)seqToClient isfin:(bool)isfin isack:(bool)isack{
+    Byte * buffer;
     IPv4Header *ip=ipheader;
     TCPHeader *tcp=[self copyTCPHeader:tcpheader];
-    unsigned sourceIP=[ip getsourceIP];
-    unsigned destIP=[ip getdestinationIP];
-    unsigned sourcePort=[tcp getSourcePort];
-    unsigned destPort=[tcp getdestinationPort];
+    int sourceIP=[ip getsourceIP];
+    int destIP=[ip getdestinationIP];
+    int sourcePort=[tcp getSourcePort];
+    int destPort=[tcp getdestinationPort];
     int ackNumber=ackToClient;
     int seqNumber=seqToClient;
     [ip setDestinationIP:destIP];

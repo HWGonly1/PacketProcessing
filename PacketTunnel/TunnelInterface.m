@@ -7,7 +7,7 @@
 //
 
 #import "TunnelInterface.h"
-#import "IPHeader.h"
+#import "IPv4Header.h"
 #import <MMWormhole.h>
 #include <CocoaAsyncSocket/AsyncSocket.h>
 #include <CocoaAsyncSocket/AsyncUdpSocket.h>
@@ -94,9 +94,10 @@
     [[TunnelInterface sharedInterface].tunnelPacketFlow readPacketsWithCompletionHandler:^(NSArray<NSData *> * _Nonnull packets, NSArray<NSNumber *> * _Nonnull protocols) {
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"See if Packets" identifier:@"VPNStatus"];
         [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",packets.count] identifier:@"VPNStatus"];
+        
         for (NSData *packet in packets) {
-            //[[TunnelInterface sharedInterface].wormhole passMessageObject:packet identifier:@"VPNStatus"];
-            ip_hdr * iphdr=[[ip_hdr alloc] init:packet];
+            IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
+            
             Byte proto = [iphdr getProtocol];
             if (proto == 17) {
                 [[TunnelInterface sharedInterface].wormhole passMessageObject:@"UDP" identifier:@"VPNStatus"];
@@ -105,6 +106,7 @@
                 [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCP" identifier:@"VPNStatus"];
                 [[TunnelInterface sharedInterface] handleTCPPPacket:packet];
             }
+            
         }
         [weakSelf processPackets];
     }];
@@ -144,18 +146,16 @@
     //write(self.writeFd , message , packet.length + 2);
     uint8_t *data = (uint8_t *)packet.bytes;
     int data_len = (int)packet.length;
-    ip_hdr *iphdr = [[ip_hdr alloc] init:packet];
-    Byte version = [iphdr getVersion];
+    IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
+    Byte version = [iphdr getIPVersion];
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getProtocol]] identifier:@"VPNStatus"];
 }
 
 - (void)handleUDPPacket: (NSData *)packet {
-    uint8_t *data = (uint8_t *)packet.bytes;
-    int data_len = (int)packet.length;
-    ip_hdr *iphdr = [[ip_hdr alloc] init:packet];
-    Byte version = [iphdr getVersion];
+    IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
+    Byte version = [iphdr getIPVersion];
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getProtocol]] identifier:@"VPNStatus"];

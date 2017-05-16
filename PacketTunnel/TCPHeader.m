@@ -72,7 +72,7 @@
     [self setFlagBits];
     return self;
 }
--(instancetype)init:(unsigned)sourcePort destinationPort:(unsigned)destinationPort sequenceNumber:(unsigned)sequenceNumber dataOffset:(unsigned)dataOffset isns:(bool)isns tcpFlags:(unsigned)tcpFlags windowSize:(unsigned)windowSize checksum:(unsigned)checksum urgentPointer:(unsigned)urgentPointer options:(Byte *)options ackNum:(unsigned)ackNum{
+-(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options ackNum:(int)ackNum{
 
     self.isns=false;
 
@@ -92,14 +92,14 @@
 }
 
 -(void)setFlagBits{
-    self.iscwr = (self.tcpFlags & 0x80) > 0;
-    self.isece = (self.tcpFlags & 0x40) > 0;
-    self.isurg = (self.tcpFlags & 0x20) > 0;
-    self.isack = (self.tcpFlags & 0x10) > 0;
-    self.ispsh = (self.tcpFlags & 0x08) > 0;
-    self.isrst = (self.tcpFlags & 0x04) > 0;
-    self.issyn = (self.tcpFlags & 0x02) > 0;
-    self.isfin = (self.tcpFlags & 0x01) > 0;
+    _iscwr = (self.tcpFlags & 0x80) > 0;
+    _isece = (self.tcpFlags & 0x40) > 0;
+    _isurg = (self.tcpFlags & 0x20) > 0;
+    _isack = (self.tcpFlags & 0x10) > 0;
+    _ispsh = (self.tcpFlags & 0x08) > 0;
+    _isrst = (self.tcpFlags & 0x04) > 0;
+    _issyn = (self.tcpFlags & 0x02) > 0;
+    _isfin = (self.tcpFlags & 0x01) > 0;
 }
 
 -(bool)isNS{
@@ -107,7 +107,7 @@
 }
 
 -(void)setIsNS:(bool)isns{
-    self.isns=isns;
+    _isns=isns;
 }
 
 -(bool)isCWR{
@@ -115,11 +115,11 @@
 }
 
 -(void)setIsCWR:(bool)iscwr{
-    self.iscwr=iscwr;
-    if(self.iscwr){
-        self.tcpFlags|=0x80;
+    _iscwr=iscwr;
+    if(_iscwr){
+        _tcpFlags|=0x80;
     }else{
-        self.tcpFlags&=0x7F;
+        _tcpFlags&=0x7F;
     }
 }
 
@@ -128,11 +128,11 @@
 }
 
 -(void)setIsECE:(bool)isece{
-    self.isece=isece;
-    if(self.isece){
-        self.tcpFlags|=0x40;
+    _isece=isece;
+    if(_isece){
+        _tcpFlags|=0x40;
     }else{
-        self.tcpFlags&=0xBF;
+        _tcpFlags&=0xBF;
     }
 }
 
@@ -141,11 +141,11 @@
 }
 
 -(void)setIsURG:(bool)isurg{
-    self.isurg=isurg;
-    if(self.isurg){
-        self.tcpFlags|=0x20;
+    _isurg=isurg;
+    if(_isurg){
+        _tcpFlags|=0x20;
     }else{
-        self.tcpFlags&=0xDF;
+        _tcpFlags&=0xDF;
     }
 }
 
@@ -154,11 +154,11 @@
 }
 
 -(void)setIsACK:(bool)isack{
-    self.isack=isack;
-    if(self.isack){
-        self.tcpFlags|=0x10;
+    _isack=isack;
+    if(_isack){
+        _tcpFlags|=0x10;
     }else{
-        self.tcpFlags&=0xEF;
+        _tcpFlags&=0xEF;
     }
 }
 
@@ -167,11 +167,11 @@
 }
 
 -(void)setIsPSH:(bool)ispsh{
-    self.ispsh=ispsh;
-    if(self.ispsh){
-        self.tcpFlags|=0x08;
+    _ispsh=ispsh;
+    if(_ispsh){
+        _tcpFlags|=0x08;
     }else{
-        self.tcpFlags&=0xF7;
+        _tcpFlags&=0xF7;
     }
 }
 
@@ -180,11 +180,11 @@
 }
 
 -(void)setIsRST:(bool)isrst{
-    self.isrst=isrst;
-    if(self.isrst){
-        self.tcpFlags|=0x04;
+    _isrst=isrst;
+    if(_isrst){
+        _tcpFlags|=0x04;
     }else{
-        self.tcpFlags&=0xFB;
+        _tcpFlags&=0xFB;
     }
 }
 
@@ -193,11 +193,11 @@
 }
 
 -(void)setIsSYN:(bool)issyn{
-    self.issyn=issyn;
-    if(self.issyn){
-        self.tcpFlags|=0x02;
+    _issyn=issyn;
+    if(_issyn){
+        _tcpFlags|=0x02;
     }else{
-        self.tcpFlags&=0xFD;
+        _tcpFlags&=0xFD;
     }
 }
 
@@ -206,76 +206,76 @@
 }
 
 -(void)setIsFIN:(bool)isfin{
-    self.isfin=isfin;
-    if(self.isfin){
-        self.tcpFlags|=0x01;
+    _isfin=isfin;
+    if(_isfin){
+        _tcpFlags|=0x01;
     }else{
-        self.tcpFlags&=0xFE;
+        _tcpFlags&=0xFE;
     }
 }
 
--(unsigned)getSourcePort{
+-(int)getSourcePort{
     return self.sourcePort;
 }
 
--(void)setSourcePort:(unsigned)sourcePort{
-    self.sourcePort=sourcePort;
+-(void)setSourcePort:(int)sourcePort{
+    _sourcePort=sourcePort;
 }
 
--(unsigned)getdestinationPort{
+-(int)getdestinationPort{
     return self.destinationPort;
 }
 
--(void)setDestinationPort:(unsigned)destinationPort{
-    self.destinationPort=destinationPort;
+-(void)setDestinationPort:(int)destinationPort{
+    _destinationPort=destinationPort;
 }
 
--(unsigned)getSequenceNumber{
+-(int)getSequenceNumber{
     return self.sequenceNumber;
 }
 
--(void)setSequenceNumber:(unsigned)sequenceNumber{
-    self.sequenceNumber=sequenceNumber;
+-(void)setSequenceNumber:(int)sequenceNumber{
+    _sequenceNumber=sequenceNumber;
 }
 
--(unsigned)getdataOffset{
+-(int)getdataOffset{
     return self.dataOffset;
 }
 
--(void)setDataOffset:(unsigned)dataOffset{
-    self.dataOffset=dataOffset;
+-(void)setDataOffset:(int)dataOffset{
+    _dataOffset=dataOffset;
 }
 
--(unsigned)getTCPFlags{
+-(int)getTCPFlags{
     return self.tcpFlags;
 }
 
--(void)setTCPFlags:(unsigned)tcpFlags{
-    self.tcpFlags=tcpFlags;
+-(void)setTCPFlags:(int)tcpFlags{
+    _tcpFlags=tcpFlags;
 }
 
--(unsigned)getWindowSize{
+-(int)getWindowSize{
     return self.windowSize;
 }
 
--(void)setWindowSize:(unsigned)windowSize{
-    self.windowSize=windowSize;
+-(void)setWindowSize:(int)windowSize{
+    _windowSize=windowSize;
 }
 
--(unsigned)getChecksum{
+-(int)getChecksum{
     return self.checksum;
 }
 
--(void)setChecksum:(unsigned)checksum{
-    self.checksum=checksum;
+-(void)setChecksum:(int)checksum{
+    _checksum=checksum;
 }
 
--(unsigned)getUrgentPointer{
+-(int)getUrgentPointer{
     return self.urgentPointer;
 }
 
--(void)setUrgentPointer:(unsigned)urgentPointer{
-    self.urgentPointer=urgentPointer;
+-(void)setUrgentPointer:(int)urgentPointer{
+    _urgentPointer=urgentPointer;
 }
 
 -(Byte *)getOptions{
@@ -283,15 +283,15 @@
 }
 
 -(void)setOptions:(Byte *)options{
-    self.options=options;
+    _options=options;
 }
 
--(unsigned)getAckNumber{
+-(int)getAckNumber{
     return self.ackNum;
 }
 
--(void)setAckNumber:(unsigned)ackNum{
-    self.ackNum=ackNum;
+-(void)setAckNumber:(int)ackNum{
+    _ackNum=ackNum;
 }
 
 -(int)getTCPHeaderLength{
@@ -303,7 +303,7 @@
 }
 
 -(void)setMaxSegmentSize:(int)maxSegmentSize{
-    self.maxSegmentSize=maxSegmentSize;
+    maxSegmentSize=maxSegmentSize;
 }
 
 -(int)getWindowScale{
@@ -311,15 +311,15 @@
 }
 
 -(void)setWindowScale:(int)windowScale{
-    self.windowScale=windowScale;
+    _windowScale=windowScale;
 }
 
--(bool)isSelectiveAckPermitted{
-    return self.isSelectiveAckPermitted;
+-(bool)isSelectiveackPermitted{
+    return self.isSelectiveackPermitted;
 }
 
--(void)setIsSelectiveAckPermitted:(bool)isSelectiveAckPermitted{
-    self.isSelectiveAckPermitted=isSelectiveAckPermitted;
+-(void)setIsSelectiveAckPermitted:(bool)isSelectiveackPermitted{
+    _isSelectiveackPermitted=isSelectiveackPermitted;
 }
 
 -(int)getTimestampSender{
@@ -327,7 +327,7 @@
 }
 
 -(void)setTimeStampSender:(int)timeStampSender{
-    self.timeStampSender=timeStampSender;
+    _timeStampSender=timeStampSender;
 }
 
 -(int)getTimestampReplyTo{
@@ -335,7 +335,7 @@
 }
 
 -(void)setTimeStampReplyTo:(int)timeStampReplyTo{
-    self.timeStampReplyTo=timeStampReplyTo;
+    _timeStampReplyTo=timeStampReplyTo;
 }
 
 @end
