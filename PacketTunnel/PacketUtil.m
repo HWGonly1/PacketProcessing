@@ -7,7 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ifaddrs.h>
+#import <arpa/inet.h>
 #import "PacketUtil.h"
+#import "IPv4Header.h"
+#import "UDPHeader.h"
+
 
 @implementation PacketUtil
 
@@ -72,6 +77,152 @@
     }
     return value;
 }
+
++(bool)isValidTCPChecksum:(int)source destination:(int)destination data:(Byte[])data tcplength:(short)tcplength tcpoffset:(int)tcpoffset{
+    int buffersize=tcplength+12;
+    bool isodd=false;
+    if(buffersize%2!=0){
+        buffersize++;
+        isodd=true;
+    }
+    Byte buffer[buffersize];
+    buffer[0]=(Byte)((source>>24)&0xFF);
+    buffer[1]=(Byte)((source>>16)&0xFF);
+    buffer[2]=(Byte)((source>>8)&0xFF);
+    buffer[3]=(Byte)((source)&0xFF);
+
+    buffer[4]=(Byte)((destination>>24)&0xFF);
+    buffer[5]=(Byte)((destination>>16)&0xFF);
+    buffer[6]=(Byte)((destination>>8)&0xFF);
+    buffer[7]=(Byte)((destination)&0xFF);
+
+    buffer[8]=(Byte)0;
+    buffer[9]=(Byte)6;
+    
+    buffer[10]=(Byte)((tcplength>>8)&0xFF);
+    buffer[11]=(Byte)((tcplength)&0xFF);
+    
+    memccpy(&buffer[12], buffer, tcpoffset, tcplength);
+    
+    if(isodd){
+        buffer[buffersize-1]=(Byte)0;
+    }
+    
+    return [PacketUtil isValidIPChecksum:buffer length:buffersize];
+    
+}
+
++(bool)isValidIPChecksum:(Byte[])data length:(int)length{
+    int start=0;
+    int sum=0;
+    int value=0;
+    while(start<length){
+        value=[PacketUtil getNetworkInt:data start:start length:2];
+        sum+=value;
+        start+=2;
+    }
+    while((sum>>16)>0){
+        sum=(sum&0xFFFF)+(sum>>16);
+    }
+    sum=~sum;
+    Byte buffer[4];
+    buffer[0]=(Byte)((sum>>24)&0xFF);
+    buffer[1]=(Byte)((sum>>16)&0xFF);
+    buffer[2]=(Byte)((sum>>8)&0xFF);
+    buffer[3]=(Byte)((sum)&0xFF);
+
+    return (buffer[2]==0&&buffer[3]==0);
+}
+
++(Byte *)calculateChecksum:(Byte[])data offset:(int)offset length:(int)length{
+    int start=offset;
+    int sum=0;
+    int value=0;
+    while(start<length){
+        value=[PacketUtil getNetworkInt:data start:start length:2];
+        sum+=value;
+        start+=2;
+    }
+    while ((sum>>16)>0) {
+        sum = (sum & 0xFFFF) + (sum >> 16);
+    }
+    sum=~sum;
+    static Byte checksum[2];
+    checksum[0]=(Byte)(sum>>8);
+    checksum[1]=(Byte)sum;
+    
+    return checksum;
+}
+
++(Byte *)calculateTCPHeaderChecksum:(Byte[])data offset:(int)offset tcplength:(int)tcplength destip:(int)destip sourceip:(int)sourceip{
+    int buffersize=tcplength+12;
+    bool odd=false;
+    if(buffersize % 2 != 0){
+        buffersize++;
+        odd = true;
+    }
+    Byte buffer[buffersize];
+    buffer[0]=(Byte)((sourceip>>24)&0xFF);
+    buffer[1]=(Byte)((sourceip>>16)&0xFF);
+    buffer[2]=(Byte)((sourceip>>8)&0xFF);
+    buffer[3]=(Byte)((sourceip)&0xFF);
+    
+    buffer[4]=(Byte)((destip>>24)&0xFF);
+    buffer[5]=(Byte)((destip>>16)&0xFF);
+    buffer[6]=(Byte)((destip>>8)&0xFF);
+    buffer[7]=(Byte)((destip)&0xFF);
+    
+    buffer[8]=(Byte)0;
+    buffer[9]=(Byte)6;
+    
+    buffer[10]=(Byte)((tcplength>>8)&0xFF);
+    buffer[11]=(Byte)((tcplength)&0xFF);
+    
+    memccpy(&buffer[12], buffer, offset, tcplength);
+    
+    if(odd){
+        buffer[buffersize-1]=(Byte)0;
+    }
+    
+    Byte * tcpchecksum=[PacketUtil calculateChecksum:buffer offset:0 length:buffersize];
+    return tcpchecksum;
+}
+
++(NSString *)intToIPAddress:(int)addressInt{
+    NSString *buffer=[buffer stringByAppendingFormat:@"%d.%d.%d.%d",((addressInt>>24)&0x000000FF),((addressInt>>16)&0x000000FF),((addressInt>>8)&0x000000FF),((addressInt)&0x000000FF)];
+    return buffer;
+}
+
++(NSString *)getLocalIpAddress {
+    NSString *address = @"error";
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *temp_addr = NULL;
+    int success = 0;
+    // retrieve the current interfaces - returns 0 on success
+    success = getifaddrs(&interfaces);
+    if (success == 0) {
+        // Loop through linked list of interfaces
+        temp_addr = interfaces;
+        while(temp_addr != NULL) {
+            if(temp_addr->ifa_addr->sa_family == AF_INET) {
+                // Check if interface is en0 which is the wifi connection on the iPhone
+                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
+                    // Get NSString from C String
+                    address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
+                }
+            }
+            temp_addr = temp_addr->ifa_next;
+        }
+    }
+    // Free memory
+    freeifaddrs(interfaces);
+    return address;
+}
+
++(NSString *)getUDPoutput:(IPv4Header)ipheader udp:(UDPHeader)udp{
+    
+}
+
 
 @end
 
