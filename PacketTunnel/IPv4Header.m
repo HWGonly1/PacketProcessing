@@ -71,6 +71,7 @@
     }
     else{
         int optionLength=(self.internetHeaderLength-5)*4;
+        self.optionLength=optionLength;
         Byte array[optionLength];
         for(int i=0;i<optionLength;i++){
             array[i]=data[20+i];
@@ -80,7 +81,7 @@
     return self;
 }
 
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes{
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes optionLength:(Byte *)optionLength{
     self.ipVersion=ipVersion;
     self.internetHeaderLength=internetHeaderLength;
     self.dscpOrTypeOfService=dscpOrTypeOfService;
@@ -102,6 +103,7 @@
     self.sourceIP=sourceIP;
     self.destinationIP=destinationIP;
     self.optionBytes=optionBytes;
+    self.optionLength=optionLength;
     return self;
 }
 
@@ -241,4 +243,7 @@
     _optionBytes=optionBytes;
 }
 
+-(int)getOptionLength{
+    return self.optionLength;
+}
 @end

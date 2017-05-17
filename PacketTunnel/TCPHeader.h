@@ -28,6 +28,7 @@
 @property (nonatomic) int checksum;
 @property (nonatomic) int urgentPointer;
 @property (nonatomic) Byte * options;
+@property (nonatomic) int optionsLength;
 @property (nonatomic) int ackNum;
 @property (nonatomic) int maxSegmentSize;
 @property (nonatomic) int windowScale;
@@ -86,4 +87,5 @@
 -(void)setTimeStampSender:(int)timeStampSender;
 -(int)getTimestampReplyTo;
 -(void)setTimeStampReplyTo:(int)timeStampReplyTo;
+-(int)getOptionsLength;
 @end

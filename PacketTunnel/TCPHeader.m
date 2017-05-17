@@ -72,7 +72,7 @@
     [self setFlagBits];
     return self;
 }
--(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options ackNum:(int)ackNum{
+-(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options optionsLength:(int)optionsLength ackNum:(int)ackNum{
 
     self.isns=false;
 
@@ -86,6 +86,7 @@
     self.checksum=checksum;
     self.urgentPointer=urgentPointer;
     self.options=options;
+    self.optionsLength=optionsLength;
     self.ackNum=ackNum;
     [self setFlagBits];
     return self;
@@ -338,6 +339,9 @@
     _timeStampReplyTo=timeStampReplyTo;
 }
 
+-(int)getOptionsLength{
+    return self.optionsLength;
+}
 @end
 
 

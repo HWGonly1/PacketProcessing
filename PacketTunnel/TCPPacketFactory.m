@@ -15,7 +15,7 @@
     TCPHeader *tcp=[[TCPHeader alloc] init:[tcpheader getSourcePort] destinationPort:[tcpheader getdestinationPort]  sequenceNumber:[tcpheader getSequenceNumber] dataOffset:[tcpheader getdataOffset] isns:[tcpheader isNS] tcpFlags:[tcpheader getTCPFlags] windowSize:[tcpheader getWindowSize] checksum:[tcpheader getChecksum] urgentPointer:[tcpheader getUrgentPointer] options:[tcpheader getOptions] ackNum:[tcpheader getAckNumber]];
     [tcp setMaxSegmentSize:65535];
     [tcp setWindowScale:[tcpheader getWindowScale]];
-    [tcp setIsSelectiveAckPermitted:[tcpheader isSelectiveAckPermitted]];
+    [tcp setIsSelectiveackPermitted:[tcpheader isSelectiveackPermitted]];
     [tcp setTimeStampSender:[tcpheader getTimestampSender]];
     [tcp setTimeStampReplyTo:[tcpheader getTimestampReplyTo]];
     return tcp;
