@@ -15,8 +15,13 @@
 @property (nonatomic) int length;
 @property (nonatomic) int checksum;
 -(instancetype)init:(NSData *)packet;
+-(instancetype)init:(int)srcPort destPort:(int)destPort length:(int)length checksum:(int)checksum;
 -(int)getsourcePort;
+-(void)setSourcePort:(int)sourcePort;
 -(int)getdestinationPort;
+-(void)setDestinationPort:(int)destinationPort;
 -(int)getlength;
+-(void)setLength:(int)length;
 -(int)getchecksum;
+-(void)setChecksum:(int)checksum;
 @end

@@ -35,17 +35,45 @@
     
     return self;
 }
+
+-(instancetype)init:(int)srcPort destPort:(int)destPort length:(int)length checksum:(int)checksum{
+    self.sourcePort=srcPort;
+    self.destinationPort=destPort;
+    self.length=length;
+    self.checksum=checksum;
+    return self;
+}
+
 -(int)getsourcePort{
     return self.sourcePort;
 }
+
+-(void)setSourcePort:(int)sourcePort{
+    _sourcePort=sourcePort;
+}
+
 -(int)getdestinationPort{
     return self.destinationPort;
 }
+
+-(void)setDestinationPort:(int)destinationPort{
+    _destinationPort=destinationPort;
+}
+
 -(int)getlength{
     return self.length;
 }
+
+-(void)setLength:(int)length{
+    _length=length;
+}
+
 -(int)getchecksum{
     return self.checksum;
+}
+
+-(void)setChecksum:(int)checksum{
+    _checksum=checksum;
 }
 
 @end
