@@ -37,41 +37,31 @@
     NSLog(@"%@", str);
 }
 
-+(void)writeIntToBytes:(int)value buffer:(Byte[])buffer offset:(int)offset{
-    /*
-    if(sizeof(buffer)/sizeof(Byte)-offset<4){
-        return;
-    }
-     */
-    buffer[offset]=(Byte)((value>>24)&0x000000FF);
-    buffer[offset+1]=(Byte)((value>>16)&0x000000FF);
-    buffer[offset+2]=(Byte)((value>>8)&0x000000FF);
-    buffer[offset+3]=(Byte)(value&0x000000FF);
++(void)writeIntToBytes:(int)value buffer:(NSMutableArray*)buffer offset:(int)offset{
+    buffer[offset]=[NSNumber numberWithShort:(Byte)((value>>24)&0x000000FF)];
+    buffer[offset+1]=[NSNumber numberWithShort:(Byte)((value>>16)&0x000000FF)];
+    buffer[offset+2]=[NSNumber numberWithShort:(Byte)((value>>8)&0x000000FF)];
+    buffer[offset+3]=[NSNumber numberWithShort:(Byte)((value)&0x000000FF)];
 }
 
-+(void)writeShortToBytes:(short)value buffer:(Byte[])buffer offset:(int)offset{
-    buffer[offset]=(Byte)((value>>8)&0x00FF);
-    buffer[offset+1]=(Byte)(value&0x00FF);
++(void)writeShortToBytes:(short)value buffer:(NSMutableArray*)buffer offset:(int)offset{
+    buffer[offset]=[NSNumber numberWithShort:(Byte)((value>>8)&0x00FF)];
+    buffer[offset+1]=[NSNumber numberWithShort:(Byte)((value)&0x00FF)];
 }
 
-+(short)getNetworkShort:(Byte[])buffer start:(int)start{
++(short)getNetworkShort:(NSMutableArray*)buffer start:(int)start{
     short value=0x0000;
-    value |= buffer[start]&0xFF;
+    value |= (Byte)[buffer[start] shortValue]&0xFF;
     value <<= 8;
-    value |= buffer[start+1]&0xFF;
+    value |= (Byte)[buffer[start+1] shortValue]&0xFF;
     return value;
 }
 
-+(int)getNetworkInt:(Byte[])buffer start:(int)start length:(int)length{
++(int)getNetworkInt:(NSMutableArray *)buffer start:(int)start length:(int)length{
     int value=0x00000000;
     int end= start+(length>4?4:length);
-    /*
-    if(end>(sizeof(buffer)/sizeof(Byte))){
-        end=sizeof(buffer)/sizeof(Byte);
-    }
-     */
     for(int i=start;i<end;i++){
-        value |= buffer[i]&0xFF;
+        value |= (Byte)[buffer[i] shortValue]&0xFF;
         if(i<(end-1)){
             value<<=8;
         }
@@ -79,41 +69,43 @@
     return value;
 }
 
-+(bool)isValidTCPChecksum:(int)source destination:(int)destination data:(Byte[])data tcplength:(short)tcplength tcpoffset:(int)tcpoffset{
++(bool)isValidTCPChecksum:(int)source destination:(int)destination data:(NSMutableArray*)data tcplength:(short)tcplength tcpoffset:(int)tcpoffset{
     int buffersize=tcplength+12;
     bool isodd=false;
     if(buffersize%2!=0){
         buffersize++;
         isodd=true;
     }
-    Byte buffer[buffersize];
-    buffer[0]=(Byte)((source>>24)&0xFF);
-    buffer[1]=(Byte)((source>>16)&0xFF);
-    buffer[2]=(Byte)((source>>8)&0xFF);
-    buffer[3]=(Byte)((source)&0xFF);
+    NSMutableArray * buffer=[[NSMutableArray alloc] init];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((source>>24)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((source>>16)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((source>>8)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((source)&0xFF)]];
 
-    buffer[4]=(Byte)((destination>>24)&0xFF);
-    buffer[5]=(Byte)((destination>>16)&0xFF);
-    buffer[6]=(Byte)((destination>>8)&0xFF);
-    buffer[7]=(Byte)((destination)&0xFF);
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destination>>24)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destination>>16)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destination>>8)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destination)&0xFF)]];
 
-    buffer[8]=(Byte)0;
-    buffer[9]=(Byte)6;
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)0]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)6]];
     
-    buffer[10]=(Byte)((tcplength>>8)&0xFF);
-    buffer[11]=(Byte)((tcplength)&0xFF);
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((tcplength>>8)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((tcplength)&0xFF)]];
     
-    memccpy(&buffer[12], buffer, tcpoffset, tcplength);
+    for(int i=0;i<tcplength;i++){
+        [buffer addObject:data[i]];
+    }
     
     if(isodd){
-        buffer[buffersize-1]=(Byte)0;
+        [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)0]];
     }
     
     return [PacketUtil isValidIPChecksum:buffer length:buffersize];
     
 }
 
-+(bool)isValidIPChecksum:(Byte[])data length:(int)length{
++(bool)isValidIPChecksum:(NSMutableArray*)data length:(int)length{
     int start=0;
     int sum=0;
     int value=0;
@@ -135,7 +127,7 @@
     return (buffer[2]==0&&buffer[3]==0);
 }
 
-+(Byte *)calculateChecksum:(Byte[])data offset:(int)offset length:(int)length{
++(NSMutableArray *)calculateChecksum:(NSMutableArray*)data offset:(int)offset length:(int)length{
     int start=offset;
     int sum=0;
     int value=0;
@@ -148,44 +140,47 @@
         sum = (sum & 0xFFFF) + (sum >> 16);
     }
     sum=~sum;
-    static Byte checksum[2];
-    checksum[0]=(Byte)(sum>>8);
-    checksum[1]=(Byte)sum;
+    NSMutableArray* checksum=[[NSMutableArray alloc] init];
+    [checksum addObject:[[NSNumber alloc] initWithShort:(Byte)(sum>>8)]];
+    [checksum addObject:[[NSNumber alloc] initWithShort:(Byte)(sum)]];
     
     return checksum;
 }
 
-+(Byte *)calculateTCPHeaderChecksum:(Byte[])data offset:(int)offset tcplength:(int)tcplength destip:(int)destip sourceip:(int)sourceip{
++(NSMutableArray *)calculateTCPHeaderChecksum:(NSMutableArray*)data offset:(int)offset tcplength:(int)tcplength destip:(int)destip sourceip:(int)sourceip{
     int buffersize=tcplength+12;
     bool odd=false;
     if(buffersize % 2 != 0){
         buffersize++;
         odd = true;
     }
-    Byte buffer[buffersize];
-    buffer[0]=(Byte)((sourceip>>24)&0xFF);
-    buffer[1]=(Byte)((sourceip>>16)&0xFF);
-    buffer[2]=(Byte)((sourceip>>8)&0xFF);
-    buffer[3]=(Byte)((sourceip)&0xFF);
+    NSMutableArray * buffer=[[NSMutableArray alloc] init];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((sourceip>>24)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((sourceip>>16)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((sourceip>>8)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((sourceip)&0xFF)]];
     
-    buffer[4]=(Byte)((destip>>24)&0xFF);
-    buffer[5]=(Byte)((destip>>16)&0xFF);
-    buffer[6]=(Byte)((destip>>8)&0xFF);
-    buffer[7]=(Byte)((destip)&0xFF);
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destip>>24)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destip>>16)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destip>>8)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((destip)&0xFF)]];
     
-    buffer[8]=(Byte)0;
-    buffer[9]=(Byte)6;
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)0]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)6]];
     
-    buffer[10]=(Byte)((tcplength>>8)&0xFF);
-    buffer[11]=(Byte)((tcplength)&0xFF);
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((tcplength>>8)&0xFF)]];
+    [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((tcplength)&0xFF)]];
+
     
-    memccpy(&buffer[12], buffer, offset, tcplength);
-    
-    if(odd){
-        buffer[buffersize-1]=(Byte)0;
+    for(int i=0;i<tcplength;i++){
+        [buffer addObject:data[i]];
     }
     
-    Byte * tcpchecksum=[PacketUtil calculateChecksum:buffer offset:0 length:buffersize];
+    if(odd){
+        [buffer addObject:[[NSNumber alloc] initWithShort:(Byte)0]];
+    }
+    
+    NSMutableArray * tcpchecksum=[PacketUtil calculateChecksum:buffer offset:0 length:buffersize];
     return tcpchecksum;
 }
 
@@ -244,7 +239,7 @@
     return str;
 }
 
-+(NSString *)getOutput:(IPv4Header *)ipheader tcpheader:(TCPHeader *)tcpheader packetdata:(Byte[])packetdata length:(int)length{
++(NSString *)getOutput:(IPv4Header *)ipheader tcpheader:(TCPHeader *)tcpheader packetdata:(NSMutableArray*)packetdata length:(int)length{
     short tcplength=(short)(length-ipheader.getIPHeaderLength);
     bool isvalidchecksum=[PacketUtil isValidTCPChecksum:ipheader.getsourceIP destination:ipheader.getdestinationIP data:packetdata tcplength:tcplength tcpoffset:ipheader.getIPHeaderLength];
     bool isvalidipchecksum=[PacketUtil isValidIPChecksum:packetdata length:ipheader.getIPHeaderLength];
@@ -284,12 +279,12 @@
          tcpheader.getWindowSize,
          tcpheader.getWindowScale,
          tcpheader.getdataOffset];
-    if(tcpheader.getOptionsLength>0){
+    if([tcpheader.getOptions count]>0){
         str=[str stringByAppendingString:@"\r\nTCP Options: \r\n.........."];
-        Byte * options=tcpheader.getOptions;
+        NSMutableArray * options=tcpheader.getOptions;
         Byte kind;
-        for(int i=0;i<tcpheader.getOptionsLength;i++){
-            kind = options[i];
+        for(int i=0;i<[tcpheader.getOptions count];i++){
+            kind = (Byte)[options[i] shortValue];
             if(kind == 0){
                 [str stringByAppendingString:@"\r\n...End of options list"];
             }else if(kind == 1){
@@ -307,7 +302,7 @@
                 i++;
                 [str stringByAppendingString:@"\r\n...Selective Ack"];
             }else if(kind == 5){
-                i = i + options[++i] - 2;
+                i = i + (Byte)[options[++i] shortValue]- 2;
                 [str stringByAppendingString:@"\r\n...selective ACK (SACK)"];
             }else if(kind == 8){
                 i += 2;
@@ -320,7 +315,7 @@
                 i +=2;
                 [str stringByAppendingString:@"\r\n...Alternative Checksum request"];
             }else if(kind == 15){
-                i = i + options[++i] - 2;
+                i = i + (Byte)[options[++i] shortValue] - 2;
                 [str stringByAppendingString:@"\r\n...TCP Alternate Checksum Data"];
             }else{
                 [str stringByAppendingFormat:@"%@%d%@%d",@"\r\n... unknown option# ",kind,@", int: ",(int)kind];
@@ -332,10 +327,10 @@
 
 +(bool)isPacketCorrupted:(TCPHeader *)tcpheader{
     bool iscorrupted=false;
-    Byte * options=tcpheader.getOptions;
+    NSMutableArray * options=tcpheader.getOptions;
     Byte kind;
-    for(int i=0;i<tcpheader.getOptionsLength;i++){
-        kind = options[i];
+    for(int i=0;i<[tcpheader.getOptions count];i++){
+        kind = (Byte)[options[i] shortValue];
         if(kind == 0 || kind == 1){
         }else if(kind == 2){
             i += 3;
@@ -344,7 +339,7 @@
         }else if(kind == 4){
             i++;
         }else if(kind == 5 || kind == 15){
-            i = i + options[++i] - 2;
+            i = i + (Byte)[options[++i] shortValue] - 2;
         }else if(kind == 8){
             i += 9;
         }else if(kind == (Byte)23){
@@ -356,14 +351,14 @@
     return iscorrupted;
 }
 
-+(NSString *)bytesToStringArray:(Byte[])bytes bytesLength:(int)bytesLength{
++(NSString *)bytesToStringArray:(NSMutableArray*)bytes bytesLength:(int)bytesLength{
     NSString * str=@"";
     str=[str stringByAppendingString:@"{"];
     for(int i =0;i<bytesLength;i++){
         if(i == 0){
-            str=[str stringByAppendingFormat:@"%d",bytes[i]];
+            str=[str stringByAppendingFormat:@"%d",(Byte)[bytes[i] shortValue]];
         }else{
-            str=[str stringByAppendingFormat:@"%@%d",@",",bytes[i]];
+            str=[str stringByAppendingFormat:@"%@%d",@",",(Byte)[bytes[i] shortValue]];
         }
     }
     str=[str stringByAppendingString:@"}"];

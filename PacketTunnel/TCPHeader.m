@@ -44,14 +44,7 @@
     
     self.dataOffset=data[12]>>4;
     self.tcpFlags=data[13]&0xFF;
-    /*
-    self.isurg=data[13]&0x20;
-    self.isack=data[13]&0x10;
-    self.ispsh=data[13]&0x08;
-    self.isrst=data[13]&0x04;
-    self.issyn=data[13]&0x02;
-    self.isfin=data[13]&0x01;
-    */
+    
     self.windowSize=0;
     self.windowSize=data[14]&0xFF;
     self.windowSize<<8;
@@ -67,12 +60,20 @@
     self.urgentPointer<<8;
     self.urgentPointer=data[19]&0xFF;
     
-    self.options=&(data[20]);
-    
+    self.options=[[NSMutableArray alloc] init];
+
+    if(self.dataOffset==5){
+    }
+    else{
+        int length=(self.dataOffset-5)*4;
+        for(int i=0;i<length;i++){
+            [self.options addObject:[NSNumber numberWithShort:data[20+i]]];
+        }
+    }
     [self setFlagBits];
     return self;
 }
--(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options optionsLength:(int)optionsLength ackNum:(int)ackNum{
+-(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(NSMutableArray *)options ackNum:(int)ackNum{
 
     self.isns=false;
 
@@ -85,8 +86,7 @@
     self.windowSize=windowSize;
     self.checksum=checksum;
     self.urgentPointer=urgentPointer;
-    self.options=options;
-    self.optionsLength=optionsLength;
+    self.options=[options mutableCopy];
     self.ackNum=ackNum;
     [self setFlagBits];
     return self;
@@ -279,12 +279,12 @@
     _urgentPointer=urgentPointer;
 }
 
--(Byte *)getOptions{
+-(NSMutableArray *)getOptions{
     return self.options;
 }
 
--(void)setOptions:(Byte *)options{
-    _options=options;
+-(void)setOptions:(NSMutableArray *)options{
+    _options=[options mutableCopy];
 }
 
 -(int)getAckNumber{
@@ -337,10 +337,6 @@
 
 -(void)setTimeStampReplyTo:(int)timeStampReplyTo{
     _timeStampReplyTo=timeStampReplyTo;
-}
-
--(int)getOptionsLength{
-    return self.optionsLength;
 }
 @end
 

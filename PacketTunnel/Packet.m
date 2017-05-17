@@ -27,40 +27,35 @@
     self.tcpheader=tcpheader;
 }
 
--(Byte *)getBuffer{
+-(NSMutableArray *)getBuffer{
     return self.buffer;
 }
 
--(void)setBuffer:(Byte *)buffer bufferLength:(int)bufferLength{
-    self.buffer=buffer;
-    self.bufferLength=bufferLength;
-}
-
--(int)getBufferLength{
-    return self.bufferLength;
+-(void)setBuffer:(NSMutableArray *)buffer{
+    self.buffer=[buffer copy];
 }
 
 -(int)getPacketodyLength{
-    if(self.bufferLength>0){
+    if([self.buffer count]>0){
         int offset=self.tcpheader.getTCPHeaderLength-self.ipheader.getIPHeaderLength;
-        int len=self.bufferLength-offset;
+        int len=[self.buffer count]-offset;
         return len;
     }
     return 0;
 }
 
--(Byte *)getPacketBody{
-    if(self.bufferLength>0){
+-(NSMutableArray *)getPacketBody{
+    NSMutableArray* data=[[NSMutableArray alloc] init];
+    if([self.buffer count]>0){
         int offset=self.tcpheader.getTCPHeaderLength-self.ipheader.getIPHeaderLength;
-        int len=self.bufferLength-offset;
+        int len=[self.buffer count]-offset;
         if(len>0){
-            Byte data[len];
-            memccpy(data, self.buffer, 0,len);
-            return data;
+            for(int i=0;i<len;i++){
+                [data addObject:self.buffer[i]];
+            }
         }
     }
-    static Byte zero[0];
-    return zero;
+    return data;
 }
 
 @end

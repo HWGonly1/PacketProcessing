@@ -65,23 +65,20 @@
     self.destinationIP<<=8;
     self.destinationIP|=data[19]&0xFF;
     
-    self.optionBytes=NULL;
+    self.optionBytes=[[NSMutableArray alloc] init];
     
     if(self.internetHeaderLength==5){
     }
     else{
         int optionLength=(self.internetHeaderLength-5)*4;
-        self.optionLength=optionLength;
-        Byte array[optionLength];
         for(int i=0;i<optionLength;i++){
-            array[i]=data[20+i];
+            [self.optionBytes addObject:[NSNumber numberWithShort:data[20+i]]];
         }
-        self.optionBytes=array;
     }
     return self;
 }
 
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes optionLength:(int)optionLength{
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(NSMutableArray *)optionBytes{
     self.ipVersion=ipVersion;
     self.internetHeaderLength=internetHeaderLength;
     self.dscpOrTypeOfService=dscpOrTypeOfService;
@@ -102,8 +99,7 @@
     self.headerChecksum=headerChecksum;
     self.sourceIP=sourceIP;
     self.destinationIP=destinationIP;
-    self.optionBytes=optionBytes;
-    self.optionLength=optionLength;
+    self.optionBytes=[optionBytes mutableCopy];
     return self;
 }
 
@@ -170,7 +166,7 @@
     return self.destinationIP;
 }
 
--(Byte *)getOptionBytes{
+-(NSMutableArray *)getOptionBytes{
     return self.optionBytes;
 }
 
@@ -239,11 +235,8 @@
     _destinationIP=destinationIP;
 }
 
--(void)setOptionBytes:(Byte *)optionBytes{
-    _optionBytes=optionBytes;
+-(void)setOptionBytes:(NSMutableArray *)optionBytes{
+    _optionBytes=[optionBytes mutableCopy];
 }
 
--(int)getOptionLength{
-    return self.optionLength;
-}
 @end

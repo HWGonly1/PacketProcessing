@@ -10,5 +10,7 @@
 #define IPPacketFactory_h
 #endif /* IPPacketFactory_h */
 @interface IPPacketFactory : NSObject 
-
++(IPv4Header *)copyIPv4Header:(IPv4Header*)ipheader;
++(NSMutableArray *)createIPv4Header:(IPv4Header*)header;
++(IPv4Header *)createIPv4Header:(NSMutableArray *)buffer start:(int)start;
 @end

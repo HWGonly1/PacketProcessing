@@ -27,8 +27,7 @@
 @property (nonatomic) int windowSize;
 @property (nonatomic) int checksum;
 @property (nonatomic) int urgentPointer;
-@property (nonatomic) Byte * options;
-@property (nonatomic) int optionsLength;
+@property (nonatomic) NSMutableArray * options;
 @property (nonatomic) int ackNum;
 @property (nonatomic) int maxSegmentSize;
 @property (nonatomic) int windowScale;
@@ -36,7 +35,7 @@
 @property (nonatomic) int timeStampSender;
 @property (nonatomic) int timeStampReplyTo;
 -(instancetype)init:(NSData*)packet;
--(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options optionsLength:(int)optionsLength ackNum:(int)ackNum;
+-(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(NSMutableArray *)options ackNum:(int)ackNum;
 -(void)setFlagBits;
 -(bool)isNS;
 -(void)setIsNS:(bool)isns;
@@ -72,8 +71,8 @@
 -(void)setChecksum:(int)checksum;
 -(int)getUrgentPointer;
 -(void)setUrgentPointer:(int)urgentPointer;
--(Byte *)getOptions;
--(void)setOptions:(Byte *)options;
+-(NSMutableArray *)getOptions;
+-(void)setOptions:(NSMutableArray *)options;
 -(int)getAckNumber;
 -(void)setAckNumber:(int)ackNum;
 -(int)getTCPHeaderLength;
@@ -87,5 +86,4 @@
 -(void)setTimeStampSender:(int)timeStampSender;
 -(int)getTimestampReplyTo;
 -(void)setTimeStampReplyTo:(int)timeStampReplyTo;
--(int)getOptionsLength;
 @end
