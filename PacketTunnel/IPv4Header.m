@@ -81,7 +81,7 @@
     return self;
 }
 
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes optionLength:(Byte *)optionLength{
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes optionLength:(int)optionLength{
     self.ipVersion=ipVersion;
     self.internetHeaderLength=internetHeaderLength;
     self.dscpOrTypeOfService=dscpOrTypeOfService;

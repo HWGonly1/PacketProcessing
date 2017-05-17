@@ -29,7 +29,7 @@
 @property (nonatomic) Byte * optionBytes;
 @property (nonatomic) int optionLength;
 -(instancetype)init:(NSData *)packet;
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes;
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(Byte *)optionBytes optionLength:(int)optionLength;
 -(Byte)getIPVersion;
 -(Byte)getInternetHeaderLength;
 -(Byte)getDscpOrTypeOfService;

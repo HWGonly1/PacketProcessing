@@ -36,7 +36,7 @@
 @property (nonatomic) int timeStampSender;
 @property (nonatomic) int timeStampReplyTo;
 -(instancetype)init:(NSData*)packet;
--(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options ackNum:(int)ackNum;
+-(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(Byte *)options optionsLength:(int)optionsLength ackNum:(int)ackNum;
 -(void)setFlagBits;
 -(bool)isNS;
 -(void)setIsNS:(bool)isns;

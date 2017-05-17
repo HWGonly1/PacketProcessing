@@ -11,6 +11,7 @@
 		DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */; };
 		DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CF1EC8784000428426 /* IPPacketFactory.m */; };
 		DD26E2D31ECA07F700428426 /* PacketUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2D21ECA07F700428426 /* PacketUtil.m */; };
+		DD26E2D61ECBF5FD00428426 /* Packet.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2D51ECBF5FD00428426 /* Packet.m */; };
 		DD35AE2C1EB0739F0078FCEF /* IPv4Header.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */; };
 		DD35AE2F1EB09F740078FCEF /* UDPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2E1EB09F740078FCEF /* UDPHeader.m */; };
 		DD35AE311EB0E8F00078FCEF /* libCocoaAsyncSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */; };
@@ -83,6 +84,8 @@
 		DD26E2CF1EC8784000428426 /* IPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPPacketFactory.m; sourceTree = "<group>"; };
 		DD26E2D11ECA07D300428426 /* PacketUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacketUtil.h; sourceTree = "<group>"; };
 		DD26E2D21ECA07F700428426 /* PacketUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PacketUtil.m; sourceTree = "<group>"; };
+		DD26E2D41ECBF41300428426 /* Packet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Packet.h; sourceTree = "<group>"; };
+		DD26E2D51ECBF5FD00428426 /* Packet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packet.m; sourceTree = "<group>"; };
 		DD35AC371EB064990078FCEF /* IPv4Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPv4Header.h; sourceTree = "<group>"; };
 		DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPv4Header.m; sourceTree = "<group>"; };
 		DD35AE2D1EB09C5A0078FCEF /* UDPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDPHeader.h; sourceTree = "<group>"; };
@@ -273,6 +276,8 @@
 				DD26E2CF1EC8784000428426 /* IPPacketFactory.m */,
 				DD26E2D11ECA07D300428426 /* PacketUtil.h */,
 				DD26E2D21ECA07F700428426 /* PacketUtil.m */,
+				DD26E2D41ECBF41300428426 /* Packet.h */,
+				DD26E2D51ECBF5FD00428426 /* Packet.m */,
 			);
 			path = PacketTunnel;
 			sourceTree = "<group>";
@@ -555,6 +560,7 @@
 				DD5289A11EC30C7C0073A176 /* Session.m in Sources */,
 				DD52899F1EC2B57C0073A176 /* TCPHeader.m in Sources */,
 				DD35AE2C1EB0739F0078FCEF /* IPv4Header.m in Sources */,
+				DD26E2D61ECBF5FD00428426 /* Packet.m in Sources */,
 				DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */,
 				DD26E2D31ECA07F700428426 /* PacketUtil.m in Sources */,
 				DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */,
