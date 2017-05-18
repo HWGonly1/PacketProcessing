@@ -11,4 +11,7 @@
 #endif /* UDPPacketFactory_h */
 @interface UDPPacketFactory : NSObject
 -(instancetype)init;
++(UDPHeader*)createUDPHeader:(NSMutableArray*)buffer start:(int)start;
++(UDPHeader*)copyHeader:(UDPHeader*)header;
++(NSMutableArray*)createResponseacket:(IPv4Header*)ip udp:(UDPHeader*)udp packetdata:(NSMutableArray*)packetdata;
 @end

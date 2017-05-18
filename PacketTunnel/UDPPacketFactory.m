@@ -18,7 +18,7 @@
     return self;
 }
 
--(UDPHeader*)createUDPHeader:(NSMutableArray*)buffer start:(int)start{
++(UDPHeader*)createUDPHeader:(NSMutableArray*)buffer start:(int)start{
     UDPHeader* header=nil;
     if(([buffer count]-start)<8){
         return header;
@@ -34,12 +34,12 @@
     return header;
 }
 
--(UDPHeader*)copyHeader:(UDPHeader*)header{
++(UDPHeader*)copyHeader:(UDPHeader*)header{
     UDPHeader* newh=[[UDPHeader alloc] init:header.getsourcePort destPort:header.getdestinationPort length:header.getlength checksum:header.getchecksum];
     return newh;
 }
 
--(NSMutableArray*)createResponseacket:(IPv4Header*)ip udp:(UDPHeader*)udp packetdata:(NSMutableArray*)packetdata{
++(NSMutableArray*)createResponseacket:(IPv4Header*)ip udp:(UDPHeader*)udp packetdata:(NSMutableArray*)packetdata{
     NSMutableArray* buffer=[[NSMutableArray alloc]init];
     int udplen=8;
     if([packetdata count]!=0){
@@ -63,8 +63,8 @@
     [ipheader setTotalLength:totalLength];
     NSMutableArray* ipdata=[IPPacketFactory createIPv4Header:ipheader];
     
-    ipdata[10]=0;
-    ipdata[11]=0;
+    ipdata[10]=[NSNumber numberWithShort:0];
+    ipdata[11]=[NSNumber numberWithShort:0];
     
     NSMutableArray* ipchecksum=[PacketUtil calculateChecksum:ipdata offset:0 length:[ipdata count]];
     ipdata[10]=ipchecksum[0];

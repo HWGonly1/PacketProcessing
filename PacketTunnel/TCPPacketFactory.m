@@ -13,8 +13,8 @@
 #import "IPv4Header.h"
 #import "TCPHeader.h"
 #import "Packet.h"
-@implementation TCPPacketHeader
--(TCPHeader*)copyTCPHeader:(TCPHeader*)tcpheader{
+@implementation TCPPacketFactory
++(TCPHeader*)copyTCPHeader:(TCPHeader*)tcpheader{
     TCPHeader *tcp=[[TCPHeader alloc] init:[tcpheader getSourcePort] destinationPort:[tcpheader getdestinationPort]  sequenceNumber:[tcpheader getSequenceNumber] dataOffset:[tcpheader getdataOffset] isns:[tcpheader isNS] tcpFlags:[tcpheader getTCPFlags] windowSize:[tcpheader getWindowSize] checksum:[tcpheader getChecksum] urgentPointer:[tcpheader getUrgentPointer] options:[tcpheader getOptions] ackNum:[tcpheader getAckNumber]];
     [tcp setMaxSegmentSize:65535];
     [tcp setWindowScale:[tcpheader getWindowScale]];
@@ -24,7 +24,7 @@
     return tcp;
 }
 
--(NSMutableArray*)createFinAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient seqToClient:(int)seqToClient isfin:(bool)isfin isack:(bool)isack{
++(NSMutableArray*)createFinAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient seqToClient:(int)seqToClient isfin:(bool)isfin isack:(bool)isack{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     IPv4Header *ip=ipheader;
     TCPHeader *tcp=[self copyTCPHeader:tcpheader];
@@ -58,7 +58,7 @@
     return buffer;
 }
 
--(NSMutableArray*)createFinData:(IPv4Header*)ip tcp:(TCPHeader*)tcp ackNumber:(int)ackNumber seqNumber:(int)seqNumber timeSender:(int)timeSender timeReplyto:(int)timeReplyto{
++(NSMutableArray*)createFinData:(IPv4Header*)ip tcp:(TCPHeader*)tcp ackNumber:(int)ackNumber seqNumber:(int)seqNumber timeSender:(int)timeSender timeReplyto:(int)timeReplyto{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     int sourceIp = [ip getdestinationIP];
     int destIp = [ip getsourceIP];
@@ -98,7 +98,7 @@
     return buffer;
 }
 
--(NSMutableArray*)createRstData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader datalength:(int)datalength{
++(NSMutableArray*)createRstData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader datalength:(int)datalength{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     IPv4Header* ip=[IPPacketFactory copyIPv4Header:ipheader];
     TCPHeader* tcp=[self copyTCPHeader:tcpheader];
@@ -149,7 +149,7 @@
     return buffer;
 }
 
--(NSMutableArray*)createResponseAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient{
++(NSMutableArray*)createResponseAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     IPv4Header* ip=[IPPacketFactory copyIPv4Header:ipheader];
     TCPHeader* tcp=[self copyTCPHeader:tcpheader];
@@ -188,7 +188,7 @@
     return buffer;
 }
 
--(NSMutableArray*)createResponsePacketData:(IPv4Header*)ip tcp:(TCPHeader*)tcp packetdata:(NSMutableArray*)packetdata ispsh:(bool)ispsh ackNumber:(int)ackNumber seqNumber:(int)seqNumber timeSender:(int)timeSender timeReplyto:(int)timeReplyto{
++(NSMutableArray*)createResponsePacketData:(IPv4Header*)ip tcp:(TCPHeader*)tcp packetdata:(NSMutableArray*)packetdata ispsh:(bool)ispsh ackNumber:(int)ackNumber seqNumber:(int)seqNumber timeSender:(int)timeSender timeReplyto:(int)timeReplyto{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     IPv4Header* ipheader=[IPPacketFactory copyIPv4Header:ip];
     TCPHeader* tcpheader=[self copyTCPHeader:tcp];
@@ -228,7 +228,7 @@
 
 }
 
--(Packet*)createSynAckPacketData:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
++(Packet*)createSynAckPacketData:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     Packet* packet=[[Packet alloc] init];
     
@@ -268,7 +268,7 @@
     return packet;
 }
 
--(NSMutableArray*)createPacketData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader data:(NSMutableArray*)data{
++(NSMutableArray*)createPacketData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader data:(NSMutableArray*)data{
     int datalength=[data count];
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     NSMutableArray* ipbuffer=[IPPacketFactory createIPv4Header:ipheader];
@@ -310,7 +310,7 @@
     return buffer;
 }
 
--(NSMutableArray*)createTCPHeaderData:(TCPHeader*)header{
++(NSMutableArray*)createTCPHeaderData:(TCPHeader*)header{
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     Byte sourcePort1=(Byte)([header getSourcePort]>>8);
     Byte sourcePort2=(Byte)([header getSourcePort]);
@@ -391,7 +391,7 @@
     return buffer;
 }
 
--(TCPHeader*)createTCPHeader:(NSMutableArray*)buffer start:(int)start{
++(TCPHeader*)createTCPHeader:(NSMutableArray*)buffer start:(int)start{
     TCPHeader *head=nil;
     if([buffer count]<start+20){
         return head;
@@ -428,7 +428,7 @@
     return head;
 }
 
--(void)extractOptionData:(TCPHeader*)head{
++(void)extractOptionData:(TCPHeader*)head{
     NSMutableArray* options=[head getOptions];
     Byte kind;
     for(int i=0;i<[options count];i++){

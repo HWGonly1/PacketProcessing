@@ -8,6 +8,12 @@
 
 #import "TunnelInterface.h"
 #import "IPv4Header.h"
+#import "UDPHeader.h"
+#import "TCPHeader.h"
+#import "IPPacketFactory.h"
+#import "TCPPacketFactory.h"
+#import "UDPPacketFactory.h"
+#import "PacketUtil.h"
 #import <MMWormhole.h>
 #include <CocoaAsyncSocket/AsyncSocket.h>
 #include <CocoaAsyncSocket/AsyncUdpSocket.h>
@@ -40,8 +46,12 @@
     self = [super init];
     if (self) {
         self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
+        
+        
         _udpSession = [NSMutableDictionary dictionaryWithCapacity:5];
         _udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_queue_create("udp", NULL)];
+        
+        
     }
     return self;
 }
@@ -93,51 +103,45 @@
     [[TunnelInterface sharedInterface].wormhole passMessageObject:@"See if Function works"  identifier:@"VPNStatus"];
     [[TunnelInterface sharedInterface].tunnelPacketFlow readPacketsWithCompletionHandler:^(NSArray<NSData *> * _Nonnull packets, NSArray<NSNumber *> * _Nonnull protocols) {
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"See if Packets" identifier:@"VPNStatus"];
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",packets.count] identifier:@"VPNStatus"];
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%lu",(unsigned long)[packets count]] identifier:@"VPNStatus"];
         
         for (NSData *packet in packets) {
-            IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
+            NSMutableArray* clientpacketdata=[[NSMutableArray alloc] init];
+
+            Byte * data = [packet bytes];
             
-            Byte proto = [iphdr getProtocol];
-            if (proto == 17) {
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"UDP" identifier:@"VPNStatus"];
-                [[TunnelInterface sharedInterface] handleUDPPacket:packet];
-            }else if (proto == 6) {
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCP" identifier:@"VPNStatus"];
-                [[TunnelInterface sharedInterface] handleTCPPPacket:packet];
+            for(int i=0;i<[packet length];i++){
+                [clientpacketdata addObject:[NSNumber numberWithShort:data[i]]];
             }
             
+            IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
+            TCPHeader* tcpheader=nil;
+            UDPHeader* udpheader=nil;
+            
+            //[[TunnelInterface sharedInterface].wormhole passMessageObject:[packet length]==[iphdr getTotalLength]?@"true":@"false" identifier:@"VPNStatus"];
+            //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[packet length]] identifier:@"VPNStatus"];
+            //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getTotalLength]]identifier:@"VPNStatus"];
+            
+            Byte proto = [ipheader getProtocol];
+            if (proto == 17) {
+                udpheader=[UDPPacketFactory createUDPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
+                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"UDP" identifier:@"VPNStatus"];
+                //[[TunnelInterface sharedInterface] handleUDPPacket:packet];
+            }else if (proto == 6) {
+                tcpheader=[TCPPacketFactory createTCPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
+                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCP" identifier:@"VPNStatus"];
+                //[[TunnelInterface sharedInterface] handleTCPPPacket:packet];
+            }
+            if(tcpheader!=nil){
+                handleTCPPacket(clientpacketdata, ipheader, tcpheader);
+            }else if(udpheader!=nil){
+                handleUDPPacket(clientpacketdata, ipheader, udpheader);
+            }
         }
         [weakSelf processPackets];
     }];
 }
-/*
-- (void)_startTun2Socks: (NSNumber *)socksServerPort {
-    char socks_server[50];
-    sprintf(socks_server, "127.0.0.1:%d", (int)([socksServerPort integerValue]));
-#if TCP_DATA_LOG_ENABLE
-    char *log_lvel = "debug";
-#else
-    char *log_lvel = "none";
-#endif
-    char *argv[] = {
-        "tun2socks",
-        "--netif-ipaddr",
-        "192.0.2.4",
-        "--netif-netmask",
-        "255.255.255.0",
-        "--loglevel",
-        log_lvel,
-        "--socks-server-addr",
-        socks_server
-    };
-    tun2socks_main(sizeof(argv)/sizeof(argv[0]), argv, self.readFd, TunnelMTU);
-    close(self.readFd);
-    close(self.writeFd);
-    [[NSNotificationCenter defaultCenter] postNotificationName:kTun2SocksStoppedNotification object:nil];
-}
- */
- 
+
 - (void)handleTCPPPacket: (NSData *)packet {
     //uint8_t message[TunnelMTU+2];
     //memcpy(message + 2, packet.bytes, packet.length);

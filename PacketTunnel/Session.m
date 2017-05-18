@@ -7,3 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Session.h"
+
+@implementation Session
+
+
+
+@end
