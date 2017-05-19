@@ -28,12 +28,19 @@
     self.destPort=destPort;
     self.timeout=timeout;
     self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
-    [self.udpSocket connectToHost:self.destIP onPort:self.destPort error:nil];
+    int port=12345;
+    NSError* error=nil;
+    [self.udpSocket bindToPort:12345 error:&error];
+    [self.udpSocket beginReceiving:nil];
+    //NSError* error=nil;
+    [self.wormhole passMessageObject:error identifier:@"VPNStatus"];
+
+    //[self.udpSocket connectToHost:self.destIP onPort:self.destPort error:nil];
     return self;
 }
 
 -(void)write:(NSData*)data{
-    [self.udpSocket sendData:data withTimeout:30 tag:0];
+    [self.udpSocket sendData:data toHost:self.destIP port:self.destPort withTimeout:30 tag:0];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address{
@@ -54,6 +61,7 @@
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
     [self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
+    
     /*
     NSMutableData completeData=[[NSMutableData alloc] init];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
