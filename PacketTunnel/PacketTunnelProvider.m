@@ -21,7 +21,7 @@
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     
     [self.wormhole passMessageObject:@"Start Tunnel" identifier:@"VPNStatus"];
-    
+
     NEIPv4Settings *ipv4Settings = [[NEIPv4Settings alloc] initWithAddresses:@[[PacketUtil getLocalIpAddress]] subnetMasks:@[@"255.255.255.0"]];
     ipv4Settings.includedRoutes = @[[NEIPv4Route defaultRoute]];
     NEPacketTunnelNetworkSettings *settings = [[NEPacketTunnelNetworkSettings alloc] initWithTunnelRemoteAddress:@"127.0.0.1"];
@@ -39,8 +39,10 @@
             }
         }
     }];
+    [self.wormhole passMessageObject:[PacketUtil getLocalIpAddress] identifier:@"VPNStatus"];
     [self.wormhole passMessageObject:@"Start Tunnel End" identifier:@"VPNStatus"];
     [SessionManager setupWithPacketTunnelFlow:self.packetFlow];
+    [TunnelInterface setPacketFlow:self.packetFlow];
     [TunnelInterface processPackets];
 }
 

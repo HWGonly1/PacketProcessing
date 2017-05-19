@@ -28,7 +28,7 @@
     int length=[PacketUtil getNetworkInt:buffer start:start+4 length:2];
     int checksum=[PacketUtil getNetworkInt:buffer start:start+6 length:2];
 
-    NSMutableString* str=@"";
+    NSMutableString* str=[[NSMutableString alloc] init];
     [str appendFormat:@"\r\n..... new UDP header .....\r\nstarting position in buffer: %d\r\nSrc port: %d\r\nDest port: %d\r\nLength: %d\r\nChecksum: %d\r\n...... end UDP header .....",start,srcPort,destPort,length,checksum];
     header=[[UDPHeader alloc]init:srcPort destPort:destPort length:length checksum:checksum];
     return header;
