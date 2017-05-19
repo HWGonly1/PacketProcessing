@@ -14,6 +14,8 @@
 #import "TCPPacketFactory.h"
 #import "UDPPacketFactory.h"
 #import "PacketUtil.h"
+#import "SessionManager.h"
+#import "UDPSession.h"
 #import <MMWormhole.h>
 #include <CocoaAsyncSocket/AsyncSocket.h>
 #include <CocoaAsyncSocket/AsyncUdpSocket.h>
@@ -56,41 +58,6 @@
     return self;
 }
 
-+ (NSError *)setupWithPacketTunnelFlow:(NEPacketTunnelFlow *)packetFlow {
-    if (packetFlow == nil) {
-        return [NSError errorWithDomain:kTunnelInterfaceErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"PacketTunnelFlow can't be nil."}];
-    }
-    [TunnelInterface sharedInterface].tunnelPacketFlow = packetFlow;
-    
-    NSError *error;
-    GCDAsyncUdpSocket *udpSocket = [TunnelInterface sharedInterface].udpSocket;
-    [udpSocket bindToPort:0 error:&error];
-    if (error) {
-        return [NSError errorWithDomain:kTunnelInterfaceErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"UDP bind fail(%@).", [error localizedDescription]]}];
-    }
-    [udpSocket beginReceiving:&error];
-    if (error) {
-        return [NSError errorWithDomain:kTunnelInterfaceErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"UDP bind fail(%@).", [error localizedDescription]]}];
-    }
-    /*
-    int fds[2];
-    if (pipe(fds) < 0) {
-        return [NSError errorWithDomain:kTunnelInterfaceErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unable to pipe."}];
-    }
-    [TunnelInterface sharedInterface].readFd = fds[0];
-    [TunnelInterface sharedInterface].writeFd = fds[1];
-     */
-    return nil;
-}
-/*
-+ (void)startTun2Socks: (int)socksServerPort{
-[NSThread detachNewThreadSelector:@selector(_startTun2Socks:) toTarget:[TunnelInterface sharedInterface] withObject:@(socksServerPort)];
-}
-
-+ (void)stop {
-    stop_tun2socks();
-}
-*/
 + (void)writePacket:(NSData *)packet {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[TunnelInterface sharedInterface].tunnelPacketFlow writePackets:@[packet] withProtocols:@[@(AF_INET)]];
@@ -106,34 +73,22 @@
         [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%lu",(unsigned long)[packets count]] identifier:@"VPNStatus"];
         
         for (NSData *packet in packets) {
-            NSMutableArray* clientpacketdata=[[NSMutableArray alloc] init];
-
-            Byte * data = [packet bytes];
             
-            for(int i=0;i<[packet length];i++){
-                [clientpacketdata addObject:[NSNumber numberWithShort:data[i]]];
-            }
+            NSMutableData* clientpacketdata=[[NSMutableData alloc] init];
+            Byte * data = [packet bytes];
+            [clientpacketdata appendData:packet];
             
             IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
             TCPHeader* tcpheader=nil;
             UDPHeader* udpheader=nil;
-            
-            //[[TunnelInterface sharedInterface].wormhole passMessageObject:[packet length]==[iphdr getTotalLength]?@"true":@"false" identifier:@"VPNStatus"];
-            //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[packet length]] identifier:@"VPNStatus"];
-            //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getTotalLength]]identifier:@"VPNStatus"];
-            
             Byte proto = [ipheader getProtocol];
             if (proto == 17) {
                 udpheader=[UDPPacketFactory createUDPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
-                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"UDP" identifier:@"VPNStatus"];
-                //[[TunnelInterface sharedInterface] handleUDPPacket:packet];
             }else if (proto == 6) {
                 tcpheader=[TCPPacketFactory createTCPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
-                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCP" identifier:@"VPNStatus"];
-                //[[TunnelInterface sharedInterface] handleTCPPPacket:packet];
             }
             if(tcpheader!=nil){
-                handleTCPPacket(clientpacketdata, ipheader, tcpheader);
+                //handleTCPPacket(clientpacketdata, ipheader, tcpheader);
             }else if(udpheader!=nil){
                 handleUDPPacket(clientpacketdata, ipheader, udpheader);
             }
@@ -143,11 +98,6 @@
 }
 
 - (void)handleTCPPPacket: (NSData *)packet {
-    //uint8_t message[TunnelMTU+2];
-    //memcpy(message + 2, packet.bytes, packet.length);
-    //message[0] = packet.length / 256;
-    //message[1] = packet.length % 256;
-    //write(self.writeFd , message , packet.length + 2);
     uint8_t *data = (uint8_t *)packet.bytes;
     int data_len = (int)packet.length;
     IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
@@ -158,11 +108,24 @@
 }
 
 - (void)handleUDPPacket: (NSData *)packet {
-    IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
-    Byte version = [iphdr getIPVersion];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getProtocol]] identifier:@"VPNStatus"];
+    IPv4Header* ipheader=[[IPv4Header alloc] init:packet];
+    int ipheaderLength=[ipheader getIPHeaderLength];
+    Byte* array = [packet bytes];
+    UDPHeader* udpheader=[[UDPHeader alloc]init:[NSData dataWithBytes:&array[ipheaderLength] length:([packet length]-ipheaderLength)]];
+    UDPSession* udpsession=[[SessionManager sharedInstance] getUDPSocket:[PacketUtil intToIPAddress:[ipheader getsourceIP]] sourcePort:[udpheader getsourcePort] destIP:[PacketUtil intToIPAddress:[ipheader getdestinationIP]]  destPort:[udpheader getdestinationPort]];
+    if(udpheader==nil){
+        [[SessionManager sharedInstance] addUDPSession:[PacketUtil intToIPAddress:[ipheader getsourceIP]] sourcePort:[udpheader getsourcePort] destIP:[PacketUtil intToIPAddress:[ipheader getdestinationIP]]destPort:[udpheader getdestinationPort]];
+        udpsession=[[SessionManager sharedInstance] getUDPSocket:[PacketUtil intToIPAddress:[ipheader getsourceIP]] sourcePort:[udpheader getsourcePort] destIP:[PacketUtil intToIPAddress:[ipheader getdestinationIP]]  destPort:[udpheader getdestinationPort]];
+    }
+    
+    @synchronized (udpsession) {
+        [udpsession write:[NSData dataWithBytes:&array[ipheaderLength+8] length:([packet length]-ipheaderLength-8)]];
+    }
+    
+    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[ipheader getsourceIP]/256/256/256,[ipheader getsourceIP]/256/256%256,[ipheader getsourceIP]/256%256,[ipheader getsourceIP]%256] identifier:@"VPNStatus"];
+    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[ipheader getdestinationIP]/256/256/256,[ipheader getdestinationIP]/256/256%256,[ipheader getdestinationIP]/256%256,[ipheader getdestinationIP]%256] identifier:@"VPNStatus"];
+    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[ipheader getProtocol]] identifier:@"VPNStatus"];
+    
     /*
     switch (version) {
         case 4: {

@@ -13,6 +13,8 @@
 		DD26E2D31ECA07F700428426 /* PacketUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2D21ECA07F700428426 /* PacketUtil.m */; };
 		DD26E2D61ECBF5FD00428426 /* Packet.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2D51ECBF5FD00428426 /* Packet.m */; };
 		DD26E31B1ECCABB700428426 /* UDPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E31A1ECCABB700428426 /* UDPPacketFactory.m */; };
+		DD26E31F1ECE7E8A00428426 /* UDPSession.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E31E1ECE7E8A00428426 /* UDPSession.m */; };
+		DD26E3221ECE81A300428426 /* SessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E3211ECE81A300428426 /* SessionManager.m */; };
 		DD35AE2C1EB0739F0078FCEF /* IPv4Header.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */; };
 		DD35AE2F1EB09F740078FCEF /* UDPHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DD35AE2E1EB09F740078FCEF /* UDPHeader.m */; };
 		DD35AE311EB0E8F00078FCEF /* libCocoaAsyncSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD35AE301EB0E8F00078FCEF /* libCocoaAsyncSocket.a */; };
@@ -90,6 +92,10 @@
 		DD26E3191ECCAB8600428426 /* UDPPacketFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDPPacketFactory.h; sourceTree = "<group>"; };
 		DD26E31A1ECCABB700428426 /* UDPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPPacketFactory.m; sourceTree = "<group>"; };
 		DD26E31C1ECDEA5E00428426 /* Session.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Session.h; sourceTree = "<group>"; };
+		DD26E31D1ECE7E7A00428426 /* UDPSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDPSession.h; sourceTree = "<group>"; };
+		DD26E31E1ECE7E8A00428426 /* UDPSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPSession.m; sourceTree = "<group>"; };
+		DD26E3201ECE819900428426 /* SessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionManager.h; sourceTree = "<group>"; };
+		DD26E3211ECE81A300428426 /* SessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SessionManager.m; sourceTree = "<group>"; };
 		DD35AC371EB064990078FCEF /* IPv4Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPv4Header.h; sourceTree = "<group>"; };
 		DD35AE2B1EB0739F0078FCEF /* IPv4Header.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPv4Header.m; sourceTree = "<group>"; };
 		DD35AE2D1EB09C5A0078FCEF /* UDPHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDPHeader.h; sourceTree = "<group>"; };
@@ -285,6 +291,10 @@
 				DD26E31A1ECCABB700428426 /* UDPPacketFactory.m */,
 				DD26E31C1ECDEA5E00428426 /* Session.h */,
 				DD5289A01EC30C7C0073A176 /* Session.m */,
+				DD26E31D1ECE7E7A00428426 /* UDPSession.h */,
+				DD26E31E1ECE7E8A00428426 /* UDPSession.m */,
+				DD26E3201ECE819900428426 /* SessionManager.h */,
+				DD26E3211ECE81A300428426 /* SessionManager.m */,
 			);
 			path = PacketTunnel;
 			sourceTree = "<group>";
@@ -566,11 +576,13 @@
 				DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */,
 				DD5289A11EC30C7C0073A176 /* Session.m in Sources */,
 				DD52899F1EC2B57C0073A176 /* TCPHeader.m in Sources */,
+				DD26E31F1ECE7E8A00428426 /* UDPSession.m in Sources */,
 				DD35AE2C1EB0739F0078FCEF /* IPv4Header.m in Sources */,
 				DD26E31B1ECCABB700428426 /* UDPPacketFactory.m in Sources */,
 				DD26E2D61ECBF5FD00428426 /* Packet.m in Sources */,
 				DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */,
 				DD26E2D31ECA07F700428426 /* PacketUtil.m in Sources */,
+				DD26E3221ECE81A300428426 /* SessionManager.m in Sources */,
 				DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */,
 				DD7C707B1EAF38F9009AC7B1 /* TunnelInterface.m in Sources */,
 			);

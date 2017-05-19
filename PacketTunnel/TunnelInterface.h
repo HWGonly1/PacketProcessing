@@ -19,7 +19,6 @@
 + (NSError *)setupWithPacketTunnelFlow:(NEPacketTunnelFlow *)packetFlow;
 + (void)processPackets;
 + (void)writePacket: (NSData *)packet;
-//+ (void)startTun2Socks: (int)socksServerPort;
 + (void)stop;
 @end
 

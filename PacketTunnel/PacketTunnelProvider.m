@@ -10,14 +10,16 @@
 #import "TunnelInterface.h"
 #import <MMWormhole.h>
 #import "PacketUtil.h"
+#import "SessionManager.h"
 @import NetworkExtension;
 
 @implementation PacketTunnelProvider
 
 - (void)startTunnelWithOptions:(NSDictionary *)options completionHandler:(void (^)(NSError *))completionHandler {
 
-    NSError *error = [TunnelInterface setupWithPacketTunnelFlow:self.packetFlow];
+    [SessionManager setupWithPacketTunnelFlow:self.packetFlow];
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
+    
     [self.wormhole passMessageObject:@"Start Tunnel" identifier:@"VPNStatus"];
     
     NEIPv4Settings *ipv4Settings = [[NEIPv4Settings alloc] initWithAddresses:@[[PacketUtil getLocalIpAddress]] subnetMasks:@[@"255.255.255.0"]];
@@ -38,6 +40,7 @@
         }
     }];
     [self.wormhole passMessageObject:@"Start Tunnel End" identifier:@"VPNStatus"];
+    [SessionManager setupWithPacketTunnelFlow:self.packetFlow];
     [TunnelInterface processPackets];
 }
 

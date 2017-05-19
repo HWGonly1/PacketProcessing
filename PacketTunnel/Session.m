@@ -11,6 +11,28 @@
 
 @implementation Session
 
+-(instancetype)init{
+    return self;
+}
+
+-(void)trackAmountSentSinceLastAck:(int)amount{
+    @synchronized (self.syncSendAmount) {
+        _sendAmountSinceLastAck+=amount;
+    }
+}
+
+-(void)decreaseAmountSentSinceLastack:(int)amount{
+    @synchronized (self.syncSendAmount) {
+        _sendAmountSinceLastAck-=amount;
+        if(self.sendAmountSinceLastAck<0){
+            _sendAmountSinceLastAck=0;
+        }
+    }
+}
+
+
+
+
 
 
 @end

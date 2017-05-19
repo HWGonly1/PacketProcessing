@@ -54,10 +54,9 @@
 @property (nonatomic) bool isbusyread;
 @property (nonatomic) bool isbusywrite;
 @property (nonatomic) bool abortingConnection;
-
 @property (nonatomic) long connectionStartTime;
 
-
+-(instancetype)init;
 
 
 @end
