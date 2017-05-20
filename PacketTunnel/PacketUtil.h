@@ -12,8 +12,8 @@
 #import "IPv4Header.h"
 #import "TCPHeader.h"
 #import "UDPHeader.h"
-volatile static bool enabledDebugLog;
-volatile static int packetid;
+volatile static bool enabledDebugLog=false;
+volatile static int packetid=0;
 static NSObject *syncObj;
 @interface PacketUtil : NSObject
 +(int)getPacketId;

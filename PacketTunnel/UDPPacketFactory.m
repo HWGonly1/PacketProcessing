@@ -11,7 +11,7 @@
 #import "UDPPacketFactory.h"
 #import "UDPHeader.h"
 #import "IPPacketFactory.h"
-
+#import "SessionManager.h"
 @implementation UDPPacketFactory
 
 -(instancetype)init{
@@ -74,36 +74,42 @@
         [buffer addObject:ipdata[i]];
     }
     
+    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%d",[buffer count]] identifier:@"VPNStatus"];
+
+    
     int start=[ipdata count];
     NSMutableArray* intcontainer=[[NSMutableArray alloc] init];
     [PacketUtil writeIntToBytes:srcPort buffer:intcontainer offset:0];
     
-    for(int i=0;i<2;i++){
-        [ipdata addObject:intcontainer[i]];
+    for(int i=2;i<4;i++){
+        [buffer addObject:intcontainer[i]];
     }
     start+=2;
     
     [PacketUtil writeIntToBytes:destPort buffer:intcontainer offset:0];
-    for(int i=0;i<2;i++){
-        [ipdata addObject:intcontainer[i]];
+    for(int i=2;i<4;i++){
+        [buffer addObject:intcontainer[i]];
     }
     start+=2;
 
     [PacketUtil writeIntToBytes:udplen buffer:intcontainer offset:0];
-    for(int i=0;i<2;i++){
-        [ipdata addObject:intcontainer[i]];
+    for(int i=2;i<4;i++){
+        [buffer addObject:intcontainer[i]];
     }
     start+=2;
     
     [PacketUtil writeIntToBytes:checksum buffer:intcontainer offset:0];
-    for(int i=0;i<2;i++){
-        [ipdata addObject:intcontainer[i]];
+    for(int i=2;i<4;i++){
+        [buffer addObject:intcontainer[i]];
     }
     start+=2;
     
     for(int i=0;i<[packetdata count];i++){
-        [ipdata addObject:packetdata[i]];
+        [buffer addObject:packetdata[i]];
     }
+    
+    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%d",[buffer count]] identifier:@"VPNStatus"];
+
     
     return buffer;
 }

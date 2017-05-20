@@ -93,7 +93,6 @@
 
                 tcpheader=[TCPPacketFactory createTCPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
             }
-            [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",3]  identifier:@"VPNStatus"];
             if(tcpheader!=nil){
                 //handleTCPPacket(clientpacketdata, ipheader, tcpheader);
             }else if(udpheader!=nil){
