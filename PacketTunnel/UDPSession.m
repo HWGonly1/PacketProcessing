@@ -10,6 +10,7 @@
 #import "UDPSession.h"
 #import "SessionManager.h"
 #import "MMWormhole.h"
+#import "UDPPacketFactory.h"
 @import NetworkExtension;
 
 @interface UDPSession () <GCDAsyncUdpSocketDelegate>
@@ -28,12 +29,21 @@
     self.destPort=destPort;
     self.timeout=timeout;
     self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
+    
     int port=12345;
+    
     NSError* error=nil;
-    [self.udpSocket bindToPort:12345 error:&error];
+    do{
+        error=nil;
+        [self.udpSocket bindToPort:port error:&error];
+        port++;
+    }while(error!=nil);
+    
     [self.udpSocket beginReceiving:nil];
-    //NSError* error=nil;
-    [self.wormhole passMessageObject:error identifier:@"VPNStatus"];
+    
+    //[self.wormhole passMessageObject:(error==nil)?@"Error NIL":@"Error NOT NIL" identifier:@"VPNStatus"];
+
+    //[self.wormhole passMessageObject:error identifier:@"VPNStatus"];
 
     //[self.udpSocket connectToHost:self.destIP onPort:self.destPort error:nil];
     return self;
@@ -61,7 +71,19 @@
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
     [self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
-    
+    NSMutableArray* rawdata=[[NSMutableArray alloc] init];
+    Byte* array=[data bytes];
+    for(int i=0;i<[data length];i++){
+        [rawdata addObject:[NSNumber numberWithShort:array[i]]];
+    }
+    NSMutableArray* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];
+    Byte response[[packetdata count]];
+    for(int i=0;i<[packetdata count];i++){
+        response[i]=(Byte)[packetdata[i] shortValue];
+    }
+    NSMutableData* packet=[[NSMutableData alloc] init];
+    [packet appendBytes:response length:[packetdata count]];
+    [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[[NSNumber numberWithShort:17]]];
     /*
     NSMutableData completeData=[[NSMutableData alloc] init];
     @synchronized ([SessionManager sharedInstance].packetFlow) {

@@ -82,18 +82,14 @@
                 [clientpacketdata addObject:[NSNumber numberWithShort:data[i]]];
             }
 
-            [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",1]  identifier:@"VPNStatus"];
             IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
             TCPHeader* tcpheader=nil;
             UDPHeader* udpheader=nil;
             Byte proto = [ipheader getProtocol];
-            [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",2]  identifier:@"VPNStatus"];
             if (proto == 17) {
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",17]  identifier:@"VPNStatus"];
 
                 udpheader=[UDPPacketFactory createUDPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
             }else if (proto == 6) {
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",6]  identifier:@"VPNStatus"];
 
                 tcpheader=[TCPPacketFactory createTCPHeader:clientpacketdata start:[ipheader getIPHeaderLength]];
             }
@@ -102,10 +98,8 @@
                 //handleTCPPacket(clientpacketdata, ipheader, tcpheader);
             }else if(udpheader!=nil){
                 [self handleUDPPacket:packet];
-                //handleUDPPacket(clientpacketdata, ipheader, udpheader);
             }
         }
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",4]  identifier:@"VPNStatus"];
         [weakSelf processPackets];
     }];
 }
@@ -121,7 +115,6 @@
 }
 
 + (void)handleUDPPacket: (NSData *)packet {
-    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"HandleUDPPackets"] identifier:@"VPNStatus"];
 
     IPv4Header* ipheader=[[IPv4Header alloc] init:packet];
     int ipheaderLength=[ipheader getIPHeaderLength];
@@ -137,6 +130,8 @@
     }
     
     @synchronized (udpsession) {
+        [udpsession setLastIPheader:ipheader];
+        [udpsession setLastUDPheader:udpheader];
         [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"WriteStart"] identifier:@"VPNStatus"];
         [udpsession write:[NSData dataWithBytes:&array[ipheaderLength+8] length:([packet length]-ipheaderLength-8)]];
         [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"WriteStop"] identifier:@"VPNStatus"];
