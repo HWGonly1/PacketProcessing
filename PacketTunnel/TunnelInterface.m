@@ -73,9 +73,7 @@
     __weak typeof(self) weakSelf = self;
     [[TunnelInterface sharedInterface].wormhole passMessageObject:@"See if Function works"  identifier:@"VPNStatus"];
     [[TunnelInterface sharedInterface].tunnelPacketFlow readPacketsWithCompletionHandler:^(NSArray<NSData *> * _Nonnull packets, NSArray<NSNumber *> * _Nonnull protocols) {
-        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"See if Packets" identifier:@"VPNStatus"];
         for (NSData *packet in packets) {
-            //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"See if Packets Exists"  identifier:@"VPNStatus"];
             NSMutableArray* clientpacketdata=[[NSMutableArray alloc] init];
             Byte * data = [packet bytes];
             for(int i=0;i<[packet length];i++){
@@ -104,13 +102,16 @@
 }
 
 + (void)handleTCPPPacket: (NSData *)packet {
-    uint8_t *data = (uint8_t *)packet.bytes;
-    int data_len = (int)packet.length;
-    IPv4Header * iphdr=[[IPv4Header alloc] init:packet];
-    Byte version = [iphdr getIPVersion];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getProtocol]] identifier:@"VPNStatus"];
+    Byte *data = (Byte*)[packet bytes];
+    int data_len = (int)[packet length];
+    IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
+    TCPHeader* tcpheader=[[TCPHeader alloc] init:[NSData dataWithBytes:&data[[ipheader getInternetHeaderLength]] length:[packet length]-[ipheader getInternetHeaderLength]]];
+    if([tcpheader issyn]){
+        [];
+    }
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getProtocol]] identifier:@"VPNStatus"];
 }
 
 + (void)handleUDPPacket: (NSData *)packet {
