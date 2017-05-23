@@ -29,6 +29,25 @@
     self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
     [self.tcpSocket connectToHost:ip onPort:port error:nil];
     
+    self.syncSendAmount=[[NSObject alloc]init];
+    self.recSequence=0;
+    self.sendUnack=0;
+    self.isacked=false;
+    self.sendNext=0;
+    self.sendWindow=0;
+    self.sendWindowSize=0;
+    self.sendWindowScale=0;
+    self.sendAmountSinceLastAck=0;
+    self.maxSegmentSize=0;
+    self.connected=false;
+    self.closingConnection=false;
+    self.packetCorrupted=false;
+    self.ackedToFin=false;
+    self.abortingConnection=false;
+    self.lastIPheader=nil;
+    self.lastTCPheader=nil;
+    self.timestampSender=0;
+    self.timestampReplyto=0;
     return session;
 }
 
@@ -66,5 +85,12 @@
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
 }
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
+    [self setConnected:false];
+    NSMutableData* rstdata=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:@[rstdata] withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
+    [self setAbortingConnection:true];
+    [[SessionManager sharedInstance]closeSession:self];
 }
 @end
