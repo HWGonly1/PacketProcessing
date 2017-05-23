@@ -11,6 +11,7 @@
 #endif /* TCPSession_h */
 #import "IPv4Header.h"
 #import "TCPHeader.h"
+#import "GCDAsyncSocket.h"
 @interface TCPSession : NSObject
 @property (nonatomic) NSObject* syncSendAmount;
 @property (nonatomic) NSString* sourceIP;
@@ -22,6 +23,7 @@
 @property (nonatomic) bool packetCorrupted;
 @property (nonatomic) bool isacked;
 @property (nonatomic) bool ackedToFin;
+@property (nonatomic) bool abortingConnection;
 @property (nonatomic) int sendNext;
 @property (nonatomic) int sendWindow;
 @property (nonatomic) int sendWindowSize;
@@ -38,4 +40,9 @@
 -(void)write:(NSData*)data;
 -(void)close;
 -(void)decreaseAmountSentSinceLastAck:(int)amount;
+-(bool)isClientWindowFull;
+-(void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port;
+-(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag;
+-(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
+-(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err;
 @end

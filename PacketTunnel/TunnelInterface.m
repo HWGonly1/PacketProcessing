@@ -145,15 +145,21 @@
         if([tcpheader ispsh]){
             [TunnelInterface pushDataToDestination:session ip:ipheader tcp:tcpheader];
         }else if([tcpheader isfin]){
-            [TunnelInterface ];
+            [TunnelInterface ackFinAck:ipheader tcp:tcpheader session:session];
         }else if([tcpheader isrst]){
-            
-        }else if(session!=nil&&[session ]&&[session ]){
+            [TunnelInterface resetConnection:ipheader tcp:tcpheader];
+        }else if(session!=nil&&[session isClientWindowFull]&&![session abortingConnection]){
+            [[SessionManager sharedInstance] keepSessionAlive:session];
         }
     }else if([tcpheader isfin]){
-        
+        TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]];
+        if(session==nil){
+            [TunnelInterface ackFinAck:ipheader tcp:tcpheader session:session];
+        }else{
+            [[SessionManager sharedInstance] keepSessionAlive:session];
+        }
     }else if([tcpheader isrst]){
-        
+        [TunnelInterface resetConnection:ipheader tcp:tcpheader];
     }
     //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
     //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
@@ -303,6 +309,13 @@
         [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
     }
     [[SessionManager sharedInstance] closeSession:session];
+}
+
++(void)resetConnection:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
+    TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ip getsourceIP]],[tcp getSourcePort],[PacketUtil intToIPAddress:[ip getdestinationIP]],[tcp getdestinationPort]]];
+    if(session!=nil){
+        [session setAbortingConnection:true];
+    }
 }
 @end
 

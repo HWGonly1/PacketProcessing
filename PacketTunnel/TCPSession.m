@@ -49,4 +49,22 @@
     }
 }
 
+-(bool)isClientWindowFull{
+    bool yes=false;
+    if(self.sendWindow>0&&self.sendAmountSinceLastAck>=0){
+        yes=true;
+    }else if(self.sendWindow>0&&self.sendAmountSinceLastAck>65535){
+        yes=true;
+    }
+    return yes;
+}
+
+-(void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port{
+}
+-(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
+}
+-(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
+}
+-(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
+}
 @end

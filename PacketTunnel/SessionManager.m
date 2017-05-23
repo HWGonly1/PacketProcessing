@@ -118,6 +118,14 @@
     }
 }
 
+-(void)keepSessionAlive:(TCPSession*)session{
+    if(session!=nil){
+        NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
+        @synchronized ([SessionManager sharedInstance].tcpdict) {
+            [[SessionManager sharedInstance].tcpdict setObject:session forKey:key];
+        }
+    }
+}
 /*
 -(void)addTCPSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort{
     NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port];
