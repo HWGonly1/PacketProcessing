@@ -14,23 +14,39 @@
 #import "SessionManager.h"
 #import "TCPPacketFactory.h"
 @interface TCPSession () <GCDAsyncSocketDelegate>
-
-
-
+@property (nonatomic) GCDAsyncSocket* tcpSocket;
 @end
 
 @implementation TCPSession
-+(void)replySynAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
-    [ip setIdentification:0];
-    Packet* packet=[TCPPacketFactory createSynAckPacketData:ip tcp:tcp];
-    TCPHeader* tcpheader=[packet getTcpheader];
-    Session session = sdata.createNewSession(ip.getDestinationIP(), tcp.getDestinationPort(),
-                                             ip.getSourceIP(), tcp.getSourcePort());
-    if(session == null){
-        return;
-    }
+-(instancetype)init:(NSString*)ip port:(uint16_t)port srcIp:(NSString*)srcIp srcPort:(uint16_t)srcPort{
+    //NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",srcIp,srcPort,ip,port];
+    TCPSession* session=[[TCPSession alloc]init];
+    [session setDestIP:ip];
+    [session setDestPort:port];
+    [session setSourceIP:srcIp];
+    [session setSourcePort:srcPort];
+    [session setConnected:true];
+    self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
+    [self.tcpSocket connectToHost:ip onPort:port error:nil];
     
+    return session;
 }
 
+-(void)write:(NSData*)data{
+    [self.tcpSocket writeData:data withTimeout:30 tag:0];
+}
+
+-(void)close{
+    [self.tcpSocket disconnect];
+}
+
+-(void)decreaseAmountSentSinceLastAck:(int)amount{
+    @synchronized (self.syncSendAmount) {
+        self.sendAmountSinceLastAck-=amount;
+        if(self.sendAmountSinceLastAck<0){
+            self.sendAmountSinceLastAck=0;
+        }
+    }
+}
 
 @end

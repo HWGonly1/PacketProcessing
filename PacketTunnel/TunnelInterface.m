@@ -16,6 +16,7 @@
 #import "PacketUtil.h"
 #import "SessionManager.h"
 #import "UDPSession.h"
+#import "TCPSession.h"
 #import <MMWormhole.h>
 #include <CocoaAsyncSocket/AsyncSocket.h>
 #include <CocoaAsyncSocket/AsyncUdpSocket.h>
@@ -31,6 +32,11 @@
 @property (nonatomic) MMWormhole *wormhole;
 @property (nonatomic) int readFd;
 @property (nonatomic) int writeFd;
++(void)replySynAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp;
++(void)sendRstPacket:(IPv4Header*)ip tcp:(TCPHeader*)tcp datalength:(int)datalength;
++(void)sendAck:(IPv4Header*)ipheader tcp:(TCPHeader*)tcpheader acceptedDataLength:(int)acceptedDataLength session:(TCPSession*)session;
++(void)acceptAck:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader session:(TCPSession*)session;
+
 @end
 
 @implementation TunnelInterface
@@ -102,12 +108,52 @@
 }
 
 + (void)handleTCPPPacket: (NSData *)packet {
+    int length=[packet length];
     Byte *data = (Byte*)[packet bytes];
     int data_len = (int)[packet length];
     IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
     TCPHeader* tcpheader=[[TCPHeader alloc] init:[NSData dataWithBytes:&data[[ipheader getInternetHeaderLength]] length:[packet length]-[ipheader getInternetHeaderLength]]];
+    int datalength=length-[ipheader getIPHeaderLength]-[tcpheader getTCPHeaderLength];
+    NSMutableArray* buffer=[[NSMutableArray alloc]init];
+    for (int i=0; i< length; i++) {
+        [buffer addObject:[NSNumber numberWithShort:data[i]]];
+    }
+    
     if([tcpheader issyn]){
-        [];
+        [TunnelInterface replySynAck:ipheader tcp:tcpheader];
+    }else if ([tcpheader isack]){
+        if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]]){
+            if(![tcpheader isrst]&&![tcpheader isfin]){
+                [TunnelInterface sendRstPacket:ipheader tcp:tcpheader datalength:datalength];
+            }
+            return;
+        }
+        TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]];
+        if(datalength>0){
+            int totalAdded=[[SessionManager sharedInstance] addClientData:ipheader tcp:tcpheader buffer:buffer];
+            if(totalAdded>0){
+                [TunnelInterface sendAck:ipheader tcp:tcpheader acceptedDataLength:totalAdded session:session];
+            }
+        }else{
+            [TunnelInterface acceptAck:ipheader tcpheader:tcpheader session:session];
+            if([session closingConnection]){
+                [TunnelInterface sendFinAck:ipheader tcp:tcpheader session:session];
+            }else if([session ackedToFin]&&![tcpheader isfin]){
+                [[SessionManager sharedInstance] closeSession:[ipheader getdestinationIP] port:[tcpheader getdestinationPort] srcIp:[ipheader getsourceIP] srcPort:[tcpheader getSourcePort]];
+            }
+        }
+        if([tcpheader ispsh]){
+            [TunnelInterface pushDataToDestination:session ip:ipheader tcp:tcpheader];
+        }else if([tcpheader isfin]){
+            [TunnelInterface ];
+        }else if([tcpheader isrst]){
+            
+        }else if(session!=nil&&[session ]&&[session ]){
+        }
+    }else if([tcpheader isfin]){
+        
+    }else if([tcpheader isrst]){
+        
     }
     //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
     //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
@@ -139,102 +185,157 @@
     
     //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[ipheader getsourceIP]/256/256/256,[ipheader getsourceIP]/256/256%256,[ipheader getsourceIP]/256%256,[ipheader getsourceIP]%256] identifier:@"VPNStatus"];
     //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[ipheader getdestinationIP]/256/256/256,[ipheader getdestinationIP]/256/256%256,[ipheader getdestinationIP]/256%256,[ipheader getdestinationIP]%256] identifier:@"VPNStatus"];
-    
-    /*
-    switch (version) {
-        case 4: {
-            uint16_t iphdr_hlen = [iphdr getinternetHeaderLength] * 4;
-            data = data + iphdr_hlen;
-            data_len -= iphdr_hlen;
-            struct udp_hdr *udphdr = (struct udp_hdr *)data;
-            
-            data = data + sizeof(struct udp_hdr *);
-            data_len -= sizeof(struct udp_hdr *);
-            
-            NSData *outData = [[NSData alloc] initWithBytes:data length:data_len];
-            struct in_addr dest = { [iphdr getdestinationIP] };
-            NSString *destHost = [NSString stringWithUTF8String:inet_ntoa(dest)];
-            NSString *key = [self strForHost:[iphdr getdestinationIP] port:udphdr->dest];
-            NSString *value = [self strForHost:[iphdr getdestinationIP]  port:udphdr->src];;
-            self.udpSession[key] = value;
-            [self.udpSocket sendData:outData toHost:destHost port:ntohs(udphdr->dest) withTimeout:30 tag:0];
-        } break;
-        case 6: {
-            
-        } break;
+}
+
++(void)replySynAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
+    [ip setIdentification:0];
+    Packet* packet=[TCPPacketFactory createSynAckPacketData:ip tcp:tcp];
+    TCPHeader* tcpheader=[packet getTcpheader];
+    TCPSession* session=[[SessionManager sharedInstance] createNewSession:[ip getdestinationIP] port:[tcp getdestinationPort] srcIp:[ip getsourceIP] srcPort:[tcp getSourcePort]];
+    if(session==nil){
+        return;
     }
-     */
-}
-/*
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext {
-    const struct sockaddr_in *addr = (const struct sockaddr_in *)[address bytes];
-    ip_addr_p_t dest ={ addr->sin_addr.s_addr };
-    in_port_t dest_port = addr->sin_port;
-    NSString *strHostPort = self.udpSession[[self strForHost:dest.addr port:dest_port]];
-    NSArray *hostPortArray = [strHostPort componentsSeparatedByString:@":"];
-    int src_ip = [hostPortArray[0] intValue];
-    int src_port = [hostPortArray[1] intValue];
-    uint8_t *bytes = (uint8_t *)[data bytes];
-    int bytes_len = (int)data.length;
-    int udp_length = sizeof(struct udp_hdr) + bytes_len;
-    int total_len = IP_HLEN + udp_length;
+    int windowScaleFactor = (int)pow(2,[tcpheader getWindowScale]);
+    [session setSendWindowSize:[tcpheader getWindowSize]];
+    [session setSendWindowScale:windowScaleFactor];
+    [session setSendWindow:[tcpheader getWindowSize]*windowScaleFactor];
+    [session setMaxSegmentSize:[tcpheader getMexSegmentSize]];
+    [session setSendUnack:[tcpheader getSequenceNumber]];
+    [session setSendNext:[tcpheader getSequenceNumber]+1];
+    [session setRecSequence:[tcpheader getAckNumber]];
     
-    ip_addr_p_t src = {src_ip};
-    struct ip_hdr *iphdr = generateNewIPHeader(IP_PROTO_UDP, dest, src, total_len);
+    Byte array[[packet.buffer count]];
+    for(int i=0;i<[packet.buffer count];i++){
+        array[i]=(Byte)[packet.buffer[i] shortValue];
+    }
     
-    struct udp_hdr udphdr;
-    udphdr.src = dest_port;
-    udphdr.dest = src_port;
-    udphdr.len = hton16(udp_length);
-    udphdr.chksum = hton16(0);
-    
-    uint8_t *udpdata = malloc(sizeof(uint8_t) * udp_length);
-    memcpy(udpdata, &udphdr, sizeof(struct udp_hdr));
-    memcpy(udpdata + sizeof(struct udp_hdr), bytes, bytes_len);
-    
-    ip_addr_t odest = { dest.addr };
-    ip_addr_t osrc = { src_ip };
-    
-    struct pbuf *p_udp = pbuf_alloc(PBUF_TRANSPORT, udp_length, PBUF_RAM);
-    pbuf_take(p_udp, udpdata, udp_length);
-    
-    struct udp_hdr *new_udphdr = (struct udp_hdr *) p_udp->payload;
-    new_udphdr->chksum = inet_chksum_pseudo(p_udp, IP_PROTO_UDP, p_udp->len, &odest, &osrc);
-    
-    uint8_t *ipdata = malloc(sizeof(uint8_t) * total_len);
-    memcpy(ipdata, iphdr, IP_HLEN);
-    memcpy(ipdata + sizeof(struct ip_hdr), p_udp->payload, udp_length);
-    
-    NSData *outData = [[NSData alloc] initWithBytes:ipdata length:total_len];
-    free(ipdata);
-    free(iphdr);
-    free(udpdata);
-    pbuf_free(p_udp);
-    [TunnelInterface writePacket:outData];
-}
- */
-
-/*struct ip_hdr *generateNewIPHeader(u8_t proto, ip_addr_p_t src, ip_addr_p_t dest, uint16_t total_len) {
-    struct ip_hdr *iphdr = malloc(sizeof(struct ip_hdr));
-    IPH_VHL_SET(iphdr, 4, IP_HLEN / 4);
-    IPH_TOS_SET(iphdr, 0);
-    IPH_LEN_SET(iphdr, htons(total_len));
-    IPH_ID_SET(iphdr, 0);
-    IPH_OFFSET_SET(iphdr, 0);
-    IPH_TTL_SET(iphdr, 64);
-    IPH_PROTO_SET(iphdr, IP_PROTO_UDP);
-    iphdr->src = src;
-    iphdr->dest = dest;
-    IPH_CHKSUM_SET(iphdr, 0);
-    IPH_CHKSUM_SET(iphdr, inet_chksum(iphdr, IP_HLEN));
-    return iphdr;
-}*/
-
-- (NSString *)strForHost: (int)host port: (int)port {
-    return [NSString stringWithFormat:@"%d:%d",host, port];
+    NSMutableData* data=[[NSMutableData alloc]init];
+    [data appendBytes:array length:[packet.buffer count]];
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:data withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
 }
 
++(void)sendRstPacket:(IPv4Header*)ip tcp:(TCPHeader*)tcp datalength:(int)datalength{
+    NSMutableArray* packet=[TCPPacketFactory createRstData:ip tcpheader:tcp datalength:datalength];
+    Byte array[[packet count]];
+    for(int i=0;i<[packet count];i++){
+        array[i]=(Byte)[packet[i] shortValue];
+    }
+    
+    NSMutableData* data=[[NSMutableData alloc]init];
+    [data appendBytes:array length:[packet count]];
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
+}
 
++(void)sendAck:(IPv4Header*)ipheader tcp:(TCPHeader*)tcpheader acceptedDataLength:(int)acceptedDataLength session:(TCPSession*)session{
+    int acknumber=[session recSequence]+acceptedDataLength;
+    [session setRecSequence:acknumber];
+    NSArray* array=[TCPPacketFactory createResponseAckData:ipheader tcpheader:tcpheader ackToClient:acknumber];
+    Byte arr[[array count]];
+    for(int i=0;i<[array count];i++){
+        arr[i]=(Byte)[array[i] shortValue];
+    }
+    NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:data withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
+}
 
++(void)pushDataToDestination:(TCPSession*)session ip:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
+    [session setLastIPheader:ip];
+    [session setLastTCPheader:tcp];
+    [session setTimestampReplyto:[tcp getTimestampSender]];
+    int recordTime = [[NSDate date] timeIntervalSince1970];
+    [session setTimestampSender:recordTime];
+}
+
++(void)sendFinAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp session:(TCPSession*)session{
+    int ack=[tcp getSequenceNumber];
+    int seq=[tcp getAckNumber];
+    NSMutableArray* array=[TCPPacketFactory createFinAckData:ip tcpheader:tcp ackToClient:ack seqToClient:seq isfin:true isack:false];
+    Byte arr[[array count]];
+    for(int i=0;i<[array count];i++){
+        arr[i]=(Byte)[array[i] shortValue];
+    }
+    NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
+    [session setSendNext:seq+1];
+    [session setClosingConnection:false];
+}
+
++(void)acceptAck:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader session:(TCPSession*)session{
+    bool iscorrupted=[PacketUtil isPacketCorrupted:tcpheader];
+    [session setPacketCorrupted:iscorrupted];
+    if([tcpheader getAckNumber]>[session sendUnack]||[tcpheader getAckNumber]==[session sendNext]){
+        [session setIsacked:true];
+    }
+    if([tcpheader getWindowSize]>0){
+        [session setSendWindowSize:[tcpheader getWindowSize]];
+        [session setSendWindowScale:[tcpheader getWindowScale]];
+        [session setSendWindow:[tcpheader getWindowScale]*[tcpheader getWindowSize]];
+    }
+    int byteReceived=[tcpheader getAckNumber]-[session sendUnack];
+    if(byteReceived>0){
+        [session decreaseAmountSentSinceLastAck:byteReceived];
+    }
+    [session setSendUnack:[tcpheader getAckNumber]];
+    [session setRecSequence:[tcpheader getSequenceNumber]];
+    [session setTimestampReplyto:[tcpheader getTimestampSender]];
+    int recordTime = [[NSDate date] timeIntervalSince1970];
+    [session setTimestampSender:recordTime];
+}
+
++(void)ackFinAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp session:(TCPSession*)session{
+    int ack=[tcp getSequenceNumber]+1;
+    int seq=[tcp getAckNumber];
+    NSMutableArray* array=[TCPPacketFactory createFinAckData:ip tcpheader:tcp ackToClient:ack seqToClient:seq isfin:true isack:true];
+    Byte arr[[array count]];
+    for(int i=0;i<[array count];i++){
+        arr[i]=(Byte)[array[i] shortValue];
+    }
+    NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
+    [[SessionManager sharedInstance] closeSession:session];
+}
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

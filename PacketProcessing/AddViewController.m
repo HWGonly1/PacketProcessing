@@ -23,9 +23,10 @@
     [self.wormhole listenForMessageWithIdentifier:@"VPNStatus" listener:^(id  _Nullable messageObject) {
         NSLog(@"%@", messageObject);
     }];
-    
+    //self.test=[[UDPSendTest alloc] init];
     self.targetManager = [NEVPNManager sharedManager];
-    UIButton *btnAdd=[[UIButton alloc] initWithFrame:CGRectMake(120, 250, 60, 40)];
+    
+    UIButton *btnAdd=[[UIButton alloc] initWithFrame:CGRectMake(120, 250, 100, 40)];
     [btnAdd setTitle:@"连接／断开" forState:UIControlStateNormal];
     [btnAdd setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     
@@ -33,6 +34,18 @@
     btnAdd.backgroundColor = [UIColor redColor];
     [btnAdd addTarget:self action:@selector(VPN) forControlEvents :UIControlEventTouchUpInside];
     [self.view addSubview:btnAdd];
+    
+    
+    /*
+    UIButton *btnSend=[[UIButton alloc] initWithFrame:CGRectMake(120, 300, 60, 40)];
+    [btnSend setTitle:@"发送" forState:UIControlStateNormal];
+    [btnSend setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    
+    [btnSend.titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
+    btnSend.backgroundColor = [UIColor redColor];
+    [btnSend addTarget:self action:@selector(send) forControlEvents :UIControlEventTouchUpInside];
+    [self.view addSubview:btnSend];
+    */
     //[btnAdd release];
 }
 
@@ -83,6 +96,10 @@
     
     //[self dismissViewControllerAnimated:YES completion:nil];
     //    [ad release];
+}
+
+-(void)send{
+    [self.test write];
 }
 
 -(void)setTargetManger :(NEVPNManager *)manager{

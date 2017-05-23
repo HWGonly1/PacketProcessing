@@ -23,6 +23,7 @@
     [self.wormhole passMessageObject:@"Start Tunnel" identifier:@"VPNStatus"];
 
     NEIPv4Settings *ipv4Settings = [[NEIPv4Settings alloc] initWithAddresses:@[[PacketUtil getLocalIpAddress]] subnetMasks:@[@"255.255.255.0"]];
+    //NEIPv4Route* rou=[[NEIPv4Route alloc] initWithDestinationAddress:@"10.210.66.16" subnetMask:@"255.255.255.0"];
     ipv4Settings.includedRoutes = @[[NEIPv4Route defaultRoute]];
     NEPacketTunnelNetworkSettings *settings = [[NEPacketTunnelNetworkSettings alloc] initWithTunnelRemoteAddress:@"127.0.0.1"];
     settings.IPv4Settings = ipv4Settings;

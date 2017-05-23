@@ -10,6 +10,7 @@
 #define SessionManager_h
 #endif /* SessionManager_h */
 #import "UDPSession.h"
+#import "TCPSession.h"
 #import "MMWormhole.h"
 @import NetworkExtension;
 @interface SessionManager : NSObject
@@ -24,4 +25,9 @@
 -(void)addUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort;
 -(bool)existUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort;
 -(UDPSession*)getUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort;
+-(TCPSession*)createNewSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
+-(bool)existTCPSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
+-(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableArray*)buffer;
+-(void)closeSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
+-(void)closeSession:(TCPSession*)session;
 @end

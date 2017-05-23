@@ -16,7 +16,6 @@
 
 @interface UDPSession () <GCDAsyncUdpSocketDelegate>
 @property (nonatomic) GCDAsyncUdpSocket* udpSocket;
-@property (nonatomic) NEPacketTunnelFlow *tunnelPacketFlow;
 @property (nonatomic) MMWormhole* wormhole;
 @end
 
