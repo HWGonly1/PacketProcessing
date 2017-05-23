@@ -44,10 +44,13 @@
     self.packetCorrupted=false;
     self.ackedToFin=false;
     self.abortingConnection=false;
+    self.hasReceivedLastSegment=false;
     self.lastIPheader=nil;
     self.lastTCPheader=nil;
     self.timestampSender=0;
     self.timestampReplyto=0;
+    self.unackData=[[NSMutableArray alloc]init];
+    self.resendPacketCounter=0;
     return session;
 }
 
@@ -83,7 +86,16 @@
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
 }
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
+    if(self.isClientWindowFull){
+        NSMutableArray* buffer=[[NSMutableArray alloc]init];
+        Byte* array=(Byte*)[data bytes];
+        for(int i=0;i<[data length];i++){
+            [buffer addObject:[NSNumber numberWithShort:array[i]]];
+        }
+        
+    }
 }
+
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
     [self setConnected:false];
     NSMutableData* rstdata=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
@@ -93,4 +105,63 @@
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];
 }
+
+-(void)sendToRequester:(NSMutableArray*)buffer socket:(GCDAsyncSocket*)socket datasize:(int)datasize sess:(TCPSession*)sess{
+    if(sess==nil){
+        return;
+    }
+    if(datasize<65535){
+        [sess setHasReceivedLastSegment:true];
+    }else{
+        [sess setHasReceivedLastSegment:false];
+    }
+}
+
+-(void)pushDataToClient:(NSMutableArray*)buffer session:(TCPSession*)session{
+    IPv4Header* ipheader=self.lastIPheader;
+    TCPHeader* tcpheader=self.lastTCPheader;
+    int max=session.maxSegmentSize-60;
+    if(max<1){
+        max=1024;
+    }
+    int unack=session.sendNext;
+    int nextUnack=self.sendNext+[buffer count];
+    [session setSendNext:nextUnack];
+    [session setUnackData:buffer];
+    [session setResendPacketCounter:0];
+    NSMutableArray* data=[TCPPacketFactory createResponsePacketData:ipheader tcp:tcpheader packetdata:buffer ispsh:[session hasReceivedLastSegment] ackNumber:[session recSequence] seqNumber:unack timeSender:[session timestampSender] timeReplyto:[session timestampReplyto]];
+    Byte array[[data count]];
+    for(int i=0;i<[data count];i++){
+        array[i]=(Byte)[data[i] shortValue];
+    }
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[data count]]] withProtocols:@[[NSNumber numberWithShort:6]]];
+    }
+}
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

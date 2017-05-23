@@ -24,6 +24,7 @@
 @property (nonatomic) bool isacked;
 @property (nonatomic) bool ackedToFin;
 @property (nonatomic) bool abortingConnection;
+@property (nonatomic) bool hasReceivedLastSegment;
 @property (nonatomic) int sendNext;
 @property (nonatomic) int sendWindow;
 @property (nonatomic) int sendWindowSize;
@@ -36,6 +37,8 @@
 @property (nonatomic) int timestampSender;
 @property (nonatomic) int timestampReplyto;
 @property (nonatomic) int sendAmountSinceLastAck;
+@property (nonatomic) NSMutableArray* unackData;
+@property (nonatomic) int resendPacketCounter;
 -(instancetype)init:(NSString*)ip port:(uint16_t)port srcIp:(NSString*)srcIp srcPort:(uint16_t)srcPort;
 -(void)write:(NSData*)data;
 -(void)close;
