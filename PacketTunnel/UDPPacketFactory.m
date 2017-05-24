@@ -45,8 +45,8 @@
     if([packetdata count]!=0){
         udplen+=[packetdata count];
     }
-    int srcPort=[udp getsourcePort];
-    int destPort=[udp getdestinationPort];
+    int srcPort=[udp getdestinationPort];
+    int destPort=[udp getsourcePort];
     short checksum=0;
     
     IPv4Header* ipheader=[IPPacketFactory copyIPv4Header:ip];
@@ -63,6 +63,8 @@
     [ipheader setTotalLength:totalLength];
     NSMutableArray* ipdata=[IPPacketFactory createIPv4Header:ipheader];
     
+    
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%@",ipdata[10],ipdata[11]] identifier:@"VPNStatus"];
     ipdata[10]=[NSNumber numberWithShort:0];
     ipdata[11]=[NSNumber numberWithShort:0];
     
@@ -74,11 +76,9 @@
         [buffer addObject:ipdata[i]];
     }
     
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%d",[buffer count]] identifier:@"VPNStatus"];
-
-    
     int start=[ipdata count];
     NSMutableArray* intcontainer=[[NSMutableArray alloc] init];
+
     [PacketUtil writeIntToBytes:srcPort buffer:intcontainer offset:0];
     
     for(int i=2;i<4;i++){
@@ -93,6 +93,7 @@
     start+=2;
 
     [PacketUtil writeIntToBytes:udplen buffer:intcontainer offset:0];
+
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
@@ -108,7 +109,7 @@
         [buffer addObject:packetdata[i]];
     }
     
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%d",[buffer count]] identifier:@"VPNStatus"];
+    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%lu",(unsigned long)[buffer count]] identifier:@"VPNStatus"];
 
     
     return buffer;

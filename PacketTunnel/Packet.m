@@ -8,33 +8,33 @@
 
 #import <Foundation/Foundation.h>
 #import "Packet.h"
-
+#import "SessionManager.h"
 @implementation Packet
 
 -(IPv4Header *)getIpheader{
     return self.ipheader;
 }
-
+/*
 -(void)setIpheader:(IPv4Header *)ipheader{
     self.ipheader=ipheader;
 }
-
+*/
 -(TCPHeader *)getTcpheader{
     return self.tcpheader;
 }
-
+/*
 -(void)setTcpheader:(TCPHeader *)tcpheader{
     self.tcpheader=tcpheader;
 }
-
+*/
 -(NSMutableArray *)getBuffer{
     return self.buffer;
 }
-
+/*
 -(void)setBuffer:(NSMutableArray *)buffer{
     self.buffer=[buffer copy];
 }
-
+*/
 -(int)getPacketodyLength{
     if([self.buffer count]>0){
         int offset=self.tcpheader.getTCPHeaderLength-self.ipheader.getIPHeaderLength;

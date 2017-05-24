@@ -71,8 +71,9 @@
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
     [self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
+    
     NSMutableArray* rawdata=[[NSMutableArray alloc] init];
-    Byte* array=[data bytes];
+    Byte* array=(Byte*)[data bytes];
     for(int i=0;i<[data length];i++){
         [rawdata addObject:[NSNumber numberWithShort:array[i]]];
     }
@@ -82,18 +83,17 @@
     
     NSMutableArray* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];
     Byte response[[packetdata count]];
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"响应长度：%d",[packetdata count]] identifier:@"VPNStatus"];
+    [self.wormhole passMessageObject:[NSString stringWithFormat:@"响应长度：%lu",(unsigned long)[packetdata count]] identifier:@"VPNStatus"];
 
     for(int i=0;i<[packetdata count];i++){
         response[i]=(Byte)[packetdata[i] shortValue];
     }
     NSMutableData* packet=[[NSMutableData alloc] init];
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",1] identifier:@"VPNStatus"];
-
     [packet appendBytes:response length:[packetdata count]];
     
     //测试部分
+    /*
     IPv4Header* iphdr=[[IPv4Header alloc] init:packet];
     
     [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",11] identifier:@"VPNStatus"];
@@ -113,18 +113,15 @@
     [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",14] identifier:@"VPNStatus"];
     
     [self.wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[iphdr getsourceIP]],[udphdr getsourcePort],[PacketUtil intToIPAddress:[iphdr getdestinationIP]],[udphdr getdestinationPort]] identifier:@"VPNStatus"];
-    
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",2] identifier:@"VPNStatus"];
+    */
     //测试结束
-    
-    [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[[NSNumber numberWithShort:17]]];
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",3] identifier:@"VPNStatus"];
 
-    /*
-    NSMutableData completeData=[[NSMutableData alloc] init];
+    //[self.wormhole passMessageObject:@"111111111111" identifier:@"VPNStatus"];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithInt:17]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[[NSNumber numberWithInt:17]]];
     }
-     */
+    
+    //[self.wormhole passMessageObject:@"2222222222222" identifier:@"VPNStatus"];
+
 }
 @end

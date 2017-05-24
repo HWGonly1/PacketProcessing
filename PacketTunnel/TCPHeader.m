@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TCPHeader.h"
+#import "SessionManager.h"
 @implementation TCPHeader
 -(instancetype)init:(NSData*)packet{
     Byte * data=(Byte *)packet.bytes;
@@ -102,19 +103,19 @@
     _issyn = (self.tcpFlags & 0x02) > 0;
     _isfin = (self.tcpFlags & 0x01) > 0;
 }
-
+/*
 -(bool)isNS{
     return self.isns;
 }
-
+*/
 -(void)setIsNS:(bool)isns{
     _isns=isns;
 }
-
+/*
 -(bool)isCWR{
     return self.iscwr;
 }
-
+*/
 -(void)setIsCWR:(bool)iscwr{
     _iscwr=iscwr;
     if(_iscwr){
@@ -123,11 +124,11 @@
         _tcpFlags&=0x7F;
     }
 }
-
+/*
 -(bool)isece{
     return self.isece;
 }
-
+*/
 -(void)setIsECE:(bool)isece{
     _isece=isece;
     if(_isece){
@@ -136,11 +137,11 @@
         _tcpFlags&=0xBF;
     }
 }
-
+/*
 -(bool)isurg{
     return self.isurg;
 }
-
+*/
 -(void)setIsURG:(bool)isurg{
     _isurg=isurg;
     if(_isurg){
@@ -149,11 +150,11 @@
         _tcpFlags&=0xDF;
     }
 }
-
+/*
 -(bool)isack{
     return self.isack;
 }
-
+*/
 -(void)setIsACK:(bool)isack{
     _isack=isack;
     if(_isack){
@@ -162,11 +163,11 @@
         _tcpFlags&=0xEF;
     }
 }
-
+/*
 -(bool)ispsh{
     return self.ispsh;
 }
-
+*/
 -(void)setIsPSH:(bool)ispsh{
     _ispsh=ispsh;
     if(_ispsh){
@@ -175,11 +176,11 @@
         _tcpFlags&=0xF7;
     }
 }
-
+/*
 -(bool)isrst{
     return self.isrst;
 }
-
+*/
 -(void)setIsRST:(bool)isrst{
     _isrst=isrst;
     if(_isrst){
@@ -188,11 +189,11 @@
         _tcpFlags&=0xFB;
     }
 }
-
--(bool)issyn{
+/*
+-(int)issyn{
     return self.issyn;
 }
-
+*/
 -(void)setIsSYN:(bool)issyn{
     _issyn=issyn;
     if(_issyn){
@@ -201,11 +202,11 @@
         _tcpFlags&=0xFD;
     }
 }
-
+/*
 -(bool)isfin{
     return self.isfin;
 }
-
+*/
 -(void)setIsFIN:(bool)isfin{
     _isfin=isfin;
     if(_isfin){
@@ -314,11 +315,11 @@
 -(void)setWindowScale:(int)windowScale{
     _windowScale=windowScale;
 }
-
+/*
 -(bool)isSelectiveackPermitted{
     return self.isSelectiveackPermitted;
 }
-
+*/
 -(void)setIsSelectiveAckPermitted:(bool)isSelectiveackPermitted{
     _isSelectiveackPermitted=isSelectiveackPermitted;
 }

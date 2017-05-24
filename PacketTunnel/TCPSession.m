@@ -98,9 +98,13 @@
 
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
     [self setConnected:false];
-    NSMutableData* rstdata=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
+    NSMutableArray* rstarray=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
+    Byte array[[rstarray count]];
+    for(int i=0;i<[rstarray count];i++){
+        array[i]=(Byte)[rstarray[i] shortValue];
+    }
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[rstdata] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[rstarray count]]] withProtocols:@[[NSNumber numberWithShort:6]]];
     }
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];

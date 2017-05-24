@@ -57,22 +57,23 @@
         NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
         if(vpnManagers.count>0){
             self.targetManager=vpnManagers[0];
-            NSLog(@"0");
+            //NSLog(@"0");
         }else{
             [self setTargetManger:(nil)];
-            NSLog(@"1");
+            //NSLog(@"1");
         }
         NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
         NSError * startError;
         if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
             //[self.targetManager.connection startVPNTunnelWithOptions : nil:^(NSError * error){}];
             [session startVPNTunnelWithOptions:nil andReturnError:&startError];
-            NSLog(@"%@", startError);
-            NSLog(@"2");
+            //NSLog(@"%@", startError);
+            //NSLog(@"2");
         }else{
             [session stopVPNTunnel];
-            NSLog(@"3");
+            //NSLog(@"3");
         }
+        /*
         switch(self.targetManager.connection.status){
             case NEVPNStatusInvalid:
                 NSLog(@".Invalid");
@@ -92,6 +93,7 @@
             default:
                 NSLog(@".Reasserting");
         }
+         */
     }];
     
     //[self dismissViewControllerAnimated:YES completion:nil];

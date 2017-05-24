@@ -16,11 +16,11 @@
 @property (nonatomic) TCPHeader * tcpheader;
 @property (nonatomic) NSMutableArray * buffer;
 -(IPv4Header *)getIpheader;
--(void)setIpheader:(IPv4Header *)ipheader;
+//-(void)setIpheader:(IPv4Header *)ipheader;
 -(TCPHeader *)getTcpheader;
--(void)setTcpheader:(TCPHeader *)tcpheader;
+//-(void)setTcpheader:(TCPHeader *)tcpheader;
 -(NSMutableArray *)getBuffer;
--(void)setBuffer:(NSMutableArray *)buffer;
+//-(void)setBuffer:(NSMutableArray *)buffer;
 -(int)getPacketodyLength;
 -(NSMutableArray *)getPacketBody;
 @end

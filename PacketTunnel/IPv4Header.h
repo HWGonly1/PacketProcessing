@@ -61,5 +61,4 @@
 -(void)setSourceIP:(int)sourceIP;
 -(void)setDestinationIP:(int)destinationIP;
 -(void)setOptionBytes:(NSMutableArray *)optionBytes;
--(int)getOptionLength;
 @end
