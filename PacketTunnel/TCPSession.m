@@ -84,9 +84,12 @@
 -(void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port{
 }
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataSent" identifier:@"VPNStatus"];
+
 }
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     if(self.isClientWindowFull){
+        [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataReceived" identifier:@"VPNStatus"];
         NSMutableArray* buffer=[[NSMutableArray alloc]init];
         Byte* array=(Byte*)[data bytes];
         for(int i=0;i<[data length];i++){

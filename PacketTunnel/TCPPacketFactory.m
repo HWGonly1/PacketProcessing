@@ -100,15 +100,16 @@
 }
 
 +(NSMutableArray*)createRstData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader datalength:(int)datalength{
+
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     IPv4Header* ip=[IPPacketFactory copyIPv4Header:ipheader];
     TCPHeader* tcp=[self copyTCPHeader:tcpheader];
-    
+
     int sourceIp = [ip getdestinationIP];
     int destIp = [ip getsourceIP];
     int sourcePort = [tcp getdestinationPort];
     int destPort = [tcp getSourcePort];
-    
+
     int ackNumber=0;
     int seqNumber=0;
     
@@ -117,7 +118,6 @@
     }else{
         ackNumber=[tcp getSequenceNumber]+datalength;
     }
-    
     [tcp setSequenceNumber:seqNumber];
     [tcp setAckNum:ackNumber];
     
@@ -127,7 +127,7 @@
     [tcp setSourcePort:sourcePort];
     
     [ip setIdentification:0];
-    
+
     [tcp setIsRST:true];
     [tcp setIsACK:false];
     [tcp setIssyn:false];
@@ -230,90 +230,71 @@
 }
 
 +(Packet*)createSynAckPacketData:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go1"] identifier:@"VPNStatus"];
 
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     Packet* packet=[[Packet alloc] init];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go2"] identifier:@"VPNStatus"];
 
     IPv4Header* ipheader=[IPPacketFactory copyIPv4Header:ip];
     TCPHeader* tcpheader=[self copyTCPHeader:tcp];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go3"] identifier:@"VPNStatus"];
 
     int sourceIp = [ip getdestinationIP];
     int destIp = [ip getsourceIP];
     int sourcePort = [tcp getdestinationPort];
     int destPort = [tcp getSourcePort];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go4"] identifier:@"VPNStatus"];
 
     int ackNumber=[tcpheader getSequenceNumber]+1;
     int seqNumber;
     seqNumber=arc4random()%INT32_MAX;
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go5"] identifier:@"VPNStatus"];
 
     [ipheader setDestinationIP:destIp];
     [ipheader setSourceIP:sourceIp];
     [tcpheader setDestinationPort:destPort];
     [tcpheader setSourcePort:sourcePort];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go6"] identifier:@"VPNStatus"];
 
     [tcpheader setSequenceNumber:seqNumber];
     [tcpheader setAckNum:ackNumber];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go7"] identifier:@"VPNStatus"];
 
     [tcpheader setIsACK:true];
     [tcpheader setIsSYN:true];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go8"] identifier:@"VPNStatus"];
 
     [tcpheader setTimeStampReplyTo:[tcp getTimestampSender]];
     int recordTime = [[NSDate date] timeIntervalSince1970];
     [tcpheader setTimeStampSender:recordTime];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go9"] identifier:@"VPNStatus"];
 
     [packet setIpheader:ipheader];
     [packet setTcpheader:tcpheader];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go10"] identifier:@"VPNStatus"];
 
     buffer=[self createPacketData:ipheader tcpheader:tcpheader data:[[NSMutableArray alloc] init]];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go11"] identifier:@"VPNStatus"];
 
     [packet setBuffer:buffer];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"go12"] identifier:@"VPNStatus"];
 
     return packet;
 }
 
 +(NSMutableArray*)createPacketData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader data:(NSMutableArray*)data{
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create1"] identifier:@"VPNStatus"];
 
     int datalength=[data count];
     NSMutableArray* buffer=[[NSMutableArray alloc] init];
     NSMutableArray* ipbuffer=[IPPacketFactory createIPv4Header:ipheader];
     NSMutableArray* tcpbuffer=[self createTCPHeaderData:tcpheader];
     int ipoffset=[ipbuffer count];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create2"] identifier:@"VPNStatus"];
 
     for(int i=0;i<ipoffset;i++){
         [buffer addObject:ipbuffer[i]];
     }
     int tcpoffset=[tcpbuffer count];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create7"] identifier:@"VPNStatus"];
 
     for(int i=0;i<tcpoffset;i++){
-        [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"tcpoffset"] identifier:@"VPNStatus"];
 
         [buffer addObject:tcpbuffer[i]];
     }
     
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create8"] identifier:@"VPNStatus"];
 
     if(datalength>0){
-        int offset=ipoffset+tcpoffset;
         for(int i=0;i<datalength;i++){
-            [buffer addObject:data[offset+i]];
+            [buffer addObject:data[i]];
         }
     }
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create3"] identifier:@"VPNStatus"];
 
     //NSMutableArray* zero=[[NSMutableArray alloc]init];
     //[zero addObject:buffer[10]];
@@ -322,26 +303,20 @@
     buffer[10]=[NSNumber numberWithShort:0];
     buffer[11]=[NSNumber numberWithShort:0];
 
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create5"] identifier:@"VPNStatus"];
 
     NSMutableArray* ipchecksum=[PacketUtil calculateChecksum:buffer offset:0 length:ipoffset];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create9"] identifier:@"VPNStatus"];
 
     buffer[10]=ipchecksum[0];
     buffer[11]=ipchecksum[1];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create11"] identifier:@"VPNStatus"];
 
     buffer[ipoffset+16]=[NSNumber numberWithShort:0];
     buffer[ipoffset+17]=[NSNumber numberWithShort:0];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create10"] identifier:@"VPNStatus"];
 
     NSMutableArray* tcpchecksum=[PacketUtil calculateTCPHeaderChecksum:buffer offset:ipoffset tcplength:tcpoffset+datalength destip:[ipheader getdestinationIP] sourceip:[ipheader getsourceIP]];
     
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create6"] identifier:@"VPNStatus"];
 
     buffer[ipoffset+16]=tcpchecksum[0];
     buffer[ipoffset+17]=tcpchecksum[1];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"create4"] identifier:@"VPNStatus"];
 
     return buffer;
 }

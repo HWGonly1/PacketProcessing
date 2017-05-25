@@ -16,7 +16,7 @@
     
     self.ipVersion=data[0]>>4;
     self.internetHeaderLength=data[0]&0x0F;
-    self.dscpOrTypeOfService=data[1]>>2;
+    self.dscpOrTypeOfService=((Byte)data[1])>>2;
     self.ecn=data[1]&0x03;
 
     self.totalLength=0;

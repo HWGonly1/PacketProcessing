@@ -261,7 +261,7 @@
          tcpheader.getTCPHeaderLength,
          tcpheader.isack?@"true":@"false",
          tcpheader.issyn?@"true":@"false",
-         tcpheader.isCWR?@"true":@"false",
+         tcpheader.iscwr?@"true":@"false",
          tcpheader.isece?@"true":@"false",
          tcpheader.isfin?@"true":@"false",
          tcpheader.isns?@"true":@"false",

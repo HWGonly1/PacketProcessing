@@ -12,6 +12,7 @@
 #import "SessionManager.h"
 #import "MMWormhole.h"
 #import "UDPPacketFactory.h"
+#import "IPPacketFactory.h"
 @import NetworkExtension;
 
 @interface UDPSession () <GCDAsyncUdpSocketDelegate>
@@ -88,40 +89,37 @@
     for(int i=0;i<[packetdata count];i++){
         response[i]=(Byte)[packetdata[i] shortValue];
     }
-    NSMutableData* packet=[[NSMutableData alloc] init];
-    
-    [packet appendBytes:response length:[packetdata count]];
-    
+    NSMutableData* packet=[[NSMutableData alloc] initWithBytes:response length:[packetdata count]];
     //测试部分
-    /*
+    
     IPv4Header* iphdr=[[IPv4Header alloc] init:packet];
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",11] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",11] identifier:@"VPNStatus"];
     
     int ipheaderLength=[iphdr getIPHeaderLength];
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",12] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",12] identifier:@"VPNStatus"];
     
     Byte* arraytest = (Byte*)[packet bytes];
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",13] identifier:@"VPNStatus"];
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"IP长度：%d",ipheaderLength] identifier:@"VPNStatus"];
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"总长度：%d",[packet length]] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",13] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"IP长度：%d",ipheaderLength] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"总长度：%d",[packet length]] identifier:@"VPNStatus"];
 
     UDPHeader* udphdr=[[UDPHeader alloc]init:[NSData dataWithBytes:&arraytest[ipheaderLength] length:([packet length]-ipheaderLength)]];
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",14] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%d",14] identifier:@"VPNStatus"];
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[iphdr getsourceIP]],[udphdr getsourcePort],[PacketUtil intToIPAddress:[iphdr getdestinationIP]],[udphdr getdestinationPort]] identifier:@"VPNStatus"];
-    */
+    [self.wormhole passMessageObject:[NSString stringWithFormat:@"生成：%@:%d-%@:%d",[PacketUtil intToIPAddress:[iphdr getsourceIP]],[udphdr getsourcePort],[PacketUtil intToIPAddress:[iphdr getdestinationIP]],[udphdr getdestinationPort]] identifier:@"VPNStatus"];
+    bool flag=[PacketUtil isValidIPChecksum:[IPPacketFactory createIPv4Header:iphdr] length:[iphdr getIPHeaderLength]];
+    [self.wormhole passMessageObject:[NSString stringWithFormat:@"CheckSum：%d",flag] identifier:@"VPNStatus"];
+
     //测试结束
 
-    //[self.wormhole passMessageObject:@"111111111111" identifier:@"VPNStatus"];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[[NSNumber numberWithInt:17]]];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[@(AF_INET)]];
+        });
     }
-    
-    //[self.wormhole passMessageObject:@"2222222222222" identifier:@"VPNStatus"];
-
 }
 @end

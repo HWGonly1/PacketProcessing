@@ -63,12 +63,11 @@
     [ipheader setTotalLength:totalLength];
     NSMutableArray* ipdata=[IPPacketFactory createIPv4Header:ipheader];
     
-    
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%@",ipdata[10],ipdata[11]] identifier:@"VPNStatus"];
     ipdata[10]=[NSNumber numberWithShort:0];
     ipdata[11]=[NSNumber numberWithShort:0];
     
     NSMutableArray* ipchecksum=[PacketUtil calculateChecksum:ipdata offset:0 length:[ipdata count]];
+    
     ipdata[10]=ipchecksum[0];
     ipdata[11]=ipchecksum[1];
     
@@ -76,7 +75,6 @@
         [buffer addObject:ipdata[i]];
     }
     
-    int start=[ipdata count];
     NSMutableArray* intcontainer=[[NSMutableArray alloc] init];
 
     [PacketUtil writeIntToBytes:srcPort buffer:intcontainer offset:0];
@@ -84,26 +82,22 @@
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
-    start+=2;
     
     [PacketUtil writeIntToBytes:destPort buffer:intcontainer offset:0];
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
-    start+=2;
 
     [PacketUtil writeIntToBytes:udplen buffer:intcontainer offset:0];
 
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
-    start+=2;
     
     [PacketUtil writeIntToBytes:checksum buffer:intcontainer offset:0];
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
-    start+=2;
     
     for(int i=0;i<[packetdata count];i++){
         [buffer addObject:packetdata[i]];

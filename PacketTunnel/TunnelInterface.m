@@ -52,7 +52,6 @@
 
 +(void)setPacketFlow:(NEPacketTunnelFlow*)packetFlow{
     [[TunnelInterface sharedInterface] setTunnelPacketFlow:packetFlow];
-    [SessionManager sharedInstance].packetFlow=packetFlow;
 }
 
 - (instancetype)init {
@@ -97,7 +96,7 @@
             }
             if(tcpheader!=nil){
                 [[TunnelInterface sharedInterface].wormhole passMessageObject:@"+++++++++++++++++++++++++++++++++++++++++++++++++"  identifier:@"VPNStatus"];
-                [self handleTCPPPacket:packet];
+                [self handleTCPPacket:packet];
                 [[TunnelInterface sharedInterface].wormhole passMessageObject:@"-------------------------"  identifier:@"VPNStatus"];
             }else if(udpheader!=nil){
                 [self handleUDPPacket:packet];
@@ -107,14 +106,25 @@
     }];
 }
 
-+ (void)handleTCPPPacket: (NSData *)packet {
++ (void)handleTCPPacket: (NSData *)packet {
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"handleTCP0"  identifier:@"VPNStatus"];
 
     int length=[packet length];
     Byte *data = (Byte*)[packet bytes];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"handleTCP1"  identifier:@"VPNStatus"];
+
     IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"handleTCP2"  identifier:@"VPNStatus"];
+
     TCPHeader* tcpheader=[[TCPHeader alloc] init:[NSData dataWithBytes:&data[[ipheader getInternetHeaderLength]] length:[packet length]-[ipheader getInternetHeaderLength]]];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"handleTCP3"  identifier:@"VPNStatus"];
+
     int datalength=length-[ipheader getIPHeaderLength]-[tcpheader getTCPHeaderLength];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"handleTCP4"  identifier:@"VPNStatus"];
+
     NSMutableArray* buffer=[[NSMutableArray alloc]init];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"handleTCP5"  identifier:@"VPNStatus"];
+
     for (int i=0; i< length; i++) {
         [buffer addObject:[NSNumber numberWithShort:data[i]]];
     }
@@ -122,12 +132,12 @@
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]  identifier:@"VPNStatus"];
     
     if([tcpheader issyn]){
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN start3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN start3333333333"  identifier:@"VPNStatus"];
 
         [TunnelInterface replySynAck:ipheader tcp:tcpheader];
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN stop3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN stop3333333333"  identifier:@"VPNStatus"];
     }else if ([tcpheader isack]){
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK start3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK start3333333333"  identifier:@"VPNStatus"];
 
         if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]]){
             
@@ -169,9 +179,9 @@
 
             [[SessionManager sharedInstance] keepSessionAlive:session];
         }
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK stop3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK stop3333333333"  identifier:@"VPNStatus"];
     }else if([tcpheader isfin]){
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"FIN start3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"FIN start3333333333"  identifier:@"VPNStatus"];
 
         TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]];
         if(session==nil){
@@ -181,16 +191,21 @@
 
             [[SessionManager sharedInstance] keepSessionAlive:session];
         }
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"FIN stop3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"FIN stop3333333333"  identifier:@"VPNStatus"];
     }else if([tcpheader isrst]){
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST start3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST start3333333333"  identifier:@"VPNStatus"];
         [TunnelInterface resetConnection:ipheader tcp:tcpheader];
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST stop3333333333"  identifier:@"VPNStatus"];
+        //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST stop3333333333"  identifier:@"VPNStatus"];
 
     }
-    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getsourceIP]/256/256/256,[iphdr getsourceIP]/256/256%256,[iphdr getsourceIP]/256%256,[iphdr getsourceIP]%256] identifier:@"VPNStatus"];
-    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[iphdr getdestinationIP]/256/256/256,[iphdr getdestinationIP]/256/256%256,[iphdr getdestinationIP]/256%256,[iphdr getdestinationIP]%256] identifier:@"VPNStatus"];
-    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[iphdr getProtocol]] identifier:@"VPNStatus"];
+    for(NSString* str in [[SessionManager sharedInstance].tcpdict allKeys]){
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary++++++++++"  identifier:@"VPNStatus"];
+
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%@",@"TCPDictionary:",str]  identifier:@"VPNStatus"];
+        
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary----------"  identifier:@"VPNStatus"];
+
+    }
 }
 
 + (void)handleUDPPacket: (NSData *)packet {
@@ -211,33 +226,23 @@
     @synchronized (udpsession) {
         [udpsession setLastIPheader:ipheader];
         [udpsession setLastUDPheader:udpheader];
-        //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"WriteStart"] identifier:@"VPNStatus"];
         [udpsession write:[NSData dataWithBytes:&array[ipheaderLength+8] length:([packet length]-ipheaderLength-8)]];
-        //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"WriteStop"] identifier:@"VPNStatus"];
     }
     
-    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[ipheader getsourceIP]/256/256/256,[ipheader getsourceIP]/256/256%256,[ipheader getsourceIP]/256%256,[ipheader getsourceIP]%256] identifier:@"VPNStatus"];
-    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d.%d.%d.%d",[ipheader getdestinationIP]/256/256/256,[ipheader getdestinationIP]/256/256%256,[ipheader getdestinationIP]/256%256,[ipheader getdestinationIP]%256] identifier:@"VPNStatus"];
 }
 
 +(void)replySynAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"aaaaaaaaaaaaaaa"] identifier:@"VPNStatus"];
     [ip setIdentification:0];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"ddddddddddddddd"] identifier:@"VPNStatus"];
 
     Packet* packet=[TCPPacketFactory createSynAckPacketData:ip tcp:tcp];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"eeeeeeeeeeeeeee"] identifier:@"VPNStatus"];
 
     TCPHeader* tcpheader=[packet getTcpheader];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"fffffffffffffff"] identifier:@"VPNStatus"];
 
     TCPSession* session=[[SessionManager sharedInstance] createNewSession:[ip getdestinationIP] port:[tcp getdestinationPort] srcIp:[ip getsourceIP] srcPort:[tcp getSourcePort]];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"fffffffffffffff"] identifier:@"VPNStatus"];
 
     if(session==nil){
         return;
     }
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"bbbbbbbbbbbbbbb"] identifier:@"VPNStatus"];
 
     int windowScaleFactor = (int)pow(2,[tcpheader getWindowScale]);
     [session setSendWindowSize:[tcpheader getWindowSize]];
@@ -248,8 +253,6 @@
     [session setSendNext:[tcpheader getSequenceNumber]+1];
     [session setRecSequence:[tcpheader getAckNumber]];
     
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@",@"ccccccccccccccc"] identifier:@"VPNStatus"];
-
     
     Byte array[[packet.buffer count]];
     for(int i=0;i<[packet.buffer count];i++){
@@ -265,6 +268,7 @@
 
 +(void)sendRstPacket:(IPv4Header*)ip tcp:(TCPHeader*)tcp datalength:(int)datalength{
     NSMutableArray* packet=[TCPPacketFactory createRstData:ip tcpheader:tcp datalength:datalength];
+
     Byte array[[packet count]];
     for(int i=0;i<[packet count];i++){
         array[i]=(Byte)[packet[i] shortValue];
