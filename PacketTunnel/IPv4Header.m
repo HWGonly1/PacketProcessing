@@ -35,9 +35,9 @@
     
     self.fragmentOffset=0;
     self.fragmentOffset|=data[6]&0xFF;
+    self.fragmentOffset&=0x1F;
     self.fragmentOffset<<=8;
     self.fragmentOffset|=data[7]&0xFF;
-    self.fragmentOffset&=0x1FFFF;
     
     self.timeToLive=data[8];
     self.protocol=data[9];
@@ -45,7 +45,7 @@
     self.headerChecksum=0;
     self.headerChecksum|=data[10]&0xFF;
     self.headerChecksum<<=8;
-    self.fragmentOffset|=data[11]&0xFF;
+    self.headerChecksum|=data[11]&0xFF;
     
     self.sourceIP=0;
     self.sourceIP|=data[12]&0xFF;

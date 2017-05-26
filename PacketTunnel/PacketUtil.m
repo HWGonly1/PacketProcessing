@@ -13,6 +13,7 @@
 #import "IPv4Header.h"
 #import "TCPHeader.h"
 #import "UDPHeader.h"
+#import "SessionManager.h"
 
 
 @implementation PacketUtil
@@ -59,13 +60,19 @@
 
 +(int)getNetworkInt:(NSMutableArray *)buffer start:(int)start length:(int)length{
     int value=0x00000000;
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INT:%@",@"1"] identifier:@"VPNStatus"];
+
     int end= start+(length>4?4:length);
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INT:%@",@"2"] identifier:@"VPNStatus"];
+
     for(int i=start;i<end;i++){
         value |= (Byte)[buffer[i] shortValue]&0xFF;
         if(i<(end-1)){
             value<<=8;
         }
     }
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INT:%@",@"3"] identifier:@"VPNStatus"];
+
     return value;
 }
 
@@ -109,14 +116,18 @@
     int start=0;
     int sum=0;
     int value=0;
+
     while(start<length){
+        
         value=[PacketUtil getNetworkInt:data start:start length:2];
+        
         sum+=value;
         start+=2;
     }
     while((sum>>16)>0){
         sum=(sum&0xFFFF)+(sum>>16);
     }
+
     sum=~sum;
     Byte buffer[4];
     buffer[0]=(Byte)((sum>>24)&0xFF);

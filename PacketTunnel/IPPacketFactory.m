@@ -47,7 +47,7 @@
     Byte flag=(Byte)(header.getFlag|leftfrag);
     //buffer[6]=flag;
     [buffer addObject:[NSNumber numberWithShort:flag]];
-    Byte rightfrag=(Byte)(header.getFragmentOffset);
+    Byte rightfrag=(Byte)(header.getFragmentOffset&0xFF);
     //buffer[7]=rightfrag;
     [buffer addObject:[NSNumber numberWithShort:rightfrag]];
     
