@@ -104,7 +104,7 @@
         [buffer addObject:packetdata[i]];
     }
     
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%lu",(unsigned long)[buffer count]] identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%lu",(unsigned long)[buffer count]] identifier:@"VPNStatus"];
 
     
     return buffer;

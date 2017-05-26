@@ -97,7 +97,7 @@
             if(tcpheader!=nil){
                 [[TunnelInterface sharedInterface].wormhole passMessageObject:@"+++++++++++++++++++++++++++++++++++++++++++++++++"  identifier:@"VPNStatus"];
                 [self handleTCPPacket:packet];
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"-------------------------"  identifier:@"VPNStatus"];
+                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"--------------------------------------------------"  identifier:@"VPNStatus"];
             }else if(udpheader!=nil){
                 [self handleUDPPacket:packet];
             }
@@ -198,6 +198,7 @@
         //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST stop3333333333"  identifier:@"VPNStatus"];
 
     }
+    
     for(NSString* str in [[SessionManager sharedInstance].tcpdict allKeys]){
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary++++++++++"  identifier:@"VPNStatus"];
 
@@ -206,10 +207,24 @@
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary----------"  identifier:@"VPNStatus"];
 
     }
+    
 }
 
 + (void)handleUDPPacket: (NSData *)packet {
-
+    /*
+    for(NSString* str in [[SessionManager sharedInstance].tcpdict allKeys]){
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary++++++++++"  identifier:@"VPNStatus"];
+        
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%@",@"TCPDictionary:",str]  identifier:@"VPNStatus"];
+        
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary----------"  identifier:@"VPNStatus"];
+        
+    }
+     */
+    NSArray* arr=[SessionManager sharedInstance].set.allObjects;
+    for(int i=0;i<[arr count];i++){
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"SET:%@",arr[i]]  identifier:@"VPNStatus"];
+    }
     IPv4Header* ipheader=[[IPv4Header alloc] init:packet];
     int ipheaderLength=[ipheader getIPHeaderLength];
     Byte* array = (Byte*)[packet bytes];

@@ -22,9 +22,12 @@
     
     self.destinationPort=0;
     self.destinationPort|=data[2]&0xFF;
+    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"SET2:%d",data[2]]];
     self.destinationPort<<=8;
     self.destinationPort|=data[3]&0xFF;
-    
+    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"SET3:%d",data[3]]];
+    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"SETTOTAL:%d",self.destinationPort]];
+
     self.sequenceNumber=0;
     self.sequenceNumber=data[4]&0xFF;
     self.sequenceNumber<<8;

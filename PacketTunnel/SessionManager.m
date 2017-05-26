@@ -27,6 +27,7 @@
     self = [super init];
     self.tcpdict=[[NSMutableDictionary alloc]init];
     self.udpdict=[[NSMutableDictionary alloc]init];
+    self.set=[[NSMutableSet alloc] init];
     self.globalQueue= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     return self;
 }
@@ -51,6 +52,7 @@
 }
 
 -(TCPSession*)createNewSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort{
+    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
     NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port];
     bool found=false;
     @synchronized ([SessionManager sharedInstance].tcpdict) {

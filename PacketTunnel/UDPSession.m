@@ -55,23 +55,25 @@
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address{
-    [self.wormhole passMessageObject:@"UDPSocket Connected" identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:@"UDPSocket Connected" identifier:@"VPNStatus"];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error{
-    [self.wormhole passMessageObject:@"UDPSocket Disconnected" identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:@"UDPSocket Disconnected" identifier:@"VPNStatus"];
+    /*
     @synchronized ([SessionManager sharedInstance].udpdict) {
         [self.udpSocket close];
         [[SessionManager sharedInstance].udpdict removeObjectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",self.sourceIP,self.sourcePort,self.destIP,self.destPort]];
     }
+     */
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag{
-    [self.wormhole passMessageObject:@"UDPSocket DataSent" identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:@"UDPSocket DataSent" identifier:@"VPNStatus"];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
-    [self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
     
     NSMutableArray* rawdata=[[NSMutableArray alloc] init];
     Byte* array=(Byte*)[data bytes];
@@ -79,7 +81,7 @@
         [rawdata addObject:[NSNumber numberWithShort:array[i]]];
     }
     
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"记录：%@:%d-%@:%d",[PacketUtil intToIPAddress:[self.lastIPheader getsourceIP]],[self.lastUDPheader getsourcePort],[PacketUtil intToIPAddress:[self.lastIPheader getdestinationIP]],[self.lastUDPheader getdestinationPort]] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"记录：%@:%d-%@:%d",[PacketUtil intToIPAddress:[self.lastIPheader getsourceIP]],[self.lastUDPheader getsourcePort],[PacketUtil intToIPAddress:[self.lastIPheader getdestinationIP]],[self.lastUDPheader getdestinationPort]] identifier:@"VPNStatus"];
 
     
     NSMutableArray* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];

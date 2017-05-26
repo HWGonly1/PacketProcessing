@@ -18,6 +18,7 @@
 @property (nonatomic) NSMutableDictionary *tcpdict;
 @property (nonatomic) NSMutableDictionary *udpdict;
 @property (nonatomic) dispatch_queue_t globalQueue;
+@property (nonatomic) NSMutableSet* set;
 @property (nonatomic) MMWormhole* wormhole;
 +(SessionManager*)sharedInstance;
 -(instancetype)init;

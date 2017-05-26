@@ -26,8 +26,12 @@
     [session setSourceIP:srcIp];
     [session setSourcePort:srcPort];
     [session setConnected:true];
+    NSError* error=nil;
     self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
-    [self.tcpSocket connectToHost:ip onPort:port error:nil];
+    [self.tcpSocket connectToHost:ip onPort:port error:&error];
+    if(error!=nil){
+        [[SessionManager sharedInstance].tcpdict setObject:@"" forKey:error];
+    }
     
     self.syncSendAmount=[[NSObject alloc]init];
     self.recSequence=0;
