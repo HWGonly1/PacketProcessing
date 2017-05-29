@@ -22,28 +22,25 @@
     
     self.destinationPort=0;
     self.destinationPort|=data[2]&0xFF;
-    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"SET2:%d",data[2]]];
     self.destinationPort<<=8;
     self.destinationPort|=data[3]&0xFF;
-    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"SET3:%d",data[3]]];
-    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"SETTOTAL:%d",self.destinationPort]];
 
     self.sequenceNumber=0;
     self.sequenceNumber=data[4]&0xFF;
-    self.sequenceNumber<<8;
+    self.sequenceNumber<<=8;
     self.sequenceNumber=data[5]&0xFF;
-    self.sequenceNumber<<8;
+    self.sequenceNumber<<=8;
     self.sequenceNumber=data[6]&0xFF;
-    self.sequenceNumber<<8;
+    self.sequenceNumber<<=8;
     self.sequenceNumber=data[7]&0xFF;
     
     self.ackNum=0;
     self.ackNum=data[8]&0xFF;
-    self.ackNum<<8;
+    self.ackNum<<=8;
     self.ackNum=data[9]&0xFF;
-    self.ackNum<<8;
+    self.ackNum<<=8;
     self.ackNum=data[10]&0xFF;
-    self.ackNum<<8;
+    self.ackNum<<=8;
     self.ackNum=data[11]&0xFF;
     
     self.dataOffset=data[12]>>4;
@@ -51,7 +48,7 @@
     
     self.windowSize=0;
     self.windowSize=data[14]&0xFF;
-    self.windowSize<<8;
+    self.windowSize<<=8;
     self.windowSize=data[15]&0xFF;
     
     self.checksum=0;
@@ -61,7 +58,7 @@
     
     self.urgentPointer=0;
     self.urgentPointer=data[18]&0xFF;
-    self.urgentPointer<<8;
+    self.urgentPointer<<=8;
     self.urgentPointer=data[19]&0xFF;
     
     self.options=[[NSMutableArray alloc] init];
