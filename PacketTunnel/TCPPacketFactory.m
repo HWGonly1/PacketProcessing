@@ -295,14 +295,9 @@
             [buffer addObject:data[i]];
         }
     }
-
-    //NSMutableArray* zero=[[NSMutableArray alloc]init];
-    //[zero addObject:buffer[10]];
-    //[zero addObject:buffer[11]];
     
     buffer[10]=[NSNumber numberWithShort:0];
     buffer[11]=[NSNumber numberWithShort:0];
-
 
     NSMutableArray* ipchecksum=[PacketUtil calculateChecksum:buffer offset:0 length:ipoffset];
 

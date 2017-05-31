@@ -37,7 +37,7 @@
 }
 
 -(void)addUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort{
-    [self.wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort] identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort] identifier:@"VPNStatus"];
     @synchronized (self.udpdict) {
         [self.udpdict setValue:[[UDPSession alloc] init:sourceIP sourcePort:sourcePort destIP:destIP destPort:destPort timeout:30] forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort]];
     }
@@ -60,9 +60,9 @@
     if(found){
         return nil;
     }
-    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Create" identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Create" identifier:@"VPNStatus"];
     TCPSession* session=[[TCPSession alloc]init:[PacketUtil intToIPAddress:ip] port:port srcIp:[PacketUtil intToIPAddress:srcIp] srcPort:srcPort];
-    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Created" identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Created" identifier:@"VPNStatus"];
 
     @synchronized ([SessionManager sharedInstance].tcpdict) {
         if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key]){
@@ -72,7 +72,7 @@
             found=true;
         }
     }
-    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Added" identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Added" identifier:@"VPNStatus"];
 
     if(found){
         session=nil;

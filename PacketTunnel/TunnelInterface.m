@@ -91,9 +91,9 @@
                 [self handleTCPPacket:packet];
                 [[TunnelInterface sharedInterface].wormhole passMessageObject:@"--------------------------------------------------"  identifier:@"VPNStatus"];
             }else if(udpheader!=nil){
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"******************************"  identifier:@"VPNStatus"];
+                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"******************************"  identifier:@"VPNStatus"];
                 [self handleUDPPacket:packet];
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"##############################"  identifier:@"VPNStatus"];
+                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"##############################"  identifier:@"VPNStatus"];
 
             }
         }
@@ -178,7 +178,7 @@
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST stop3333333333"  identifier:@"VPNStatus"];
 
     }
-    
+    /*
     [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary++++++++++"  identifier:@"VPNStatus"];
     for(NSString* str in [[SessionManager sharedInstance].tcpdict allKeys]){
 
@@ -190,10 +190,10 @@
         [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%d",[session connected]] identifier:@"VPNStatus"];
     }
     [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary----------"  identifier:@"VPNStatus"];
+     */
 }
 
 + (void)handleUDPPacket: (NSData *)packet {
-    NSArray* arr=[SessionManager sharedInstance].set.allObjects;
     IPv4Header* ipheader=[[IPv4Header alloc] init:packet];
     int ipheaderLength=[ipheader getIPHeaderLength];
     Byte* array = (Byte*)[packet bytes];
@@ -212,7 +212,6 @@
         [udpsession setLastUDPheader:udpheader];
         [udpsession write:[NSData dataWithBytes:&array[ipheaderLength+8] length:([packet length]-ipheaderLength-8)]];
     }
-    
 }
 
 +(void)replySynAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
@@ -246,7 +245,7 @@
     NSMutableData* data=[[NSMutableData alloc]init];
     [data appendBytes:array length:[packet.buffer count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
 }
 
@@ -261,7 +260,7 @@
     NSMutableData* data=[[NSMutableData alloc]init];
     [data appendBytes:array length:[packet count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
 }
 
@@ -275,7 +274,7 @@
     }
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
 }
 
@@ -297,7 +296,7 @@
     }
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
     [session setSendNext:seq+1];
     [session setClosingConnection:false];
@@ -335,7 +334,7 @@
     }
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
     [[SessionManager sharedInstance] closeSession:session];
 }

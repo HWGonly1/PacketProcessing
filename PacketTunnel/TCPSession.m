@@ -26,12 +26,12 @@
     self.sourcePort=srcPort;
     NSError* error=nil;
     self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
-    [[SessionManager sharedInstance].wormhole passMessageObject:@"Before Connect" identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:@"Before Connect" identifier:@"VPNStatus"];
     [self.tcpSocket connectToHost:ip onPort:port error:&error];
     if(error!=nil){
         [[SessionManager sharedInstance].wormhole passMessageObject:error identifier:@"VPNStatus"];
     }
-    [[SessionManager sharedInstance].wormhole passMessageObject:@"After Connect" identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:@"After Connect" identifier:@"VPNStatus"];
     self.connected=[self.tcpSocket isConnected];
     self.syncSendAmount=[[NSObject alloc]init];
     self.recSequence=0;
@@ -113,7 +113,7 @@
         array[i]=(Byte)[rstarray[i] shortValue];
     }
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[rstarray count]]] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[rstarray count]]] withProtocols:@[@AF_INET]];
     }
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];
@@ -148,7 +148,7 @@
         array[i]=(Byte)[data[i] shortValue];
     }
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[data count]]] withProtocols:@[[NSNumber numberWithShort:6]]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[data count]]] withProtocols:@[@AF_INET]];
     }
 }
 @end
