@@ -20,19 +20,19 @@
 @implementation TCPSession
 -(instancetype)init:(NSString*)ip port:(uint16_t)port srcIp:(NSString*)srcIp srcPort:(uint16_t)srcPort{
     //NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",srcIp,srcPort,ip,port];
-    TCPSession* session=[[TCPSession alloc]init];
-    [session setDestIP:ip];
-    [session setDestPort:port];
-    [session setSourceIP:srcIp];
-    [session setSourcePort:srcPort];
-    [session setConnected:true];
+    self.destIP=ip;
+    self.destPort=port;
+    self.sourceIP=srcIp;
+    self.sourcePort=srcPort;
     NSError* error=nil;
     self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"Before Connect" identifier:@"VPNStatus"];
     [self.tcpSocket connectToHost:ip onPort:port error:&error];
     if(error!=nil){
-        [[SessionManager sharedInstance].tcpdict setObject:@"" forKey:error];
+        [[SessionManager sharedInstance].wormhole passMessageObject:error identifier:@"VPNStatus"];
     }
-    
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"After Connect" identifier:@"VPNStatus"];
+    self.connected=[self.tcpSocket isConnected];
     self.syncSendAmount=[[NSObject alloc]init];
     self.recSequence=0;
     self.sendUnack=0;
@@ -55,7 +55,7 @@
     self.timestampReplyto=0;
     self.unackData=[[NSMutableArray alloc]init];
     self.resendPacketCounter=0;
-    return session;
+    return self;
 }
 
 -(void)write:(NSData*)data{
@@ -86,6 +86,8 @@
 }
 
 -(void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port{
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Connected" identifier:@"VPNStatus"];
+    self.connected=true;
 }
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
     [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataSent" identifier:@"VPNStatus"];
@@ -99,11 +101,11 @@
         for(int i=0;i<[data length];i++){
             [buffer addObject:[NSNumber numberWithShort:array[i]]];
         }
-        
     }
 }
 
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Disconnected" identifier:@"VPNStatus"];
     [self setConnected:false];
     NSMutableArray* rstarray=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
     Byte array[[rstarray count]];

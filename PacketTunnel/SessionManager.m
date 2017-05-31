@@ -52,7 +52,6 @@
 }
 
 -(TCPSession*)createNewSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort{
-    [[SessionManager sharedInstance].set addObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
     NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port];
     bool found=false;
     @synchronized ([SessionManager sharedInstance].tcpdict) {
@@ -61,7 +60,10 @@
     if(found){
         return nil;
     }
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Create" identifier:@"VPNStatus"];
     TCPSession* session=[[TCPSession alloc]init:[PacketUtil intToIPAddress:ip] port:port srcIp:[PacketUtil intToIPAddress:srcIp] srcPort:srcPort];
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Created" identifier:@"VPNStatus"];
+
     @synchronized ([SessionManager sharedInstance].tcpdict) {
         if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key]){
             [[SessionManager sharedInstance].tcpdict setValue:session forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
@@ -70,6 +72,8 @@
             found=true;
         }
     }
+    [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Added" identifier:@"VPNStatus"];
+
     if(found){
         session=nil;
     }

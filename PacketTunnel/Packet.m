@@ -37,7 +37,7 @@
 */
 -(int)getPacketodyLength{
     if([self.buffer count]>0){
-        int offset=self.tcpheader.getTCPHeaderLength-self.ipheader.getIPHeaderLength;
+        int offset=self.tcpheader.getTCPHeaderLength+self.ipheader.getIPHeaderLength;
         int len=[self.buffer count]-offset;
         return len;
     }
@@ -47,7 +47,7 @@
 -(NSMutableArray *)getPacketBody{
     NSMutableArray* data=[[NSMutableArray alloc] init];
     if([self.buffer count]>0){
-        int offset=self.tcpheader.getTCPHeaderLength-self.ipheader.getIPHeaderLength;
+        int offset=self.tcpheader.getTCPHeaderLength+self.ipheader.getIPHeaderLength;
         int len=[self.buffer count]-offset;
         if(len>0){
             for(int i=0;i<len;i++){
