@@ -44,19 +44,20 @@
     //buffer[offset+1]=[NSNumber numberWithShort:(Byte)((value>>16)&0x000000FF)];
     //buffer[offset+2]=[NSNumber numberWithShort:(Byte)((value>>8)&0x000000FF)];
     //buffer[offset+3]=[NSNumber numberWithShort:(Byte)((value)&0x000000FF)];
-    array[0]=(Byte)((value>>24)&0x000000FF);
-    array[1]=(Byte)((value>>16)&0x000000FF);
-    array[2]=(Byte)((value>>8)&0x000000FF);
-    array[3]=(Byte)((value)&0x000000FF);
-    [buffer replaceBytesInRange:NSMakeRange(offset, 4) withBytes:array length:4];
+    array[0]=(Byte)(value>>24);
+    array[1]=(Byte)(value>>16);
+    array[2]=(Byte)(value>>8);
+    array[3]=(Byte)(value);
+    //[buffer replaceBytesInRange:NSMakeRange(offset, 4) withBytes:array length:4];
+    [buffer appendBytes:array length:4];
 }
 
 +(void)writeShortToBytes:(short)value buffer:(NSMutableData*)buffer offset:(int)offset{
     Byte array[2];
     //buffer[offset]=[NSNumber numberWithShort:(Byte)((value>>8)&0x00FF)];
     //buffer[offset+1]=[NSNumber numberWithShort:(Byte)((value)&0x00FF)];
-    array[0]=(Byte)((value>>8)&0x00FF);
-    array[1]=(Byte)((value>>8));
+    array[0]=(Byte)(value>>8);
+    array[1]=(Byte)(value>>8);
     [buffer replaceBytesInRange:NSMakeRange(offset,2) withBytes:array length:2];
 }
 

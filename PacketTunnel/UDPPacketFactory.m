@@ -19,18 +19,25 @@
 }
 
 +(UDPHeader*)createUDPHeader:(NSMutableData*)buffer start:(int)start{
+
     UDPHeader* header=nil;
+
     if(([buffer length]-start)<8){
         return header;
     }
+
     int srcPort=[PacketUtil getNetworkInt:buffer start:start length:2];
     int destPort=[PacketUtil getNetworkInt:buffer start:start+2 length:2];
     int length=[PacketUtil getNetworkInt:buffer start:start+4 length:2];
     int checksum=[PacketUtil getNetworkInt:buffer start:start+6 length:2];
 
+    /*
     NSMutableString* str=[[NSMutableString alloc] init];
     [str appendFormat:@"\r\n..... new UDP header .....\r\nstarting position in buffer: %d\r\nSrc port: %d\r\nDest port: %d\r\nLength: %d\r\nChecksum: %d\r\n...... end UDP header .....",start,srcPort,destPort,length,checksum];
+     */
+    
     header=[[UDPHeader alloc]init:srcPort destPort:destPort length:length checksum:checksum];
+
     return header;
 }
 
@@ -65,8 +72,9 @@
     NSMutableData* ipdata=[IPPacketFactory createIPv4Header:ipheader];
     
     Byte zeros[2]={0,0};
+
     [ipdata replaceBytesInRange:NSMakeRange(10, 2) withBytes:zeros length:2];
-    
+
     //ipdata[10]=[NSNumber numberWithShort:0];
     //ipdata[11]=[NSNumber numberWithShort:0];
     

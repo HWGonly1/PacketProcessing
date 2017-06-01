@@ -93,14 +93,13 @@
                 tcpheader=[TCPPacketFactory createTCPHeader:data start:[ipheader getIPHeaderLength]];
             }
             if(tcpheader!=nil){
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"+++++++++++++++++++++++++++++++++++++++++++++++++"  identifier:@"VPNStatus"];
+                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"+++++++++++++++++++++++++++++++++++++++++++++++++"  identifier:@"VPNStatus"];
                 [self handleTCPPacket:packet];
-                [[TunnelInterface sharedInterface].wormhole passMessageObject:@"--------------------------------------------------"  identifier:@"VPNStatus"];
+                //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"--------------------------------------------------"  identifier:@"VPNStatus"];
             }else if(udpheader!=nil){
                 //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"******************************"  identifier:@"VPNStatus"];
                 [self handleUDPPacket:packet];
                 //[[TunnelInterface sharedInterface].wormhole passMessageObject:@"##############################"  identifier:@"VPNStatus"];
-
             }
         }
         [weakSelf processPackets];
@@ -216,7 +215,6 @@
     }else{
         udpsession=[[SessionManager sharedInstance] getUDPSession:[PacketUtil intToIPAddress:[ipheader getsourceIP]] sourcePort:[udpheader getsourcePort] destIP:[PacketUtil intToIPAddress:[ipheader getdestinationIP]]  destPort:[udpheader getdestinationPort]];
     }
-    
     @synchronized (udpsession) {
         [udpsession setLastIPheader:ipheader];
         [udpsession setLastUDPheader:udpheader];

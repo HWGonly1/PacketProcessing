@@ -453,7 +453,7 @@
 
 +(TCPHeader*)createTCPHeader:(NSMutableData*)buffer start:(int)start{
     TCPHeader *head=nil;
-    Byte* array=(Byte*)[buffer length];
+    Byte* array=(Byte*)[buffer bytes];
     if([buffer length]<start+20){
         return head;
     }
