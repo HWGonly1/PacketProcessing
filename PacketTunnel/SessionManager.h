@@ -28,7 +28,7 @@
 -(UDPSession*)getUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort;
 -(TCPSession*)createNewSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
 -(bool)existTCPSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
--(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableArray*)buffer;
+-(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableData*)buffer;
 -(void)closeSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
 -(void)closeSession:(TCPSession*)session;
 -(void)keepSessionAlive:(TCPSession*)session;

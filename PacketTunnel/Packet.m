@@ -27,7 +27,7 @@
     self.tcpheader=tcpheader;
 }
 */
--(NSMutableArray *)getBuffer{
+-(NSMutableData *)getBuffer{
     return self.buffer;
 }
 /*
@@ -36,23 +36,26 @@
 }
 */
 -(int)getPacketodyLength{
-    if([self.buffer count]>0){
+    if([self.buffer length]>0){
         int offset=self.tcpheader.getTCPHeaderLength+self.ipheader.getIPHeaderLength;
-        int len=[self.buffer count]-offset;
+        int len=[self.buffer length]-offset;
         return len;
     }
     return 0;
 }
 
--(NSMutableArray *)getPacketBody{
-    NSMutableArray* data=[[NSMutableArray alloc] init];
-    if([self.buffer count]>0){
+-(NSMutableData *)getPacketBody{
+    NSMutableData* data=[[NSMutableData alloc] init];
+    if([self.buffer length]>0){
         int offset=self.tcpheader.getTCPHeaderLength+self.ipheader.getIPHeaderLength;
-        int len=[self.buffer count]-offset;
+        int len=[self.buffer length]-offset;
         if(len>0){
+            /*
             for(int i=0;i<len;i++){
                 [data addObject:self.buffer[i]];
             }
+             */
+            [data appendData:self.buffer];
         }
     }
     return data;

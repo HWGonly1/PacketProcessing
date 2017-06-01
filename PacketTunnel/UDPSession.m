@@ -75,23 +75,27 @@
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
     //[self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
     
-    NSMutableArray* rawdata=[[NSMutableArray alloc] init];
+    NSMutableData* rawdata=[[NSMutableData alloc] init];
+    /*
     Byte* array=(Byte*)[data bytes];
     for(int i=0;i<[data length];i++){
         [rawdata addObject:[NSNumber numberWithShort:array[i]]];
     }
+    */
+    [rawdata appendData:data];
     
-    NSMutableArray* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];
+    NSMutableData* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];
+    /*
     Byte response[[packetdata count]];
 
     for(int i=0;i<[packetdata count];i++){
         response[i]=(Byte)[packetdata[i] shortValue];
     }
-    NSMutableData* packet=[[NSMutableData alloc] initWithBytes:response length:[packetdata count]];
-
+     */
+    
     @synchronized ([SessionManager sharedInstance].packetFlow) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[@(AF_INET)]];
+            [[SessionManager sharedInstance].packetFlow writePackets:@[packetdata] withProtocols:@[@(AF_INET)]];
         });
     }
 }

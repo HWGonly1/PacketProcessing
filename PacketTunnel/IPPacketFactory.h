@@ -12,6 +12,6 @@
 #import "IPv4Header.h"
 @interface IPPacketFactory : NSObject 
 +(IPv4Header *)copyIPv4Header:(IPv4Header*)ipheader;
-+(NSMutableArray *)createIPv4Header:(IPv4Header*)header;
-+(IPv4Header *)createIPv4Header:(NSMutableArray *)buffer start:(int)start;
++(NSMutableData *)createIPv4Header:(IPv4Header*)header;
++(IPv4Header *)createIPv4Header:(NSMutableData *)buffer start:(int)start;
 @end

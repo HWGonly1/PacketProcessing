@@ -84,19 +84,22 @@
     return [[self.tcpdict allKeys]containsObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
 }
 
--(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableArray*)buffer{
+-(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableData*)buffer{
     TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ip getsourceIP]],[tcp getSourcePort],[PacketUtil intToIPAddress:[ip getdestinationIP]],[tcp getdestinationPort]]];
     int len=0;
     if([session recSequence]!=0&&[tcp getSequenceNumber]<[session recSequence]){
         return len;
     }
     int start=[ip getIPHeaderLength]+[tcp getTCPHeaderLength];
-    len=[buffer count]-start;
+    len=[buffer length]-start;
+    Byte* array=(Byte*)[buffer bytes];
+    /*
     Byte array[len];
-    for(int i=start;i<[buffer count];i++){
+    for(int i=start;i<[buffer length];i++){
         array[i-start]=(Byte)[buffer[i] shortValue];
     }
-    NSData* data=[NSData dataWithBytes:array length:len];
+     */
+    NSData* data=[NSData dataWithBytes:array+start length:len];
     [session write:data];
     return len;
 }

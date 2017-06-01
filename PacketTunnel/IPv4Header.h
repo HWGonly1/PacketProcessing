@@ -26,9 +26,10 @@
 @property (nonatomic) int headerChecksum;
 @property (nonatomic) int sourceIP;
 @property (nonatomic) int destinationIP;
-@property (nonatomic) NSMutableArray * optionBytes;
+//@property (nonatomic) NSMutableArray * optionBytes;
+@property (nonatomic) NSMutableData* optionBytes;
 -(instancetype)init:(NSData *)packet;
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(NSMutableArray *)optionBytes;
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(NSMutableData *)optionBytes;
 -(Byte)getIPVersion;
 -(Byte)getInternetHeaderLength;
 -(Byte)getDscpOrTypeOfService;
@@ -45,7 +46,7 @@
 -(int)getHeaderCheckSum;
 -(int)getsourceIP;
 -(int)getdestinationIP;
--(NSMutableArray *)getOptionBytes;
+-(NSMutableData *)getOptionBytes;
 -(void)setInternetHeaderLength:(Byte)internetHeaderLength;
 -(void)setDscpOrTypeOfService:(Byte)dscpOrTypeOfService;
 -(void)setEcn:(Byte)ecn;
@@ -60,5 +61,6 @@
 -(void)setHeaderChecksum:(int)headerChecksum;
 -(void)setSourceIP:(int)sourceIP;
 -(void)setDestinationIP:(int)destinationIP;
--(void)setOptionBytes:(NSMutableArray *)optionBytes;
+//-(void)setOptionBytes:(NSMutableArray *)optionBytes;
+-(void)setOptionBytes:(NSMutableData *)optionBytes;
 @end

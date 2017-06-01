@@ -37,7 +37,7 @@
 @property (nonatomic) int timestampSender;
 @property (nonatomic) int timestampReplyto;
 @property (nonatomic) int sendAmountSinceLastAck;
-@property (nonatomic) NSMutableArray* unackData;
+@property (nonatomic) NSMutableData* unackData;
 @property (nonatomic) int resendPacketCounter;
 -(instancetype)init:(NSString*)ip port:(uint16_t)port srcIp:(NSString*)srcIp srcPort:(uint16_t)srcPort;
 -(void)write:(NSData*)data;

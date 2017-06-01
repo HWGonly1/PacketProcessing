@@ -61,20 +61,23 @@
     self.urgentPointer<<=8;
     self.urgentPointer=data[19]&0xFF;
     
-    self.options=[[NSMutableArray alloc] init];
+    self.options=[[NSMutableData alloc] init];
 
     if(self.dataOffset==5){
     }
     else{
         int length=(self.dataOffset-5)*4;
+        /*
         for(int i=0;i<length;i++){
             [self.options addObject:[NSNumber numberWithShort:data[20+i]]];
         }
+         */
+        [self.options appendBytes:data+20 length:length];
     }
     [self setFlagBits];
     return self;
 }
--(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(NSMutableArray *)options ackNum:(int)ackNum{
+-(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(NSMutableData *)options ackNum:(int)ackNum{
 
     self.isns=false;
 
@@ -280,11 +283,11 @@
     _urgentPointer=urgentPointer;
 }
 
--(NSMutableArray *)getOptions{
+-(NSMutableData *)getOptions{
     return self.options;
 }
 
--(void)setOptions:(NSMutableArray *)options{
+-(void)setOptions:(NSMutableData *)options{
     _options=[options mutableCopy];
 }
 

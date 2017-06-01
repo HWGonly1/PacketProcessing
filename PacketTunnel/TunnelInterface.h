@@ -29,9 +29,7 @@
 @interface TunnelInterface : NSObject
 + (TunnelInterface *)sharedInterface;
 + (void)setPacketFlow:(NEPacketTunnelFlow*)packetFlow;
-//+ (NSError *)setupWithPacketTunnelFlow:(NEPacketTunnelFlow *)packetFlow;
 + (void)processPackets;
 + (void)writePacket: (NSData *)packet;
-//+ (void)stop;
 @end
 

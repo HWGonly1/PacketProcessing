@@ -18,9 +18,9 @@
     return self;
 }
 
-+(UDPHeader*)createUDPHeader:(NSMutableArray*)buffer start:(int)start{
++(UDPHeader*)createUDPHeader:(NSMutableData*)buffer start:(int)start{
     UDPHeader* header=nil;
-    if(([buffer count]-start)<8){
+    if(([buffer length]-start)<8){
         return header;
     }
     int srcPort=[PacketUtil getNetworkInt:buffer start:start length:2];
@@ -39,12 +39,12 @@
     return newh;
 }
 
-+(NSMutableArray*)createResponsePacket:(IPv4Header*)ip udp:(UDPHeader*)udp packetdata:(NSMutableArray*)packetdata{
++(NSMutableData*)createResponsePacket:(IPv4Header*)ip udp:(UDPHeader*)udp packetdata:(NSMutableData*)packetdata{
 
-    NSMutableArray* buffer=[[NSMutableArray alloc]init];
+    NSMutableData* buffer=[[NSMutableData alloc]init];
     int udplen=8;
-    if([packetdata count]!=0){
-        udplen+=[packetdata count];
+    if([packetdata length]!=0){
+        udplen+=[packetdata length];
     }
     int srcPort=[udp getdestinationPort];
     int destPort=[udp getsourcePort];
@@ -62,47 +62,75 @@
     int totalLength=[ip getIPHeaderLength]+udplen;
     
     [ipheader setTotalLength:totalLength];
-    NSMutableArray* ipdata=[IPPacketFactory createIPv4Header:ipheader];
+    NSMutableData* ipdata=[IPPacketFactory createIPv4Header:ipheader];
     
-    ipdata[10]=[NSNumber numberWithShort:0];
-    ipdata[11]=[NSNumber numberWithShort:0];
+    Byte zeros[2]={0,0};
+    [ipdata replaceBytesInRange:NSMakeRange(10, 2) withBytes:zeros length:2];
     
-    NSMutableArray* ipchecksum=[PacketUtil calculateChecksum:ipdata offset:0 length:[ipdata count]];
+    //ipdata[10]=[NSNumber numberWithShort:0];
+    //ipdata[11]=[NSNumber numberWithShort:0];
     
-    ipdata[10]=ipchecksum[0];
-    ipdata[11]=ipchecksum[1];
+    NSMutableData* ipchecksum=[PacketUtil calculateChecksum:ipdata offset:0 length:[ipdata length]];
+    Byte* temp=(Byte*)[ipchecksum bytes];
+    [ipdata replaceBytesInRange:NSMakeRange(10, 2) withBytes:temp length:2];
     
+    //ipdata[10]=ipchecksum[0];
+    //ipdata[11]=ipchecksum[1];
+    
+    /*
     for(int i=0;i<[ipdata count];i++){
         [buffer addObject:ipdata[i]];
     }
+    */
+    [buffer appendData:ipdata];
     
-    NSMutableArray* intcontainer=[[NSMutableArray alloc] init];
-
+    NSMutableData* intcontainer=[[NSMutableData alloc] init];
+    Byte* tempcontainer;
     [PacketUtil writeIntToBytes:srcPort buffer:intcontainer offset:0];
     
+    /*
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
+    */
+    tempcontainer=(Byte*)[intcontainer bytes];
+    [buffer appendBytes:tempcontainer+2 length:2];
     
     [PacketUtil writeIntToBytes:destPort buffer:intcontainer offset:0];
+    /*
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
-
+     */
+    tempcontainer=(Byte*)[intcontainer bytes];
+    [buffer appendBytes:tempcontainer+2 length:2];
+    
     [PacketUtil writeIntToBytes:udplen buffer:intcontainer offset:0];
 
+    /*
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
+    */
+    tempcontainer=(Byte*)[intcontainer bytes];
+    [buffer appendBytes:tempcontainer+2 length:2];
     
     [PacketUtil writeIntToBytes:checksum buffer:intcontainer offset:0];
+    
+    /*
     for(int i=2;i<4;i++){
         [buffer addObject:intcontainer[i]];
     }
+     */
+    tempcontainer=(Byte*)[intcontainer bytes];
+    [buffer appendBytes:tempcontainer+2 length:2];
     
+    /*
     for(int i=0;i<[packetdata count];i++){
         [buffer addObject:packetdata[i]];
     }
+    */
+    [buffer appendData:packetdata];
     
     //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%lu",(unsigned long)[buffer count]] identifier:@"VPNStatus"];
 

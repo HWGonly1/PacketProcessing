@@ -65,20 +65,24 @@
     self.destinationIP<<=8;
     self.destinationIP|=data[19]&0xFF;
     
-    self.optionBytes=[[NSMutableArray alloc] init];
+    self.optionBytes=[[NSMutableData alloc] init];
     
     if(self.internetHeaderLength==5){
     }
     else{
+        
         int optionLength=(self.internetHeaderLength-5)*4;
+        /*
         for(int i=0;i<optionLength;i++){
             [self.optionBytes addObject:[NSNumber numberWithShort:data[20+i]]];
         }
+         */
+        [self.optionBytes appendBytes:data[20] length:optionLength];
     }
     return self;
 }
 
--(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(NSMutableArray *)optionBytes{
+-(instancetype)init:(Byte)ipVersion internetHeaderLength:(Byte)internetHeaderLength dscpOrTypeOfService:(Byte)dscpOrTypeOfService ecn:(Byte)ecn totalLength:(int)totalLength identification:(int)identification mayFragment:(bool)mayFragment lastFragment:(bool)lastFrament fragmentOffset:(short)fragmentOffset timeToLive:(Byte)timeToLive protocol:(Byte)protocol headerChecksum:(int)headerChecksum sourceIP:(int)sourceIP destinationIP:(int)destinationIP optionBytes:(NSMutableData *)optionBytes{
     self.ipVersion=ipVersion;
     self.internetHeaderLength=internetHeaderLength;
     self.dscpOrTypeOfService=dscpOrTypeOfService;
@@ -166,7 +170,7 @@
     return self.destinationIP;
 }
 
--(NSMutableArray *)getOptionBytes{
+-(NSMutableData *)getOptionBytes{
     return self.optionBytes;
 }
 
@@ -235,7 +239,7 @@
     _destinationIP=destinationIP;
 }
 
--(void)setOptionBytes:(NSMutableArray *)optionBytes{
+-(void)setOptionBytes:(NSMutableData *)optionBytes{
     _optionBytes=[optionBytes mutableCopy];
 }
 

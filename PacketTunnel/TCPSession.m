@@ -53,7 +53,7 @@
     self.lastTCPheader=nil;
     self.timestampSender=0;
     self.timestampReplyto=0;
-    self.unackData=[[NSMutableArray alloc]init];
+    self.unackData=[[NSMutableData alloc]init];
     self.resendPacketCounter=0;
     return self;
 }
@@ -96,33 +96,38 @@
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     if(self.isClientWindowFull){
         [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataReceived" identifier:@"VPNStatus"];
-        NSMutableArray* buffer=[[NSMutableArray alloc]init];
+        NSMutableData* buffer=[[NSMutableData alloc]init];
+        /*
         Byte* array=(Byte*)[data bytes];
         for(int i=0;i<[data length];i++){
             [buffer addObject:[NSNumber numberWithShort:array[i]]];
         }
+         */
+        [buffer appendData:data];
     }
 }
 
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
     [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Disconnected" identifier:@"VPNStatus"];
     [self setConnected:false];
-    NSMutableArray* rstarray=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
+    NSMutableData* rstarray=[TCPPacketFactory createRstData:self.lastIPheader tcpheader:self.lastTCPheader datalength:0];
+    /*
     Byte array[[rstarray count]];
     for(int i=0;i<[rstarray count];i++){
         array[i]=(Byte)[rstarray[i] shortValue];
     }
     NSData* data=[NSData dataWithBytes:array length:[rstarray count]];
+     */
     @synchronized ([SessionManager sharedInstance].packetFlow) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[rstarray] withProtocols:@[@AF_INET]];
         });
     }
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];
 }
 
--(void)sendToRequester:(NSMutableArray*)buffer socket:(GCDAsyncSocket*)socket datasize:(int)datasize sess:(TCPSession*)sess{
+-(void)sendToRequester:(NSMutableData*)buffer socket:(GCDAsyncSocket*)socket datasize:(int)datasize sess:(TCPSession*)sess{
     if(sess==nil){
         return;
     }
@@ -133,7 +138,7 @@
     }
 }
 
--(void)pushDataToClient:(NSMutableArray*)buffer session:(TCPSession*)session{
+-(void)pushDataToClient:(NSMutableData*)buffer session:(TCPSession*)session{
     IPv4Header* ipheader=self.lastIPheader;
     TCPHeader* tcpheader=self.lastTCPheader;
     int max=session.maxSegmentSize-60;
@@ -141,17 +146,19 @@
         max=1024;
     }
     int unack=session.sendNext;
-    int nextUnack=self.sendNext+[buffer count];
+    int nextUnack=self.sendNext+[buffer length];
     [session setSendNext:nextUnack];
     [session setUnackData:buffer];
     [session setResendPacketCounter:0];
-    NSMutableArray* data=[TCPPacketFactory createResponsePacketData:ipheader tcp:tcpheader packetdata:buffer ispsh:[session hasReceivedLastSegment] ackNumber:[session recSequence] seqNumber:unack timeSender:[session timestampSender] timeReplyto:[session timestampReplyto]];
+    NSMutableData* data=[TCPPacketFactory createResponsePacketData:ipheader tcp:tcpheader packetdata:buffer ispsh:[session hasReceivedLastSegment] ackNumber:[session recSequence] seqNumber:unack timeSender:[session timestampSender] timeReplyto:[session timestampReplyto]];
+    /*
     Byte array[[data count]];
     for(int i=0;i<[data count];i++){
         array[i]=(Byte)[data[i] shortValue];
     }
+     */
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[data count]]] withProtocols:@[@AF_INET]];
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
 }
 @end

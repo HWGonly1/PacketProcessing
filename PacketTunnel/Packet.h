@@ -14,13 +14,13 @@
 @interface Packet : NSObject
 @property (nonatomic) IPv4Header * ipheader;
 @property (nonatomic) TCPHeader * tcpheader;
-@property (nonatomic) NSMutableArray * buffer;
+@property (nonatomic) NSMutableData * buffer;
 -(IPv4Header *)getIpheader;
 //-(void)setIpheader:(IPv4Header *)ipheader;
 -(TCPHeader *)getTcpheader;
 //-(void)setTcpheader:(TCPHeader *)tcpheader;
--(NSMutableArray *)getBuffer;
+-(NSMutableData *)getBuffer;
 //-(void)setBuffer:(NSMutableArray *)buffer;
 -(int)getPacketodyLength;
--(NSMutableArray *)getPacketBody;
+-(NSMutableData *)getPacketBody;
 @end
