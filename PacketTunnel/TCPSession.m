@@ -112,8 +112,11 @@
     for(int i=0;i<[rstarray count];i++){
         array[i]=(Byte)[rstarray[i] shortValue];
     }
+    NSData* data=[NSData dataWithBytes:array length:[rstarray count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[[NSData dataWithBytes:array length:[rstarray count]]] withProtocols:@[@AF_INET]];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        });
     }
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];

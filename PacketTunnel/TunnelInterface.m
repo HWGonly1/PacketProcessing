@@ -61,9 +61,13 @@
 }
 
 + (void)writePacket:(NSData *)packet {
+    @synchronized ([SessionManager sharedInstance].packetFlow) {
+
     dispatch_async(dispatch_get_main_queue(), ^{
         [[TunnelInterface sharedInterface].tunnelPacketFlow writePackets:@[packet] withProtocols:@[@(AF_INET)]];
     });
+    
+    }
 }
 
 
@@ -125,10 +129,14 @@
 
             if(![tcpheader isrst]&&![tcpheader isfin]){
                 [TunnelInterface sendRstPacket:ipheader tcp:tcpheader datalength:datalength];
+                //[[SessionManager sharedInstance] createNewSession:[ipheader getdestinationIP] port:[tcpheader getdestinationPort] srcIp:[ipheader getsourceIP] srcPort:[tcpheader getdestinationPort]];
             }
             return;
         }
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK Contains"  identifier:@"VPNStatus"];
         TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]];
+        
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"Connected"  identifier:@"VPNStatus"];
         if(datalength>0){
             int totalAdded=[[SessionManager sharedInstance] addClientData:ipheader tcp:tcpheader buffer:buffer];
             if(totalAdded>0){
@@ -165,10 +173,8 @@
 
         TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]];
         if(session==nil){
-
             [TunnelInterface ackFinAck:ipheader tcp:tcpheader session:session];
         }else{
-
             [[SessionManager sharedInstance] keepSessionAlive:session];
         }
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"FIN stop3333333333"  identifier:@"VPNStatus"];
@@ -176,7 +182,6 @@
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST start3333333333"  identifier:@"VPNStatus"];
         [TunnelInterface resetConnection:ipheader tcp:tcpheader];
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"RST stop3333333333"  identifier:@"VPNStatus"];
-
     }
     /*
     [[TunnelInterface sharedInterface].wormhole passMessageObject:@"TCPDictionary++++++++++"  identifier:@"VPNStatus"];
@@ -245,7 +250,9 @@
     NSMutableData* data=[[NSMutableData alloc]init];
     [data appendBytes:array length:[packet.buffer count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        });
     }
 }
 
@@ -260,7 +267,10 @@
     NSMutableData* data=[[NSMutableData alloc]init];
     [data appendBytes:array length:[packet count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+
         [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        });
     }
 }
 
@@ -274,7 +284,10 @@
     }
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+
         [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        });
     }
 }
 
@@ -296,7 +309,10 @@
     }
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+
         [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        });
     }
     [session setSendNext:seq+1];
     [session setClosingConnection:false];
@@ -334,7 +350,10 @@
     }
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     @synchronized ([SessionManager sharedInstance].packetFlow) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+
         [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
+        });
     }
     [[SessionManager sharedInstance] closeSession:session];
 }
