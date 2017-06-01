@@ -104,6 +104,8 @@
     tempcontainer=(Byte*)[intcontainer bytes];
     [buffer appendBytes:tempcontainer+2 length:2];
     
+    [intcontainer resetBytesInRange:NSMakeRange(0, 4)];
+    [intcontainer setLength:0];
     [PacketUtil writeIntToBytes:destPort buffer:intcontainer offset:0];
     /*
     for(int i=2;i<4;i++){
@@ -113,6 +115,8 @@
     tempcontainer=(Byte*)[intcontainer bytes];
     [buffer appendBytes:tempcontainer+2 length:2];
     
+    [intcontainer resetBytesInRange:NSMakeRange(0, 4)];
+    [intcontainer setLength:0];
     [PacketUtil writeIntToBytes:udplen buffer:intcontainer offset:0];
 
     /*
@@ -123,6 +127,8 @@
     tempcontainer=(Byte*)[intcontainer bytes];
     [buffer appendBytes:tempcontainer+2 length:2];
     
+    [intcontainer resetBytesInRange:NSMakeRange(0, 4)];
+    [intcontainer setLength:0];
     [PacketUtil writeIntToBytes:checksum buffer:intcontainer offset:0];
     
     /*

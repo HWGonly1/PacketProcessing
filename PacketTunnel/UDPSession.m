@@ -73,7 +73,7 @@
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
-    //[self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
+    [self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
     
     NSMutableData* rawdata=[[NSMutableData alloc] init];
     /*

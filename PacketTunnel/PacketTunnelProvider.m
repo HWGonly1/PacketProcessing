@@ -28,7 +28,7 @@
     NEPacketTunnelNetworkSettings *settings = [[NEPacketTunnelNetworkSettings alloc] initWithTunnelRemoteAddress:@"127.0.0.1"];
     settings.IPv4Settings = ipv4Settings;
     settings.MTU = @(TunnelMTU);
-    settings.DNSSettings=[[NEDNSSettings alloc] initWithServers:@[@"9.239.26.42",@"124.207.160.106"]];
+    settings.DNSSettings=[[NEDNSSettings alloc] initWithServers:@[@"8.8.8.8",@"219.141.136.10"]];
     [self setTunnelNetworkSettings:settings completionHandler:^(NSError * _Nullable error) {
         if (error) {
             if (completionHandler) {
