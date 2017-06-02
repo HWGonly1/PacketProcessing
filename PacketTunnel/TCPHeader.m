@@ -33,29 +33,33 @@
     self.sourcePort|=data[0];
     self.sourcePort<<=8;
     self.sourcePort|=data[1];
-    
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INITSRC:%d",self.sourcePort]  identifier:@"VPNStatus"];
+
     self.destinationPort=0;
     self.destinationPort|=data[2];
     self.destinationPort<<=8;
     self.destinationPort|=data[3];
 
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INITDEST:%d",self.destinationPort]  identifier:@"VPNStatus"];
+
     self.sequenceNumber=0;
-    self.sequenceNumber=data[4];
+    self.sequenceNumber|=data[4];
     self.sequenceNumber<<=8;
-    self.sequenceNumber=data[5];
+    self.sequenceNumber|=data[5];
     self.sequenceNumber<<=8;
-    self.sequenceNumber=data[6];
+    self.sequenceNumber|=data[6];
     self.sequenceNumber<<=8;
-    self.sequenceNumber=data[7];
-    
+    self.sequenceNumber|=data[7];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INITSEQ:%d",self.sequenceNumber]  identifier:@"VPNStatus"];
+
     self.ackNum=0;
-    self.ackNum=data[8];
+    self.ackNum|=data[8];
     self.ackNum<<=8;
-    self.ackNum=data[9];
+    self.ackNum|=data[9];
     self.ackNum<<=8;
-    self.ackNum=data[10];
+    self.ackNum|=data[10];
     self.ackNum<<=8;
-    self.ackNum=data[11];
+    self.ackNum|=data[11];
     
     self.dataOffset=(data[12]>>4)&0x0F;
 
@@ -65,9 +69,9 @@
     self.tcpFlags=data[13];
     
     self.windowSize=0;
-    self.windowSize=data[14];
+    self.windowSize|=data[14];
     self.windowSize<<=8;
-    self.windowSize=data[15];
+    self.windowSize|=data[15];
     
     self.checksum=0;
     self.checksum|=data[16];
@@ -75,9 +79,9 @@
     self.checksum|=data[17];
     
     self.urgentPointer=0;
-    self.urgentPointer=data[18];
+    self.urgentPointer|=data[18];
     self.urgentPointer<<=8;
-    self.urgentPointer=data[19];
+    self.urgentPointer|=data[19];
     
     self.options=[[NSMutableData alloc] init];
 

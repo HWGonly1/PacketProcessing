@@ -122,6 +122,7 @@
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]  identifier:@"VPNStatus"];
     if([tcpheader issyn]){
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN start3333333333"  identifier:@"VPNStatus"];
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:packet  identifier:@"VPNStatus"];
         [TunnelInterface replySynAck:ipheader tcp:tcpheader];
         for(NSString* s in [[SessionManager sharedInstance].tcpdict allKeys]){
             [[TunnelInterface sharedInterface].wormhole passMessageObject:s  identifier:@"VPNStatus"];
@@ -235,6 +236,8 @@
     Packet* packet=[TCPPacketFactory createSynAckPacketData:ip tcp:tcp];
 
     TCPHeader* tcpheader=[packet getTcpheader];
+    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"TCPSEQ:%d",[tcp getSequenceNumber]]  identifier:@"VPNStatus"];
+    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"TCPACK:%d",[tcpheader getAckNumber]]  identifier:@"VPNStatus"];
 
     TCPSession* session=[[SessionManager sharedInstance] createNewSession:[ip getdestinationIP] port:[tcp getdestinationPort] srcIp:[ip getsourceIP] srcPort:[tcp getSourcePort]];
 
@@ -260,6 +263,8 @@
     NSMutableData* data=[[NSMutableData alloc]init];
     [data appendBytes:array length:[packet.buffer length]];
      */
+    [[TunnelInterface sharedInterface].wormhole passMessageObject:packet.buffer  identifier:@"VPNStatus"];
+
     @synchronized ([SessionManager sharedInstance].packetFlow) {
         //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].wormhole passMessageObject:@"ReplySYNACK++++++++++"  identifier:@"VPNStatus"];
