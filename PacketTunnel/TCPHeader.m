@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TCPHeader.h"
 #import "SessionManager.h"
+#import "PacketUtil.h"
 @implementation TCPHeader
 -(instancetype)init:(NSData*)packet{
     Byte * data=(Byte *)packet.bytes;
@@ -16,50 +17,54 @@
     self.isns=false;
     
     self.sourcePort=0;
-    self.sourcePort|=data[0]&0xFF;
+    self.sourcePort|=data[0];
     self.sourcePort<<=8;
-    self.sourcePort|=data[1]&0xFF;
+    self.sourcePort|=data[1];
     
     self.destinationPort=0;
-    self.destinationPort|=data[2]&0xFF;
+    self.destinationPort|=data[2];
     self.destinationPort<<=8;
-    self.destinationPort|=data[3]&0xFF;
+    self.destinationPort|=data[3];
 
     self.sequenceNumber=0;
-    self.sequenceNumber=data[4]&0xFF;
+    self.sequenceNumber=data[4];
     self.sequenceNumber<<=8;
-    self.sequenceNumber=data[5]&0xFF;
+    self.sequenceNumber=data[5];
     self.sequenceNumber<<=8;
-    self.sequenceNumber=data[6]&0xFF;
+    self.sequenceNumber=data[6];
     self.sequenceNumber<<=8;
-    self.sequenceNumber=data[7]&0xFF;
+    self.sequenceNumber=data[7];
     
     self.ackNum=0;
-    self.ackNum=data[8]&0xFF;
+    self.ackNum=data[8];
     self.ackNum<<=8;
-    self.ackNum=data[9]&0xFF;
+    self.ackNum=data[9];
     self.ackNum<<=8;
-    self.ackNum=data[10]&0xFF;
+    self.ackNum=data[10];
     self.ackNum<<=8;
-    self.ackNum=data[11]&0xFF;
+    self.ackNum=data[11];
     
-    self.dataOffset=data[12]>>4;
-    self.tcpFlags=data[13]&0xFF;
+    self.dataOffset=(data[12]>>4)&0x0F;
+
+    Byte nsbyte=data[12];
+    self.isns=(nsbyte&0x1)>0x0;
+    
+    self.tcpFlags=data[13];
     
     self.windowSize=0;
-    self.windowSize=data[14]&0xFF;
+    self.windowSize=data[14];
     self.windowSize<<=8;
-    self.windowSize=data[15]&0xFF;
+    self.windowSize=data[15];
     
     self.checksum=0;
-    self.checksum|=data[16]&0xFF;
+    self.checksum|=data[16];
     self.checksum<<=8;
-    self.checksum|=data[17]&0xFF;
+    self.checksum|=data[17];
     
     self.urgentPointer=0;
-    self.urgentPointer=data[18]&0xFF;
+    self.urgentPointer=data[18];
     self.urgentPointer<<=8;
-    self.urgentPointer=data[19]&0xFF;
+    self.urgentPointer=data[19];
     
     self.options=[[NSMutableData alloc] init];
 
@@ -93,6 +98,7 @@
     self.options=[options mutableCopy];
     self.ackNum=ackNum;
     [self setFlagBits];
+    [TCPHeader extractOptionData:self];
     return self;
 }
 
@@ -105,6 +111,43 @@
     _isrst = (self.tcpFlags & 0x04) > 0;
     _issyn = (self.tcpFlags & 0x02) > 0;
     _isfin = (self.tcpFlags & 0x01) > 0;
+}
+
++(void)extractOptionData:(TCPHeader*)head{
+    NSMutableData* options=[head getOptions];
+    Byte kind;
+    for(int i=0;i<[options length];i++){
+        Byte* optionsarray=(Byte*)[options bytes];
+        kind=(Byte)optionsarray[i];
+        if(kind == 2){
+            i +=2;
+            int segsize = [PacketUtil getNetworkInt:options start:i length:2];
+            [head setMaxSegmentSize:segsize];
+            i++;
+        }else if(kind == 3){
+            i += 2;
+            int scale = [PacketUtil getNetworkInt:options start:i length:1];
+            [head setWindowScale:scale];
+        }else if(kind == 4){
+            i++;
+            [head setIsSelectiveackPermitted:true];
+        }else if(kind == 5){//SACK => selective acknowledgment
+            i++;
+            int sacklength = [PacketUtil getNetworkInt:options start:i length:1];
+            i = i + (sacklength - 2);
+            //case 10, 18, 26 and 34
+            //TODO: handle missing segments
+            //rare case => low priority
+        }else if(kind == 8){//timestamp and echo of previous timestamp
+            i += 2;
+            int timestampSender = [PacketUtil getNetworkInt:options start:i length:4];
+            i += 4;
+            int timestampReplyTo = [PacketUtil getNetworkInt:options start:i length:4];
+            i += 3;
+            [head setTimeStampSender:timestampSender];
+            [head setTimeStampReplyTo:timestampReplyTo];
+        }
+    }
 }
 /*
 -(bool)isNS{

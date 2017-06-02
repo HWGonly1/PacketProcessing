@@ -245,7 +245,6 @@
     int ackNumber=[tcpheader getSequenceNumber]+1;
     int seqNumber;
     seqNumber=arc4random()%INT32_MAX;
-
     [ipheader setDestinationIP:destIp];
     [ipheader setSourceIP:sourceIp];
     [tcpheader setDestinationPort:destPort];
@@ -280,30 +279,36 @@
     Byte* iparray=(Byte*)[ipbuffer bytes];
     NSMutableData* tcpbuffer=[self createTCPHeaderData:tcpheader];
     Byte* tcparray=(Byte*)[tcpbuffer bytes];
-    Byte array[[ipheader getIPHeaderLength]+[tcpheader getTCPHeaderLength]+[data length]];
+    //Byte array[[ipheader getIPHeaderLength]+[tcpheader getTCPHeaderLength]+[data length]];
     int ipoffset=[ipbuffer length];
     /*
     for(int i=0;i<ipoffset;i++){
         [buffer addObject:ipbuffer[i]];
     }
      */
+    /*
     for(int i=0;i<ipoffset;i++){
         array[i]=iparray[i];
     }
+     */
     int tcpoffset=[tcpbuffer length];
+    /*
     for(int i=0;i<tcpoffset;i++){
         array[ipoffset+i]=tcparray[i];
     }
+     */
     /*
     for(int i=0;i<tcpoffset;i++){
         [buffer addObject:tcpbuffer[i]];
     }
     */
+    /*
     if(datalength>0){
         for(int i=0;i<datalength;i++){
             array[ipoffset+tcpoffset+i]=dataarray[i];
         }
     }
+     */
     /*
     if(datalength>0){
         for(int i=0;i<datalength;i++){
@@ -318,7 +323,7 @@
     tcparray[17]=0;
     [buffer appendBytes:iparray length:ipoffset];
     [buffer appendBytes:tcparray length:tcpoffset];
-    [buffer appendBytes:array length:datalength];
+    [buffer appendBytes:dataarray length:datalength];
     
     //buffer[10]=[NSNumber numberWithShort:0];
     //buffer[11]=[NSNumber numberWithShort:0];
@@ -345,6 +350,15 @@
     //buffer[ipoffset+16]=tcpchecksum[0];
     //buffer[ipoffset+17]=tcpchecksum[1];
 
+    //测试开始
+    /*
+    Byte* arr1=(Byte*)[buffer bytes];
+    bool flag1=[PacketUtil isValidIPChecksum:[NSMutableData dataWithBytes:arr1 length:ipoffset] length:ipoffset];
+    bool flag2=[PacketUtil isValidTCPChecksum:[ipheader getsourceIP] destination:[ipheader getdestinationIP] data:buffer tcplength:([buffer length]-ipoffset) tcpoffset:ipoffset];
+    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"IPChecksum:%d",flag1] identifier:@"VPNStatus"];
+    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPChecksum:%d",flag2] identifier:@"VPNStatus"];
+     */
+    //测试结束
     return buffer;
 }
 
@@ -424,8 +438,8 @@
     Byte len;
     int timeSender=[header getTimestampSender];
     int timeReplyto=[header getTimestampReplyTo];
-    Byte* optionsarray=(Byte*)[options bytes];
     for(int i=0;i<[options length];i++){
+        Byte* optionsarray=(Byte*)[options bytes];
         kind=optionsarray[i];
         if(kind>1){
             if(kind == 8){//timestamp
@@ -437,17 +451,15 @@
                 }
                 break;
             }else if((i+1) < [options length]){
-                len = (Byte)optionsarray[i+1];
+                len = optionsarray[i+1];
                 i = i + len - 1;
             }
         }
     }
+    [buffer appendBytes:array length:20];
     if([options length]>0){
-        for(int i=0;i<[options length];i++){
-            array[20+i]=optionsarray[i];
-        }
+        [buffer appendData:options];
     }
-    [buffer appendBytes:array length:[header getTCPHeaderLength]];
     return buffer;
 }
 

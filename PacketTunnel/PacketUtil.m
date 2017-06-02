@@ -48,8 +48,11 @@
     array[1]=(Byte)(value>>16);
     array[2]=(Byte)(value>>8);
     array[3]=(Byte)(value);
-    //[buffer replaceBytesInRange:NSMakeRange(offset, 4) withBytes:array length:4];
-    [buffer appendBytes:array length:4];
+    if(offset<[buffer length]){
+        [buffer replaceBytesInRange:NSMakeRange(offset, 4) withBytes:array length:4];
+    }else{
+        [buffer appendBytes:array length:4];
+    }
 }
 
 +(void)writeShortToBytes:(short)value buffer:(NSMutableData*)buffer offset:(int)offset{
@@ -123,11 +126,12 @@
 
     //[buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((tcplength>>8)&0xFF)]];
     //[buffer addObject:[[NSNumber alloc] initWithShort:(Byte)((tcplength)&0xFF)]];
-    array[10]=(Byte)(Byte)(tcplength>>8);
-    array[11]=(Byte)(Byte)tcplength;
+    array[10]=(Byte)(tcplength>>8);
+    array[11]=(Byte)tcplength;
 
+    Byte* dataarray=(Byte*)[data bytes];
     [buffer appendBytes:array length:12];
-    [buffer appendData:data];
+    [buffer appendData:[NSMutableData dataWithBytes:dataarray+tcpoffset length:tcplength]];
     /*
     for(int i=0;i<tcplength;i++){
         [buffer addObject:data[i]];
@@ -228,8 +232,9 @@
     array[10]=(Byte)(tcplength>>8);
     array[11]=(Byte)(tcplength);
 
+    Byte* dataarray=(Byte*)[data bytes];
     [buffer appendBytes:array length:12];
-    [buffer appendData:data];
+    [buffer appendData:[NSMutableData dataWithBytes:dataarray+offset length:([data length]-offset)]];
     /*
     for(int i=0;i<tcplength;i++){
         [buffer addObject:data[i]];
@@ -365,7 +370,9 @@
                 i++;
                 [str stringByAppendingString:@"\r\n...Selective Ack"];
             }else if(kind == 5){
-                i = i + (Byte)optionsarray[++i]- 2;
+                //i = i + (Byte)optionsarray[++i]- 2;
+                i=i+optionsarray[i+1]-2;
+                i++;
                 [str stringByAppendingString:@"\r\n...selective ACK (SACK)"];
             }else if(kind == 8){
                 i += 2;
@@ -378,7 +385,9 @@
                 i +=2;
                 [str stringByAppendingString:@"\r\n...Alternative Checksum request"];
             }else if(kind == 15){
-                i = i + (Byte)optionsarray[++i] - 2;
+                //i = i + (Byte)optionsarray[++i] - 2;
+                i=i+optionsarray[i+1]-2;
+                i++;
                 [str stringByAppendingString:@"\r\n...TCP Alternate Checksum Data"];
             }else{
                 [str stringByAppendingFormat:@"%@%d%@%d",@"\r\n... unknown option# ",kind,@", int: ",(int)kind];
@@ -403,7 +412,9 @@
         }else if(kind == 4){
             i++;
         }else if(kind == 5 || kind == 15){
-            i = i + (Byte)optionsarray[++i] - 2;
+            //i = i + (Byte)optionsarray[++i] - 2;
+            i=i+optionsarray[i+1]-2;
+            i++;
         }else if(kind == 8){
             i += 9;
         }else if(kind == (Byte)23){
