@@ -15,6 +15,19 @@
     Byte * data=(Byte *)packet.bytes;
     
     self.isns=false;
+    self.iscwr=false;
+    self.isece=false;
+    self.issyn=false;
+    self.isack=false;
+    self.isfin=false;
+    self.isrst=false;
+    self.ispsh=false;
+    self.isurg=false;
+    self.maxSegmentSize=0;
+    self.windowScale=0;
+    self.isSelectiveackPermitted=false;
+    self.timeStampSender=0;
+    self.timeStampReplyTo=0;
     
     self.sourcePort=0;
     self.sourcePort|=data[0];
@@ -80,11 +93,24 @@
         [self.options appendBytes:data+20 length:length];
     }
     [self setFlagBits];
+    [TCPHeader extractOptionData:self];
     return self;
 }
 -(instancetype)init:(int)sourcePort destinationPort:(int)destinationPort sequenceNumber:(int)sequenceNumber dataOffset:(int)dataOffset isns:(bool)isns tcpFlags:(int)tcpFlags windowSize:(int)windowSize checksum:(int)checksum urgentPointer:(int)urgentPointer options:(NSMutableData *)options ackNum:(int)ackNum{
-
     self.isns=false;
+    self.iscwr=false;
+    self.isece=false;
+    self.issyn=false;
+    self.isack=false;
+    self.isfin=false;
+    self.isrst=false;
+    self.ispsh=false;
+    self.isurg=false;
+    self.maxSegmentSize=0;
+    self.windowScale=0;
+    self.isSelectiveackPermitted=false;
+    self.timeStampSender=0;
+    self.timeStampReplyTo=0;
 
     self.sourcePort=sourcePort;
     self.destinationPort=destinationPort;
@@ -346,7 +372,7 @@
     return self.dataOffset*4;
 }
 
--(int)getMexSegmentSize{
+-(int)getMaxSegmentSize{
     return self.maxSegmentSize;
 }
 

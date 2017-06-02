@@ -63,9 +63,9 @@
 + (void)writePacket:(NSData *)packet {
     @synchronized ([SessionManager sharedInstance].packetFlow) {
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[TunnelInterface sharedInterface].tunnelPacketFlow writePackets:@[packet] withProtocols:@[@(AF_INET)]];
-    });
+    //});
     
     }
 }
@@ -123,6 +123,9 @@
     if([tcpheader issyn]){
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN start3333333333"  identifier:@"VPNStatus"];
         [TunnelInterface replySynAck:ipheader tcp:tcpheader];
+        for(NSString* s in [[SessionManager sharedInstance].tcpdict allKeys]){
+            [[TunnelInterface sharedInterface].wormhole passMessageObject:s  identifier:@"VPNStatus"];
+        }
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN stop3333333333"  identifier:@"VPNStatus"];
     }else if ([tcpheader isack]){
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK start3333333333"  identifier:@"VPNStatus"];
@@ -243,7 +246,7 @@
     [session setSendWindowSize:[tcpheader getWindowSize]];
     [session setSendWindowScale:windowScaleFactor];
     [session setSendWindow:[tcpheader getWindowSize]*windowScaleFactor];
-    [session setMaxSegmentSize:[tcpheader getMexSegmentSize]];
+    [session setMaxSegmentSize:[tcpheader getMaxSegmentSize]];
     [session setSendUnack:[tcpheader getSequenceNumber]];
     [session setSendNext:[tcpheader getSequenceNumber]+1];
     [session setRecSequence:[tcpheader getAckNumber]];
@@ -258,9 +261,11 @@
     [data appendBytes:array length:[packet.buffer length]];
      */
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[SessionManager sharedInstance].wormhole passMessageObject:@"ReplySYNACK++++++++++"  identifier:@"VPNStatus"];
             [[SessionManager sharedInstance].packetFlow writePackets:@[packet.buffer] withProtocols:@[@(AF_INET)]];
-        });
+            [[SessionManager sharedInstance].wormhole passMessageObject:@"ReplySYNACK----------"  identifier:@"VPNStatus"];
+        //});
     }
 }
 
@@ -278,9 +283,9 @@
      */
     
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[packet] withProtocols:@[@(AF_INET)]];
-        });
+        //});
     }
 }
 
@@ -295,9 +300,9 @@
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
     */
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[array] withProtocols:@[@(AF_INET)]];
-        });
+        //});
     }
 }
 
@@ -322,9 +327,9 @@
      */
     
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[array] withProtocols:@[@(AF_INET)]];
-        });
+        //});
     }
     [session setSendNext:seq+1];
     [session setClosingConnection:false];
@@ -364,9 +369,9 @@
     NSMutableData* data=[NSMutableData dataWithBytes:arr length:[array count]];
      */
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[array] withProtocols:@[@(AF_INET)]];
-        });
+        //});
     }
     [[SessionManager sharedInstance] closeSession:session];
 }

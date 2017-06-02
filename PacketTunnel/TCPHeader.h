@@ -78,7 +78,7 @@
 -(int)getAckNumber;
 -(void)setAckNumber:(int)ackNum;
 -(int)getTCPHeaderLength;
--(int)getMexSegmentSize;
+-(int)getMaxSegmentSize;
 -(void)setMaxSegmentSize:(int)maxSegmentSize;
 -(int)getWindowScale;
 -(void)setWindowScale:(int)windowScale;

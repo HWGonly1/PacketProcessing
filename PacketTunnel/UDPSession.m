@@ -29,8 +29,9 @@
     self.destIP=destIP;
     self.destPort=destPort;
     self.timeout=timeout;
-    self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
-    
+    //self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
+    self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)];
+
     int port=12345;
     
     NSError* error=nil;
@@ -73,7 +74,7 @@
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
-    [self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
+    //[self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
     
     NSMutableData* rawdata=[[NSMutableData alloc] init];
     /*
@@ -94,9 +95,11 @@
      */
     
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[SessionManager sharedInstance].wormhole passMessageObject:@"UDPSocket++++++++++"  identifier:@"VPNStatus"];
             [[SessionManager sharedInstance].packetFlow writePackets:@[packetdata] withProtocols:@[@(AF_INET)]];
-        });
+            [[SessionManager sharedInstance].wormhole passMessageObject:@"UDPSocket----------"  identifier:@"VPNStatus"];
+        //});
     }
 }
 @end

@@ -28,7 +28,7 @@
     self.tcpdict=[[NSMutableDictionary alloc]init];
     self.udpdict=[[NSMutableDictionary alloc]init];
     self.set=[[NSMutableSet alloc] init];
-    self.globalQueue= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    //self.globalQueue= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     return self;
 }
 

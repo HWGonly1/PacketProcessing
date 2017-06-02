@@ -25,7 +25,8 @@
     self.sourceIP=srcIp;
     self.sourcePort=srcPort;
     NSError* error=nil;
-    self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
+    //self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
+    self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     //[[SessionManager sharedInstance].wormhole passMessageObject:@"Before Connect" identifier:@"VPNStatus"];
     [self.tcpSocket connectToHost:ip onPort:port error:&error];
     if(error!=nil){
@@ -119,9 +120,9 @@
     NSData* data=[NSData dataWithBytes:array length:[rstarray count]];
      */
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[rstarray] withProtocols:@[@(AF_INET)]];
-        });
+        //});
     }
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];
