@@ -93,7 +93,7 @@
         response[i]=(Byte)[packetdata[i] shortValue];
     }
      */
-    [[SessionManager sharedInstance].wormhole passMessageObject:packetdata identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:packetdata identifier:@"VPNStatus"];
 
     @synchronized ([SessionManager sharedInstance].packetFlow) {
         //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

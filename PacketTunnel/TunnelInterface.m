@@ -122,11 +122,12 @@
     [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]  identifier:@"VPNStatus"];
     if([tcpheader issyn]){
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN start3333333333"  identifier:@"VPNStatus"];
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:packet  identifier:@"VPNStatus"];
         [TunnelInterface replySynAck:ipheader tcp:tcpheader];
+        
         for(NSString* s in [[SessionManager sharedInstance].tcpdict allKeys]){
             [[TunnelInterface sharedInterface].wormhole passMessageObject:s  identifier:@"VPNStatus"];
         }
+        
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"SYN stop3333333333"  identifier:@"VPNStatus"];
     }else if ([tcpheader isack]){
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK start3333333333"  identifier:@"VPNStatus"];
@@ -139,21 +140,23 @@
             
             [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK No Contains"  identifier:@"VPNStatus"];
             
+            //[[TunnelInterface sharedInterface].wormhole passMessageObject:packet  identifier:@"VPNStatus"];
+
+            
             if(![tcpheader isrst]&&![tcpheader isfin]){
                 [TunnelInterface sendRstPacket:ipheader tcp:tcpheader datalength:datalength];
-                //[[SessionManager sharedInstance] createNewSession:[ipheader getdestinationIP] port:[tcpheader getdestinationPort] srcIp:[ipheader getsourceIP] srcPort:[tcpheader getdestinationPort]];
             }
             return;
         }
         [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK Contains"  identifier:@"VPNStatus"];
         TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ipheader getsourceIP]],[tcpheader getSourcePort],[PacketUtil intToIPAddress:[ipheader getdestinationIP]],[tcpheader getdestinationPort]]];
         
-        [[TunnelInterface sharedInterface].wormhole passMessageObject:@"Connected"  identifier:@"VPNStatus"];
         if(datalength>0){
             int totalAdded=[[SessionManager sharedInstance] addClientData:ipheader tcp:tcpheader buffer:buffer];
             if(totalAdded>0){
                 [TunnelInterface sendAck:ipheader tcp:tcpheader acceptedDataLength:totalAdded session:session];
             }
+            [[TunnelInterface sharedInterface].wormhole passMessageObject:@"DataLength>0"  identifier:@"VPNStatus"];
         }else{
             [TunnelInterface acceptAck:ipheader tcpheader:tcpheader session:session];
             if([session closingConnection]){
@@ -161,6 +164,7 @@
             }else if([session ackedToFin]&&![tcpheader isfin]){
                 [[SessionManager sharedInstance] closeSession:[ipheader getdestinationIP] port:[tcpheader getdestinationPort] srcIp:[ipheader getsourceIP] srcPort:[tcpheader getSourcePort]];
             }
+            [[TunnelInterface sharedInterface].wormhole passMessageObject:@"DataLength=0"  identifier:@"VPNStatus"];
         }
         if([tcpheader ispsh]){
             [[TunnelInterface sharedInterface].wormhole passMessageObject:@"ACK PSH start3333333333"  identifier:@"VPNStatus"];
@@ -236,8 +240,8 @@
     Packet* packet=[TCPPacketFactory createSynAckPacketData:ip tcp:tcp];
 
     TCPHeader* tcpheader=[packet getTcpheader];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"TCPSEQ:%d",[tcp getSequenceNumber]]  identifier:@"VPNStatus"];
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"TCPACK:%d",[tcpheader getAckNumber]]  identifier:@"VPNStatus"];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"TCPSEQ:%d",[tcp getSequenceNumber]]  identifier:@"VPNStatus"];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:[NSString stringWithFormat:@"TCPACK:%d",[tcpheader getAckNumber]]  identifier:@"VPNStatus"];
 
     TCPSession* session=[[SessionManager sharedInstance] createNewSession:[ip getdestinationIP] port:[tcp getdestinationPort] srcIp:[ip getsourceIP] srcPort:[tcp getSourcePort]];
 
@@ -263,7 +267,7 @@
     NSMutableData* data=[[NSMutableData alloc]init];
     [data appendBytes:array length:[packet.buffer length]];
      */
-    [[TunnelInterface sharedInterface].wormhole passMessageObject:packet.buffer  identifier:@"VPNStatus"];
+    //[[TunnelInterface sharedInterface].wormhole passMessageObject:packet.buffer  identifier:@"VPNStatus"];
 
     @synchronized ([SessionManager sharedInstance].packetFlow) {
         //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -276,6 +280,7 @@
 
 +(void)sendRstPacket:(IPv4Header*)ip tcp:(TCPHeader*)tcp datalength:(int)datalength{
     NSMutableData* packet=[TCPPacketFactory createRstData:ip tcpheader:tcp datalength:datalength];
+    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"DidSendRSTPacket"]  identifier:@"VPNStatus"];
 
     /*
     Byte array[[packet length]];
@@ -345,21 +350,24 @@
     [session setPacketCorrupted:iscorrupted];
     if([tcpheader getAckNumber]>[session sendUnack]||[tcpheader getAckNumber]==[session sendNext]){
         [session setIsacked:true];
+        if([tcpheader getWindowSize]>0){
+            [session setSendWindowSize:[tcpheader getWindowSize]];
+            [session setSendWindowScale:[tcpheader getWindowScale]];
+            [session setSendWindow:[tcpheader getWindowScale]*[tcpheader getWindowSize]];
+        }
+        int byteReceived=[tcpheader getAckNumber]-[session sendUnack];
+        if(byteReceived>0){
+            [session decreaseAmountSentSinceLastAck:byteReceived];
+        }
+        [session setSendUnack:[tcpheader getAckNumber]];
+        [session setRecSequence:[tcpheader getSequenceNumber]];
+        [session setTimestampReplyto:[tcpheader getTimestampSender]];
+        int recordTime = [[NSDate date] timeIntervalSince1970];
+        [session setTimestampSender:recordTime];
     }
-    if([tcpheader getWindowSize]>0){
-        [session setSendWindowSize:[tcpheader getWindowSize]];
-        [session setSendWindowScale:[tcpheader getWindowScale]];
-        [session setSendWindow:[tcpheader getWindowScale]*[tcpheader getWindowSize]];
+    else{
+        [session setIsacked:false];
     }
-    int byteReceived=[tcpheader getAckNumber]-[session sendUnack];
-    if(byteReceived>0){
-        [session decreaseAmountSentSinceLastAck:byteReceived];
-    }
-    [session setSendUnack:[tcpheader getAckNumber]];
-    [session setRecSequence:[tcpheader getSequenceNumber]];
-    [session setTimestampReplyto:[tcpheader getTimestampSender]];
-    int recordTime = [[NSDate date] timeIntervalSince1970];
-    [session setTimestampSender:recordTime];
 }
 
 +(void)ackFinAck:(IPv4Header*)ip tcp:(TCPHeader*)tcp session:(TCPSession*)session{

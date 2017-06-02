@@ -400,9 +400,9 @@
 +(bool)isPacketCorrupted:(TCPHeader *)tcpheader{
     bool iscorrupted=false;
     NSMutableData * options=tcpheader.getOptions;
-    Byte* optionsarray=(Byte*)[options bytes];
     Byte kind;
     for(int i=0;i<[tcpheader.getOptions length];i++){
+        Byte* optionsarray=(Byte*)[options bytes];
         kind = (Byte)optionsarray[i];
         if(kind == 0 || kind == 1){
         }else if(kind == 2){

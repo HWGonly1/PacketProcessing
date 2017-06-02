@@ -27,7 +27,7 @@
 
 +(NSMutableData*)createFinAckData:(IPv4Header*)ipheader tcpheader:(TCPHeader*)tcpheader ackToClient:(int)ackToClient seqToClient:(int)seqToClient isfin:(bool)isfin isack:(bool)isack{
     NSMutableData* buffer=[[NSMutableData alloc] init];
-    IPv4Header *ip=ipheader;
+    IPv4Header *ip=[IPPacketFactory copyIPv4Header:ipheader];
     TCPHeader *tcp=[self copyTCPHeader:tcpheader];
     int sourceIP=[ip getdestinationIP];
     int destIP=[ip getsourceIP];

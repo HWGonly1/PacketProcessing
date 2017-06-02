@@ -100,7 +100,8 @@
     }
      */
     NSData* data=[NSData dataWithBytes:array+start length:len];
-    [session write:data];
+    //[session write:data];
+    [session setSendingData:data];
     return len;
 }
 
