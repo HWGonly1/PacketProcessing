@@ -27,7 +27,7 @@
     self = [super init];
     self.tcpdict=[[NSMutableDictionary alloc]init];
     self.udpdict=[[NSMutableDictionary alloc]init];
-    self.set=[[NSMutableSet alloc] init];
+    self.dict=[[NSMutableDictionary alloc] init];
     //self.globalQueue= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     return self;
 }
@@ -39,7 +39,7 @@
 -(void)addUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort{
     //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort] identifier:@"VPNStatus"];
     @synchronized (self.udpdict) {
-        [self.udpdict setValue:[[UDPSession alloc] init:sourceIP sourcePort:sourcePort destIP:destIP destPort:destPort timeout:30] forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort]];
+        [self.udpdict setValue:[[UDPSession alloc] init:sourceIP sourcePort:sourcePort destIP:destIP destPort:destPort timeout:-1] forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort]];
     }
 }
 
@@ -100,8 +100,8 @@
     }
      */
     NSData* data=[NSData dataWithBytes:array+start length:len];
-    //[session write:data];
-    [session setSendingData:data];
+    [session write:data];
+    //[session setSendingData:data];
     return len;
 }
 

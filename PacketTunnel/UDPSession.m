@@ -52,7 +52,7 @@
 }
 
 -(void)write:(NSData*)data{
-    [self.udpSocket sendData:data toHost:self.destIP port:self.destPort withTimeout:30 tag:0];
+    [self.udpSocket sendData:data toHost:self.destIP port:self.destPort withTimeout:-1 tag:0];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address{

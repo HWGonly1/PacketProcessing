@@ -25,6 +25,7 @@
 @property (nonatomic) bool ackedToFin;
 @property (nonatomic) bool abortingConnection;
 @property (nonatomic) bool hasReceivedLastSegment;
+@property (nonatomic) bool isDataForSendingReady;
 @property (nonatomic) int sendNext;
 @property (nonatomic) int sendWindow;
 @property (nonatomic) int sendWindowSize;
@@ -48,4 +49,5 @@
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag;
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err;
+-(void)setSendingData:(NSData*)data;
 @end

@@ -107,6 +107,12 @@
 }
 
 + (void)handleTCPPacket: (NSData *)packet {
+    for(NSString* key in [SessionManager sharedInstance].dict.allKeys){
+
+        [[TunnelInterface sharedInterface].wormhole passMessageObject:key identifier:@"VPNStatus"];
+        
+    }
+    
     int length=[packet length];
     Byte *data = (Byte*)[packet bytes];
     IPv4Header * ipheader=[[IPv4Header alloc] init:packet];
@@ -317,6 +323,7 @@
 }
 
 +(void)pushDataToDestination:(TCPSession*)session ip:(IPv4Header*)ip tcp:(TCPHeader*)tcp{
+    [session setIsDataForSendingReady:true];
     [session setLastIPheader:ip];
     [session setLastTCPheader:tcp];
     [session setTimestampReplyto:[tcp getTimestampSender]];
@@ -352,8 +359,8 @@
         [session setIsacked:true];
         if([tcpheader getWindowSize]>0){
             [session setSendWindowSize:[tcpheader getWindowSize]];
-            [session setSendWindowScale:[tcpheader getWindowScale]];
-            [session setSendWindow:[tcpheader getWindowScale]*[tcpheader getWindowSize]];
+            [session setSendWindowScale:[session sendWindowScale]];
+            [session setSendWindow:[tcpheader getWindowScale]*[session sendWindowScale]];
         }
         int byteReceived=[tcpheader getAckNumber]-[session sendUnack];
         if(byteReceived>0){

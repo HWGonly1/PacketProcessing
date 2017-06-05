@@ -30,7 +30,7 @@
     NSString* address=@"10.210.66.16";
     uint16_t port=6789;
     
-    [self.udpSocket sendData:data toHost:address port:port withTimeout:3 tag:0];
+    [self.udpSocket sendData:data toHost:address port:port withTimeout:-1 tag:0];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address{

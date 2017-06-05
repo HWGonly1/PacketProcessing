@@ -50,6 +50,7 @@
     self.ackedToFin=false;
     self.abortingConnection=false;
     self.hasReceivedLastSegment=false;
+    self.isDataForSendingReady=false;
     self.lastIPheader=nil;
     self.lastTCPheader=nil;
     self.timestampSender=0;
@@ -60,7 +61,7 @@
 }
 
 -(void)write:(NSData*)data{
-    [self.tcpSocket writeData:data withTimeout:30 tag:0];
+    [self.tcpSocket writeData:data withTimeout:-1 tag:0];
 }
 
 -(void)close{
@@ -78,25 +79,50 @@
 
 -(bool)isClientWindowFull{
     bool yes=false;
+    //[[SessionManager sharedInstance].dict setObject:@"" forKey:[NSString stringWithFormat:@"%@:%d",@"sendwindow",self.sendWindow]];
+    //[[SessionManager sharedInstance].dict setObject:@"" forKey:[NSString stringWithFormat:@"%@:%d",@"sendAmount",self.sendAmountSinceLastAck]];
     if(self.sendWindow>0&&self.sendAmountSinceLastAck>=0){
         yes=true;
-    }else if(self.sendWindow>0&&self.sendAmountSinceLastAck>65535){
+    }else if(self.sendWindow==0&&self.sendAmountSinceLastAck>65535){
         yes=true;
     }
     return yes;
 }
 
 -(void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port{
+
     [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Connected" identifier:@"VPNStatus"];
+
     self.connected=true;
+    
+    //NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithCapacity:3];
+    //允许自签名证书手动验证
+    //[settings setObject:@YES forKey:GCDAsyncSocketManuallyEvaluateTrust];
+    //GCDAsyncSocketSSLPeerName
+    //[settings setObject:@"tv.diveinedu.com" forKey:GCDAsyncSocketSSLPeerName];
+    
+    // 如果不是自签名证书，而是那种权威证书颁发机构注册申请的证书
+    // 那么这个settings字典可不传。
+    [sock startTLS:nil]; // 开始SSL握手
 }
+-(void)socketDidSecure:(GCDAsyncSocket *)sock{
+    //[[SessionManager sharedInstance].dict setObject:@"GOT" forKey:[NSString stringWithFormat:@"%@:%@",self.destIP,@"Secure"]];
+
+    [sock readDataWithTimeout:-1 tag:0];
+    
+    //[[SessionManager sharedInstance].dict setObject:@"GG" forKey:[NSString stringWithFormat:@"%@:%@",self.destIP,@"StartRead"]];
+
+}
+
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
     [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataSent" identifier:@"VPNStatus"];
 
 }
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
-    if(self.isClientWindowFull){
+    if(!self.isClientWindowFull){
         [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataReceived" identifier:@"VPNStatus"];
+        [[SessionManager sharedInstance].dict setObject:@"GOT" forKey:self.destIP];
+
         NSMutableData* buffer=[[NSMutableData alloc]init];
         /*
         Byte* array=(Byte*)[data bytes];
@@ -105,7 +131,21 @@
         }
          */
         [buffer appendData:data];
+        IPv4Header* ipheader=self.lastIPheader;
+        TCPHeader* tcpheader=self.lastTCPheader;
+        int unack=[self sendNext];
+        int nextunack=unack+[data length];
+        [self setSendNext:nextunack];
+        [self setUnackData:[NSMutableData dataWithData:data]];
+        [self setResendPacketCounter:0];
+        NSMutableData* packetbody=[TCPPacketFactory createResponsePacketData:ipheader tcp:tcpheader packetdata:[NSMutableData dataWithData:data] ispsh:[self hasReceivedLastSegment] ackNumber:[self recSequence] seqNumber:unack timeSender:[self timestampSender] timeReplyto:[self timestampReplyto]];
+        @synchronized ([SessionManager sharedInstance].packetFlow) {
+            //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[SessionManager sharedInstance].packetFlow writePackets:@[packetbody] withProtocols:@[@(AF_INET)]];
+            //});
+        }
     }
+    [sock readDataWithTimeout:-1 tag:0];
 }
 
 -(void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err{
@@ -161,6 +201,10 @@
     @synchronized ([SessionManager sharedInstance].packetFlow) {
         [[SessionManager sharedInstance].packetFlow writePackets:@[data] withProtocols:@[@AF_INET]];
     }
+}
+
+-(void)setSendingData:(NSData*)data{
+    
 }
 @end
 
