@@ -85,6 +85,7 @@
 }
 
 -(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableData*)buffer{
+    @synchronized ([SessionManager sharedInstance].tcpdict) {
     TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ip getsourceIP]],[tcp getSourcePort],[PacketUtil intToIPAddress:[ip getdestinationIP]],[tcp getdestinationPort]]];
     int len=0;
     if([session recSequence]!=0&&[tcp getSequenceNumber]<[session recSequence]){
@@ -100,18 +101,23 @@
     }
      */
     NSData* data=[NSData dataWithBytes:array+start length:len];
-    [session write:data];
+        @synchronized (session) {
+            [session write:data];
+        }
     //[session setSendingData:data];
     return len;
+    }
 }
 
 -(void)closeSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort{
     NSString* keys=[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port];
     @synchronized ([SessionManager sharedInstance].tcpdict) {
         TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:keys];
-        [[SessionManager sharedInstance].tcpdict removeObjectForKey:keys];
-        [session close];
-        session=nil;
+        if(session!=nil){
+            [[SessionManager sharedInstance].tcpdict removeObjectForKey:keys];
+            [session close];
+            session=nil;
+        }
     }
 }
 
@@ -129,10 +135,9 @@
 }
 
 -(void)keepSessionAlive:(TCPSession*)session{
-
     if(session!=nil){
-        NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
         @synchronized ([SessionManager sharedInstance].tcpdict) {
+            NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
             [[SessionManager sharedInstance].tcpdict setObject:session forKey:key];
         }
     }

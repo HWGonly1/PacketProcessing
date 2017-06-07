@@ -262,10 +262,10 @@
     //[tcpheader setTimeStampSender:([tcpheader timeStampReplyTo]+1000)];
 
 
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPLength:%d",[tcp getTCPHeaderLength]] identifier:@"VPNStatus"];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPHeaderLength:%d",[tcpheader getTCPHeaderLength]] identifier:@"VPNStatus"];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TimeReply:%d",[tcpheader getTimestampReplyTo]] identifier:@"VPNStatus"];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TimeSender:%d",[tcpheader getTimestampSender]] identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPLength:%d",[tcp getTCPHeaderLength]] identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPHeaderLength:%d",[tcpheader getTCPHeaderLength]] identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TimeReply:%d",[tcpheader getTimestampReplyTo]] identifier:@"VPNStatus"];
+    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TimeSender:%d",[tcpheader getTimestampSender]] identifier:@"VPNStatus"];
 
     [packet setIpheader:ipheader];
     [packet setTcpheader:tcpheader];
