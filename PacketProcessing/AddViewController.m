@@ -37,21 +37,21 @@
     
     
     /*
-    UIButton *btnSend=[[UIButton alloc] initWithFrame:CGRectMake(120, 300, 60, 40)];
-    [btnSend setTitle:@"发送" forState:UIControlStateNormal];
-    [btnSend setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    
-    [btnSend.titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
-    btnSend.backgroundColor = [UIColor redColor];
-    [btnSend addTarget:self action:@selector(send) forControlEvents :UIControlEventTouchUpInside];
-    [self.view addSubview:btnSend];
-    */
+     UIButton *btnSend=[[UIButton alloc] initWithFrame:CGRectMake(120, 300, 60, 40)];
+     [btnSend setTitle:@"发送" forState:UIControlStateNormal];
+     [btnSend setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+     
+     [btnSend.titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
+     btnSend.backgroundColor = [UIColor redColor];
+     [btnSend addTarget:self action:@selector(send) forControlEvents :UIControlEventTouchUpInside];
+     [self.view addSubview:btnSend];
+     */
     //[btnAdd release];
 }
 
 -(void)VPN{
     //    AddViewController *ad=[[AddViewController alloc] init];
-
+    
     [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
         NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
         if(vpnManagers.count>0){
@@ -72,31 +72,7 @@
             [session stopVPNTunnel];
             //NSLog(@"3");
         }
-        /*
-        switch(self.targetManager.connection.status){
-            case NEVPNStatusInvalid:
-                NSLog(@".Invalid");
-                break;
-            case NEVPNStatusDisconnected:
-                NSLog(@".Disconnected");
-                break;
-            case NEVPNStatusConnected:
-                NSLog(@".Connected");
-                break;
-            case NEVPNStatusConnecting:
-                NSLog(@".Connecting");
-                break;
-            case NEVPNStatusDisconnecting:
-                NSLog(@".Disconnecting");
-                break;
-            default:
-                NSLog(@".Reasserting");
-        }
-         */
     }];
-    
-    //[self dismissViewControllerAnimated:YES completion:nil];
-    //    [ad release];
 }
 
 -(void)send{

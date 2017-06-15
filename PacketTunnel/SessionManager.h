@@ -31,5 +31,6 @@
 -(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableData*)buffer;
 -(void)closeSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort;
 -(void)closeSession:(TCPSession*)session;
+-(void)closeUDPSession:(UDPSession*)session;
 -(void)keepSessionAlive:(TCPSession*)session;
 @end

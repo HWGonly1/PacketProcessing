@@ -104,4 +104,8 @@
         data=nil;
     }
 }
+
+-(void)close{
+    [self.udpSocket close];
+}
 @end

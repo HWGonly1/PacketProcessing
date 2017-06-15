@@ -137,6 +137,19 @@
     }
 }
 
+-(void)closeUDPSession:(UDPSession*)session{
+    if(session==nil){
+        return;
+    }
+    NSString* keys=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
+    @synchronized ([SessionManager sharedInstance].udpdict) {
+        UDPSession* session=[[SessionManager sharedInstance].udpdict objectForKey:keys];
+        [[SessionManager sharedInstance].tcpdict removeObjectForKey:keys];
+        [session close];
+        session=nil;
+    }
+}
+
 -(void)keepSessionAlive:(TCPSession*)session{
     if(session!=nil){
         @synchronized ([SessionManager sharedInstance].tcpdict) {

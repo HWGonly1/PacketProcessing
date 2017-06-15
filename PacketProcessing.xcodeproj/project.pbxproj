@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
-		541F50DB65BA824422252F02 /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
 		DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */; };
 		DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CF1EC8784000428426 /* IPPacketFactory.m */; };
 		DD26E2D31ECA07F700428426 /* PacketUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2D21ECA07F700428426 /* PacketUtil.m */; };
@@ -153,7 +152,6 @@
 				DD26E32F1ED0728300428426 /* libCocoaAsyncSocket.a in Frameworks */,
 				09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */,
 				DD7C707E1EAF3AA0009AC7B1 /* NetworkExtension.framework in Frameworks */,
-				541F50DB65BA824422252F02 /* libPods-PacketProcessing.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

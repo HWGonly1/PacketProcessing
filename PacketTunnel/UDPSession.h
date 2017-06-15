@@ -9,7 +9,6 @@
 #ifndef UDPSession_h
 #define UDPSession_h
 #endif /* UDPSession_h */
-
 #import "GCDAsyncUdpSocket.h"
 #import "IPv4Header.h"
 #import "UDPHeader.h"
@@ -18,7 +17,6 @@
 @property (nonatomic) uint16_t sourcePort;
 @property (nonatomic) NSString* destIP;
 @property (nonatomic) uint16_t destPort;
-//@property (nonatomic) NSTimeInterval* timeout;
 @property (nonatomic) NSError* error;
 @property (nonatomic) IPv4Header* lastIPheader;
 @property (nonatomic) UDPHeader* lastUDPheader;
@@ -28,4 +26,5 @@
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error;
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag;
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext;
+-(void)close;
 @end

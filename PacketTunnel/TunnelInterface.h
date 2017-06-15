@@ -10,7 +10,6 @@
 #define TunnelInterface_h
 #endif /* TunnelInterface_h */
 #import <Foundation/Foundation.h>
-#import "TunnelInterface.h"
 #import "IPv4Header.h"
 #import "UDPHeader.h"
 #import "TCPHeader.h"
@@ -23,13 +22,12 @@
 #import "TCPSession.h"
 #import <MMWormhole.h>
 @import NetworkExtension;
-#define TunnelMTU 1600
-#define kTun2SocksStoppedNotification @"kTun2SocksStoppedNotification"
 
 @interface TunnelInterface : NSObject
+@property (nonatomic) bool processing;
 + (TunnelInterface *)sharedInterface;
 + (void)setPacketFlow:(NEPacketTunnelFlow*)packetFlow;
 + (void)processPackets;
-+ (void)writePacket: (NSData *)packet;
++ (void)writePacket:(NSData *)packet;
 @end
 
