@@ -18,11 +18,11 @@
 @property (nonatomic) uint16_t sourcePort;
 @property (nonatomic) NSString* destIP;
 @property (nonatomic) uint16_t destPort;
-@property (nonatomic) NSTimeInterval* timeout;
+//@property (nonatomic) NSTimeInterval* timeout;
 @property (nonatomic) NSError* error;
 @property (nonatomic) IPv4Header* lastIPheader;
 @property (nonatomic) UDPHeader* lastUDPheader;
--(instancetype)init:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort timeout:(NSTimeInterval*)timeout;
+-(instancetype)init:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort;
 -(void)write:(NSData*)data;
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address;
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error;

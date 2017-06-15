@@ -39,7 +39,8 @@
 -(void)addUDPSession:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort{
     //[self.wormhole passMessageObject:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort] identifier:@"VPNStatus"];
     @synchronized (self.udpdict) {
-        [self.udpdict setValue:[[UDPSession alloc] init:sourceIP sourcePort:sourcePort destIP:destIP destPort:destPort timeout:-1] forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort]];
+        //NSTimeInterval interval=-1;
+        [self.udpdict setValue:[[UDPSession alloc] init:sourceIP sourcePort:sourcePort destIP:destIP destPort:destPort] forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",sourceIP,sourcePort,destIP,destPort]];
     }
 }
 
@@ -63,7 +64,7 @@
     //[[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Create" identifier:@"VPNStatus"];
     TCPSession* session=[[TCPSession alloc]init:[PacketUtil intToIPAddress:ip] port:port srcIp:[PacketUtil intToIPAddress:srcIp] srcPort:srcPort];
     //[[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Created" identifier:@"VPNStatus"];
-
+    
     @synchronized ([SessionManager sharedInstance].tcpdict) {
         if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key]){
             [[SessionManager sharedInstance].tcpdict setValue:session forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
@@ -73,7 +74,7 @@
         }
     }
     //[[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Added" identifier:@"VPNStatus"];
-
+    
     if(found){
         session=nil;
     }
@@ -85,27 +86,29 @@
 }
 
 -(int)addClientData:(IPv4Header*)ip tcp:(TCPHeader*)tcp buffer:(NSMutableData*)buffer{
-    @synchronized ([SessionManager sharedInstance].tcpdict) {
-    TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ip getsourceIP]],[tcp getSourcePort],[PacketUtil intToIPAddress:[ip getdestinationIP]],[tcp getdestinationPort]]];
-    int len=0;
-    if([session recSequence]!=0&&[tcp getSequenceNumber]<[session recSequence]){
-        return len;
-    }
-    int start=[ip getIPHeaderLength]+[tcp getTCPHeaderLength];
-    len=[buffer length]-start;
-    Byte* array=(Byte*)[buffer bytes];
-    /*
-    Byte array[len];
-    for(int i=start;i<[buffer length];i++){
-        array[i-start]=(Byte)[buffer[i] shortValue];
-    }
-     */
-    NSData* data=[NSData dataWithBytes:array+start length:len];
-        @synchronized (session) {
-            [session write:data];
+    @autoreleasepool {
+        @synchronized ([SessionManager sharedInstance].tcpdict) {
+            TCPSession* session=[[SessionManager sharedInstance].tcpdict objectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:[ip getsourceIP]],[tcp getSourcePort],[PacketUtil intToIPAddress:[ip getdestinationIP]],[tcp getdestinationPort]]];
+            int len=0;
+            if([session recSequence]!=0&&[tcp getSequenceNumber]<[session recSequence]){
+                return len;
+            }
+            int start=[ip getIPHeaderLength]+[tcp getTCPHeaderLength];
+            len=[buffer length]-start;
+            Byte* array=(Byte*)[buffer bytes];
+            /*
+             Byte array[len];
+             for(int i=start;i<[buffer length];i++){
+             array[i-start]=(Byte)[buffer[i] shortValue];
+             }
+             */
+            NSData* data=[NSData dataWithBytes:array+start length:len];
+            @synchronized (session) {
+                [session write:data];
+            }
+            //[session setSendingData:data];
+            return len;
         }
-    //[session setSendingData:data];
-    return len;
     }
 }
 
@@ -138,32 +141,36 @@
     if(session!=nil){
         @synchronized ([SessionManager sharedInstance].tcpdict) {
             NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
-            [[SessionManager sharedInstance].tcpdict setObject:session forKey:key];
+            if(session!=nil){
+                [[SessionManager sharedInstance].tcpdict setObject:session forKey:key];
+            }else{
+                [[SessionManager sharedInstance].tcpdict removeObjectForKey:key];
+            }
         }
     }
 }
 /*
--(void)addTCPSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort{
-    NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port];
-    bool found=false;
-    @synchronized ([SessionManager sharedInstance].tcpdict) {
-        found=[[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key];
-    }
-    if(found){
-        return;
-    }
-    TCPSession* session=[[TCPSession alloc]init:[PacketUtil intToIPAddress:ip] port:port srcIp:[PacketUtil intToIPAddress:srcIp] srcPort:srcPort];
-    @synchronized ([SessionManager sharedInstance].tcpdict) {
-        if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key]){
-            [[SessionManager sharedInstance].tcpdict setValue:session forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
-        }
-        else{
-            found=true;
-        }
-    }
-    return;
-}
-*/
+ -(void)addTCPSession:(int)ip port:(int)port srcIp:(int)srcIp srcPort:(int)srcPort{
+ NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port];
+ bool found=false;
+ @synchronized ([SessionManager sharedInstance].tcpdict) {
+ found=[[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key];
+ }
+ if(found){
+ return;
+ }
+ TCPSession* session=[[TCPSession alloc]init:[PacketUtil intToIPAddress:ip] port:port srcIp:[PacketUtil intToIPAddress:srcIp] srcPort:srcPort];
+ @synchronized ([SessionManager sharedInstance].tcpdict) {
+ if(![[[SessionManager sharedInstance].tcpdict allKeys]containsObject:key]){
+ [[SessionManager sharedInstance].tcpdict setValue:session forKey:[NSString stringWithFormat:@"%@:%d-%@:%d",[PacketUtil intToIPAddress:srcIp],srcPort,[PacketUtil intToIPAddress:ip],port]];
+ }
+ else{
+ found=true;
+ }
+ }
+ return;
+ }
+ */
 @end
 
 

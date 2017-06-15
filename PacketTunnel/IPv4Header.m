@@ -77,7 +77,7 @@
             [self.optionBytes addObject:[NSNumber numberWithShort:data[20+i]]];
         }
          */
-        [self.optionBytes appendBytes:data[20] length:optionLength];
+        [self.optionBytes appendBytes:data+20 length:optionLength];
     }
     return self;
 }

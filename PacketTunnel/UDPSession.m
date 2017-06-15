@@ -22,16 +22,16 @@
 
 @implementation UDPSession
 
--(instancetype)init:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort timeout:(NSTimeInterval*)timeout{
+-(instancetype)init:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort{
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     self.sourceIP=sourceIP;
     self.sourcePort=sourcePort;
     self.destIP=destIP;
     self.destPort=destPort;
-    self.timeout=timeout;
+    //self.timeout=timeout;
     //self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
-    self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)];
-
+    self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+    
     int port=12345;
     
     NSError* error=nil;
@@ -44,9 +44,9 @@
     [self.udpSocket beginReceiving:nil];
     
     //[self.wormhole passMessageObject:(error==nil)?@"Error NIL":@"Error NOT NIL" identifier:@"VPNStatus"];
-
+    
     //[self.wormhole passMessageObject:error identifier:@"VPNStatus"];
-
+    
     //[self.udpSocket connectToHost:self.destIP onPort:self.destPort error:nil];
     return self;
 }
@@ -62,10 +62,10 @@
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error{
     //[self.wormhole passMessageObject:@"UDPSocket Disconnected" identifier:@"VPNStatus"];
     /*
-    @synchronized ([SessionManager sharedInstance].udpdict) {
-        [self.udpSocket close];
-        [[SessionManager sharedInstance].udpdict removeObjectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",self.sourceIP,self.sourcePort,self.destIP,self.destPort]];
-    }
+     @synchronized ([SessionManager sharedInstance].udpdict) {
+     [self.udpSocket close];
+     [[SessionManager sharedInstance].udpdict removeObjectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",self.sourceIP,self.sourcePort,self.destIP,self.destPort]];
+     }
      */
 }
 
@@ -75,32 +75,33 @@
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
     //[self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
-    
-    NSMutableData* rawdata=[[NSMutableData alloc] init];
-    /*
-    Byte* array=(Byte*)[data bytes];
-    for(int i=0;i<[data length];i++){
-        [rawdata addObject:[NSNumber numberWithShort:array[i]]];
-    }
-    */
-    [rawdata appendData:data];
-    
-    NSMutableData* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];
-    /*
-    Byte response[[packetdata count]];
-
-    for(int i=0;i<[packetdata count];i++){
-        response[i]=(Byte)[packetdata[i] shortValue];
-    }
-     */
-    //[[SessionManager sharedInstance].wormhole passMessageObject:packetdata identifier:@"VPNStatus"];
-
-    @synchronized ([SessionManager sharedInstance].packetFlow) {
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    @autoreleasepool {
+        
+        NSMutableData* rawdata=[[NSMutableData alloc] init];
+        /*
+         Byte* array=(Byte*)[data bytes];
+         for(int i=0;i<[data length];i++){
+         [rawdata addObject:[NSNumber numberWithShort:array[i]]];
+         }
+         */
+        [rawdata appendData:data];
+        
+        NSMutableData* packetdata=[UDPPacketFactory createResponsePacket:self.lastIPheader udp:self.lastUDPheader packetdata:rawdata];
+        /*
+         Byte response[[packetdata count]];
+         
+         for(int i=0;i<[packetdata count];i++){
+         response[i]=(Byte)[packetdata[i] shortValue];
+         }
+         */
+        //[[SessionManager sharedInstance].wormhole passMessageObject:packetdata identifier:@"VPNStatus"];
+        
+        @synchronized ([SessionManager sharedInstance].packetFlow) {
             [[SessionManager sharedInstance].wormhole passMessageObject:@"UDPSocket++++++++++"  identifier:@"VPNStatus"];
             [[SessionManager sharedInstance].packetFlow writePackets:@[packetdata] withProtocols:@[@(AF_INET)]];
             [[SessionManager sharedInstance].wormhole passMessageObject:@"UDPSocket----------"  identifier:@"VPNStatus"];
-        //});
+        }
+        data=nil;
     }
 }
 @end

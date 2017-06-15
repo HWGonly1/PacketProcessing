@@ -51,7 +51,6 @@
 
 -(void)VPN{
     //    AddViewController *ad=[[AddViewController alloc] init];
-    system("ls /etc/");
 
     [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
         NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;

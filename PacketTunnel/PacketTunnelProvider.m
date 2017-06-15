@@ -48,6 +48,7 @@
 
 - (void)stopTunnelWithReason:(NEProviderStopReason)reason completionHandler:(void (^)(void))completionHandler
 {
+    NSLog(@"%@",[NSString stringWithFormat:@"ReasonIS:%ld",(long)reason]);
 	// Add code here to start the process of stopping the tunnel
 	//[self.connection cancel];
 	//completionHandler();

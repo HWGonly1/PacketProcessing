@@ -142,28 +142,26 @@
 }
 -(void)socketDidSecure:(GCDAsyncSocket *)sock{
     [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSession Secure" identifier:@"VPNStatus"];
-    //[[SessionManager sharedInstance].dict setObject:@"GOT" forKey:[NSString stringWithFormat:@"%@:%@",self.destIP,@"Secure"]];
-
-    //[sock readDataWithTimeout:-1 tag:0];
-    
-    //[[SessionManager sharedInstance].dict setObject:@"GG" forKey:[NSString stringWithFormat:@"%@:%@",self.destIP,@"StartRead"]];
-
 }
 
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
+    NSLog(@"DID WRITE");
+
     [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataSent" identifier:@"VPNStatus"];
     [[SessionManager sharedInstance].dict setObject:@"" forKey:[NSString stringWithFormat:@"%@:%@",self.destIP,@"Sent"]];
 
 }
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
+    NSLog(@"DID READ");
     //if(!self.isClientWindowFull){
         [[SessionManager sharedInstance].wormhole passMessageObject:@"TCPSocket DataReceived" identifier:@"VPNStatus"];
         //[[SessionManager sharedInstance].dict setObject:data forKey:[NSString stringWithFormat:@"%@-%d:%d",self.destIP,self.count++,[data length]]];
-
+    
     Byte* array=(Byte*)[data bytes];
     int flag=0;
     while(([data length]-flag)>1024){
         //[[SessionManager sharedInstance].dict setObject:data forKey:[NSString stringWithFormat:@"%@-%d:%d",self.destIP,self.count++,1024]];
+        @autoreleasepool {
 
         NSMutableData* segment=[NSMutableData dataWithBytes:array+flag length:1024];
         flag+=1024;
@@ -176,14 +174,15 @@
         [self setResendPacketCounter:0];
         NSMutableData* packetbody=[TCPPacketFactory createResponsePacketData:ipheader tcp:tcpheader packetdata:[NSMutableData dataWithData:segment] ispsh:true ackNumber:[self recSequence] seqNumber:unack timeSender:[self timestampSender] timeReplyto:[self timestampReplyto]];
         @synchronized ([SessionManager sharedInstance].packetFlow) {
-            //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[packetbody] withProtocols:@[@(AF_INET)]];
-            //});
+        }
         }
     }
+    NSLog(@"DID PROCESS MAIN");
 
     if(([data length]-flag)>0){
         //[[SessionManager sharedInstance].dict setObject:data forKey:[NSString stringWithFormat:@"%@-%d:%d",self.destIP,self.count++,([data length]-flag)]];
+        @autoreleasepool {
 
         NSMutableData* segment=[NSMutableData dataWithBytes:array+flag length:([data length]-flag)];
         IPv4Header* ipheader=self.lastIPheader;
@@ -197,11 +196,14 @@
         NSMutableData* packetbody=[TCPPacketFactory createResponsePacketData:ipheader tcp:tcpheader packetdata:[NSMutableData dataWithData:segment] ispsh:true ackNumber:[self recSequence] seqNumber:unack timeSender:[self timestampSender] timeReplyto:[self timestampReplyto]];
         
         @synchronized ([SessionManager sharedInstance].packetFlow) {
-            //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[packetbody] withProtocols:@[@(AF_INET)]];
-            //});
+        }
+            
         }
     }
+    data=nil;
+    NSLog(@"DID PROCESS TAIL");
+
     /*
         NSMutableData* buffer=[[NSMutableData alloc]init];
         [buffer appendData:data];
@@ -216,9 +218,7 @@
     [[SessionManager sharedInstance].dict setObject:data forKey:[NSString stringWithFormat:@"%@-%d",self.destIP,[data length]]];
     [[SessionManager sharedInstance].dict setObject:packetbody forKey:[NSString stringWithFormat:@"%@-%d",self.destIP,[packetbody length]]];
         @synchronized ([SessionManager sharedInstance].packetFlow) {
-            //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[SessionManager sharedInstance].packetFlow writePackets:@[packetbody] withProtocols:@[@(AF_INET)]];
-            //});
         }
      */
     [sock readDataWithTimeout:-1 tag:0];
@@ -239,13 +239,10 @@
      */
     
     @synchronized ([SessionManager sharedInstance].packetFlow) {
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [[SessionManager sharedInstance].packetFlow writePackets:@[rstarray] withProtocols:@[@(AF_INET)]];
-        //});
+        [[SessionManager sharedInstance].packetFlow writePackets:@[rstarray] withProtocols:@[@(AF_INET)]];
     }
     [self setAbortingConnection:true];
     [[SessionManager sharedInstance]closeSession:self];
-    
 }
 
 -(void)sendToRequester:(NSMutableData*)buffer socket:(GCDAsyncSocket*)socket datasize:(int)datasize sess:(TCPSession*)sess{
