@@ -5,7 +5,6 @@
 //  Created by HWG on 2017/5/20.
 //  Copyright © 2017年 HWG. All rights reserved.
 //
-
 #import <Foundation/Foundation.h>
 #import "TCPSession.h"
 #import "GCDAsyncSocket.h"
@@ -25,7 +24,6 @@
     self.sourceIP=srcIp;
     self.sourcePort=srcPort;
     NSError* error=nil;
-    //self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:[SessionManager sharedInstance].globalQueue];
     self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     [self.tcpSocket connectToHost:ip onPort:port error:&error];
     if(error!=nil){
@@ -55,7 +53,8 @@
     self.timestampReplyto=0;
     self.unackData=[[NSMutableData alloc]init];
     self.resendPacketCounter=0;
-    self.count=0;
+    self.sendcount=0;
+    self.receivecount=0;
     return self;
 }
 
@@ -94,6 +93,8 @@
 }
 
 -(void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag{
+    self.sendcount++;
+    NSLog(@"SendCount:%d",self.sendcount);
 }
 -(void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     //if(!self.isClientWindowFull){
@@ -101,6 +102,9 @@
     Byte* array=(Byte*)[data bytes];
     int flag=0;
     while(([data length]-flag)>1400){
+        self.receivecount++;
+        NSLog(@"ReceiveCount:%d",self.receivecount);
+
         @autoreleasepool {
             NSMutableData* segment=[NSMutableData dataWithBytes:array+flag length:1400];
             flag+=1400;
@@ -117,9 +121,10 @@
             }
         }
     }
-    NSLog(@"DID PROCESS MAIN");
     
     if(([data length]-flag)>0){
+        self.receivecount++;
+        NSLog(@"ReceiveCount:%d",self.receivecount);
         @autoreleasepool {
             NSMutableData* segment=[NSMutableData dataWithBytes:array+flag length:([data length]-flag)];
             IPv4Header* ipheader=self.lastIPheader;
@@ -136,7 +141,6 @@
         }
     }
     data=nil;
-    NSLog(@"DID PROCESS TAIL");
     /*
      NSMutableData* buffer=[[NSMutableData alloc]init];
      [buffer appendData:data];

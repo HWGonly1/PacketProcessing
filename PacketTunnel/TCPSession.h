@@ -40,7 +40,8 @@
 @property (nonatomic) int sendAmountSinceLastAck;
 @property (nonatomic) NSMutableData* unackData;
 @property (nonatomic) int resendPacketCounter;
-@property (nonatomic) int count;
+@property (nonatomic) int sendcount;
+@property (nonatomic) int receivecount;
 -(instancetype)init:(NSString*)ip port:(uint16_t)port srcIp:(NSString*)srcIp srcPort:(uint16_t)srcPort;
 -(void)write:(NSData*)data;
 -(void)close;

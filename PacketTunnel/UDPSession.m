@@ -53,6 +53,7 @@
 
 -(void)write:(NSData*)data{
     [self.udpSocket sendData:data toHost:self.destIP port:self.destPort withTimeout:-1 tag:0];
+    NSLog(@"NSData Wrote Out on UDPSocket!!!");
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address{
@@ -103,6 +104,8 @@
         }
         data=nil;
     }
+    [self.udpSocket close];
+    [[SessionManager sharedInstance].udpdict removeObjectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",self.sourceIP,self.sourcePort,self.destIP,self.destPort]];
 }
 
 -(void)close{
