@@ -13,7 +13,7 @@
 #import "UDPSendTest.h"
 @import NetworkExtension;
 @interface AddViewController:UIViewController
-@property (strong,nonatomic) NEVPNManager * targetManager;
-@property (strong,nonatomic) NSArray<NEVPNManager *> * managers;
-@property (strong,nonatomic) UDPSendTest* test;
+@property (nonatomic) NEVPNManager * targetManager;
+@property (nonatomic) NSArray<NEVPNManager *> * managers;
+@property (nonatomic) UDPSendTest* test;
 @end

@@ -19,7 +19,6 @@
 -(instancetype)init{
     dispatch_queue_t globalQueue= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     self.udpSocket=[[GCDAsyncUdpSocket alloc]initWithDelegate:self delegateQueue:globalQueue];
-    //[self.udpSocket bindToPort:6790 error:nil];
     [self.udpSocket beginReceiving:nil];
     return self;
 }

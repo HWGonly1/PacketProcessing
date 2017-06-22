@@ -134,6 +134,7 @@
         [[SessionManager sharedInstance].tcpdict removeObjectForKey:keys];
         [session close];
         session=nil;
+        //[session dealloc];
     }
 }
 
@@ -141,10 +142,10 @@
     if(session==nil){
         return;
     }
-    NSString* keys=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
+    NSString* key=[NSString stringWithFormat:@"%@:%d-%@:%d",[session sourceIP],[session sourcePort],[session destIP],[session destPort]];
     @synchronized ([SessionManager sharedInstance].udpdict) {
-        UDPSession* session=[[SessionManager sharedInstance].udpdict objectForKey:keys];
-        [[SessionManager sharedInstance].tcpdict removeObjectForKey:keys];
+        UDPSession* session=[[SessionManager sharedInstance].udpdict objectForKey:key];
+        [[SessionManager sharedInstance].udpdict removeObjectForKey:key];
         [session close];
         session=nil;
     }

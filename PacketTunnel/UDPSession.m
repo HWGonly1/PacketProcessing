@@ -104,8 +104,11 @@
         }
         data=nil;
     }
+    [[SessionManager sharedInstance] closeUDPSession:self];
+    /*
     [self.udpSocket close];
     [[SessionManager sharedInstance].udpdict removeObjectForKey:[NSString stringWithFormat:@"%@:%d-%@:%d",self.sourceIP,self.sourcePort,self.destIP,self.destPort]];
+     */
 }
 
 -(void)close{
