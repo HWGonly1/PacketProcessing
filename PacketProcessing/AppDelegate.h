@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "AddViewController.h"
+#import "InitialViewController.h"
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
-
 @property (nonatomic) UIWindow *window;
 @property (nonatomic) AddViewController * addview;
-
+@property (nonatomic) InitialViewController * initialview;
 @end
 

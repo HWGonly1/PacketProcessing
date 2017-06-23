@@ -10,10 +10,12 @@
 #define AddViewController_h
 #endif /* AddViewController_h */
 #import <UIKit/UIKit.h>
-#import "UDPSendTest.h"
+#import "InitialViewController.h"
+
 @import NetworkExtension;
 @interface AddViewController:UIViewController
 @property (nonatomic) NEVPNManager * targetManager;
 @property (nonatomic) NSArray<NEVPNManager *> * managers;
-@property (nonatomic) UDPSendTest* test;
+@property (nonatomic,strong) UIButton* logoutButton;
+@property (nonatomic) UIViewController* initialview;
 @end

@@ -39,6 +39,7 @@
 		DD7C70801EAF3AB9009AC7B1 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C707D1EAF3AA0009AC7B1 /* NetworkExtension.framework */; };
 		DD7C70831EAF86CC009AC7B1 /* libMMWormhole.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */; };
 		DD7C70851EAF88BE009AC7B1 /* libMMWormhole.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */; };
+		DD89C4271EFCF4C30003D555 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C4261EFCF4C30003D555 /* InitialViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,8 @@
 		DD7C707F1EAF3AA0009AC7B1 /* PacketProcessing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketProcessing.entitlements; sourceTree = "<group>"; };
 		DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMMWormhole.a; path = "Pods/../build/Release-iphoneos/MMWormhole/libMMWormhole.a"; sourceTree = "<group>"; };
 		DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMMWormhole.a; path = "../../Library/Developer/Xcode/DerivedData/PacketProcessing-akexfjlbqamkvrbrklixejkunrlr/Build/Products/Debug-iphoneos/MMWormhole/libMMWormhole.a"; sourceTree = "<group>"; };
+		DD89C4251EFCBE350003D555 /* InitialViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InitialViewController.h; sourceTree = "<group>"; };
+		DD89C4261EFCF4C30003D555 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitialViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +239,8 @@
 				DD7C707F1EAF3AA0009AC7B1 /* PacketProcessing.entitlements */,
 				DD4799321EAF2B2A005DE266 /* AddViewController.h */,
 				DD4799301EAF2AD6005DE266 /* AddViewController.m */,
+				DD89C4251EFCBE350003D555 /* InitialViewController.h */,
+				DD89C4261EFCF4C30003D555 /* InitialViewController.m */,
 				DD4799001EAF256A005DE266 /* AppDelegate.h */,
 				DD4799011EAF256A005DE266 /* AppDelegate.m */,
 				DD4799031EAF256A005DE266 /* ViewController.h */,
@@ -573,6 +578,7 @@
 				DD4799051EAF256A005DE266 /* ViewController.m in Sources */,
 				DD4799021EAF256A005DE266 /* AppDelegate.m in Sources */,
 				DD26E32D1ED0706200428426 /* UDPSendTest.m in Sources */,
+				DD89C4271EFCF4C30003D555 /* InitialViewController.m in Sources */,
 				DD4799311EAF2AD6005DE266 /* AddViewController.m in Sources */,
 				DD4798FF1EAF256A005DE266 /* main.m in Sources */,
 			);

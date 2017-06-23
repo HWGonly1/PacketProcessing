@@ -18,9 +18,18 @@
     // Override point for customization after application launch.
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]];
     self.window.backgroundColor=[UIColor whiteColor];
-    self.addview=[[AddViewController alloc] init];
-    self.window.rootViewController=self.addview;
-    return YES;
+    
+    NSUserDefaults* defaults=[NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"CFSMagentEnterpriseID"]!=nil&&[defaults objectForKey:@"CFSMagentUserID"]!=nil){
+        self.addview=[[AddViewController alloc] init];
+        self.window.rootViewController=self.addview;
+        return YES;
+    }
+    else{
+        self.initialview=[[InitialViewController alloc] init];
+        self.window.rootViewController=self.initialview;
+        return YES;
+    }
 }
 
 
