@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		09CD36CB776DC7B8DB4BB57D /* libPods-PacketProcessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */; };
+		DD13A4081F01034E0095C976 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = DD13A4071F01034E0095C976 /* Message.m */; };
 		DD26E2CC1EC7DB9D00428426 /* TCPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */; };
 		DD26E2D01EC8784000428426 /* IPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2CF1EC8784000428426 /* IPPacketFactory.m */; };
 		DD26E2D31ECA07F700428426 /* PacketUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = DD26E2D21ECA07F700428426 /* PacketUtil.m */; };
@@ -40,6 +41,8 @@
 		DD7C70831EAF86CC009AC7B1 /* libMMWormhole.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C70821EAF86CC009AC7B1 /* libMMWormhole.a */; };
 		DD7C70851EAF88BE009AC7B1 /* libMMWormhole.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */; };
 		DD89C4271EFCF4C30003D555 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C4261EFCF4C30003D555 /* InitialViewController.m */; };
+		DD89C42A1EFD13D70003D555 /* GSKeyChainManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C4291EFD13D70003D555 /* GSKeyChainManager.m */; };
+		DD89C42D1EFD29460003D555 /* GSKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C42C1EFD29450003D555 /* GSKeyChain.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +87,8 @@
 		0F5BD7753983FB9FE67C2669 /* Pods-PacketProcessing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.release.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.release.xcconfig"; sourceTree = "<group>"; };
 		1C31E51B1D60A865AD490EAE /* libPods-PacketProcessing.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PacketProcessing.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C542512B3F5ECA236AC34F11 /* Pods-PacketProcessing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PacketProcessing.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PacketProcessing/Pods-PacketProcessing.debug.xcconfig"; sourceTree = "<group>"; };
+		DD13A4061F0103150095C976 /* Message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		DD13A4071F01034E0095C976 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TCPPacketFactory.m; path = PacketTunnel/TCPPacketFactory.m; sourceTree = "<group>"; };
 		DD26E2CD1EC7DBAC00428426 /* TCPPacketFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TCPPacketFactory.h; path = PacketTunnel/TCPPacketFactory.h; sourceTree = "<group>"; };
 		DD26E2CE1EC8782E00428426 /* IPPacketFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IPPacketFactory.h; path = PacketTunnel/IPPacketFactory.h; sourceTree = "<group>"; };
@@ -144,6 +149,10 @@
 		DD7C70841EAF88BE009AC7B1 /* libMMWormhole.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMMWormhole.a; path = "../../Library/Developer/Xcode/DerivedData/PacketProcessing-akexfjlbqamkvrbrklixejkunrlr/Build/Products/Debug-iphoneos/MMWormhole/libMMWormhole.a"; sourceTree = "<group>"; };
 		DD89C4251EFCBE350003D555 /* InitialViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InitialViewController.h; sourceTree = "<group>"; };
 		DD89C4261EFCF4C30003D555 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitialViewController.m; sourceTree = "<group>"; };
+		DD89C4281EFD11130003D555 /* GSKeyChainManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSKeyChainManager.h; sourceTree = "<group>"; };
+		DD89C4291EFD13D70003D555 /* GSKeyChainManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSKeyChainManager.m; sourceTree = "<group>"; };
+		DD89C42B1EFD28F30003D555 /* GSKeyChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSKeyChain.h; sourceTree = "<group>"; };
+		DD89C42C1EFD29450003D555 /* GSKeyChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSKeyChain.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -316,12 +325,12 @@
 				DD26E2CB1EC7DB9D00428426 /* TCPPacketFactory.m */,
 				DD26E2CE1EC8782E00428426 /* IPPacketFactory.h */,
 				DD26E2CF1EC8784000428426 /* IPPacketFactory.m */,
+				DD26E3191ECCAB8600428426 /* UDPPacketFactory.h */,
+				DD26E31A1ECCABB700428426 /* UDPPacketFactory.m */,
 				DD26E2D11ECA07D300428426 /* PacketUtil.h */,
 				DD26E2D21ECA07F700428426 /* PacketUtil.m */,
 				DD26E2D41ECBF41300428426 /* Packet.h */,
 				DD26E2D51ECBF5FD00428426 /* Packet.m */,
-				DD26E3191ECCAB8600428426 /* UDPPacketFactory.h */,
-				DD26E31A1ECCABB700428426 /* UDPPacketFactory.m */,
 				DD26E31C1ECDEA5E00428426 /* Session.h */,
 				DD5289A01EC30C7C0073A176 /* Session.m */,
 				DD26E31D1ECE7E7A00428426 /* UDPSession.h */,
@@ -330,6 +339,12 @@
 				DD26E3241ECFFF0000428426 /* TCPSession.m */,
 				DD26E3201ECE819900428426 /* SessionManager.h */,
 				DD26E3211ECE81A300428426 /* SessionManager.m */,
+				DD89C4281EFD11130003D555 /* GSKeyChainManager.h */,
+				DD89C4291EFD13D70003D555 /* GSKeyChainManager.m */,
+				DD89C42B1EFD28F30003D555 /* GSKeyChain.h */,
+				DD89C42C1EFD29450003D555 /* GSKeyChain.m */,
+				DD13A4061F0103150095C976 /* Message.h */,
+				DD13A4071F01034E0095C976 /* Message.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -578,8 +593,11 @@
 				DD4799051EAF256A005DE266 /* ViewController.m in Sources */,
 				DD4799021EAF256A005DE266 /* AppDelegate.m in Sources */,
 				DD26E32D1ED0706200428426 /* UDPSendTest.m in Sources */,
+				DD89C42A1EFD13D70003D555 /* GSKeyChainManager.m in Sources */,
 				DD89C4271EFCF4C30003D555 /* InitialViewController.m in Sources */,
+				DD89C42D1EFD29460003D555 /* GSKeyChain.m in Sources */,
 				DD4799311EAF2AD6005DE266 /* AddViewController.m in Sources */,
+				DD13A4081F01034E0095C976 /* Message.m in Sources */,
 				DD4798FF1EAF256A005DE266 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

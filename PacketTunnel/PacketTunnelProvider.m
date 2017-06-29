@@ -36,6 +36,7 @@
         }
     }];
     [TunnelInterface setPacketFlow:self.packetFlow];
+    
     [TunnelInterface processPackets];
 }
 

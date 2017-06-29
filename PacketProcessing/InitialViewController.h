@@ -11,9 +11,11 @@
 #endif /* InitialViewController_h */
 #import <UIKit/UIKit.h>
 #import "AddViewController.h"
+#import "Message.h"
 @interface  InitialViewController : UIViewController
 @property (nonatomic,strong) UITextField *enterpriseID;
 @property (nonatomic,strong) UITextField *userID;
 @property (nonatomic,strong) UIButton *registerButton;
 @property (nonatomic) UIViewController *addview;
+-(void)alertRegister;
 @end

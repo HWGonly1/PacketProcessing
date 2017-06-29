@@ -55,8 +55,8 @@
 -(void)logout{
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
-    NSLog(@"EID:%ld",[[defaults objectForKey:@"CFSMagentEnterpriseID"] longLongValue]);
-    NSLog(@"UID:%ld",[[defaults objectForKey:@"CFSMagentUserID"] longLongValue]);
+    NSLog(@"EID:%lld",[[defaults objectForKey:@"CFSMagentEnterpriseID"] longLongValue]);
+    NSLog(@"UID:%lld",[[defaults objectForKey:@"CFSMagentUserID"] longLongValue]);
     
     [defaults removeObjectForKey:@"CFSMagentEnterpriseID"];
     [defaults removeObjectForKey:@"CFSMagentUserID"];
