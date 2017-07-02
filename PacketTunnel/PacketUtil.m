@@ -76,19 +76,13 @@
 +(int)getNetworkInt:(NSMutableData *)buffer start:(int)start length:(int)length{
     int value=0x00000000;
     Byte* array=(Byte*)[buffer bytes];
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INT:%@",@"1"] identifier:@"VPNStatus"];
-
     int end= start+(length>4?4:length);
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INT:%@",@"2"] identifier:@"VPNStatus"];
-
     for(int i=start;i<end;i++){
         value |= (Byte)array[i];
         if(i<(end-1)){
             value<<=8;
         }
     }
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INT:%@",@"3"] identifier:@"VPNStatus"];
-
     return value;
 }
 

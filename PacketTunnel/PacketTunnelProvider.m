@@ -8,7 +8,6 @@
 
 #import "PacketTunnelProvider.h"
 #import "TunnelInterface.h"
-#import <MMWormhole.h>
 #import "PacketUtil.h"
 #import "SessionManager.h"
 @import NetworkExtension;

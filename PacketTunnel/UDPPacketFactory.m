@@ -146,9 +146,6 @@
     */
     [buffer appendData:packetdata];
     
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"UDPResponse长度：%lu",(unsigned long)[buffer count]] identifier:@"VPNStatus"];
-
-    
     return buffer;
 }
 

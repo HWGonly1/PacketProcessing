@@ -9,22 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "AddViewController.h"
 #import <UIKit/UIKit.h>
-#import <MMWormhole.h>
 @import NetworkExtension;
 
 @interface AddViewController()
-@property (nonatomic) MMWormhole *wormhole;
 @end
 @implementation AddViewController
 
 -(void) viewDidLoad{
     [super viewDidLoad];
-    self.flag=false;
-    self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
-    [self.wormhole listenForMessageWithIdentifier:@"VPNStatus" listener:^(id  _Nullable messageObject) {
-        //NSLog(@"%@", messageObject);
-    }];
-    
+    self.flag=false;    
     [[Message shareInstance] startLoop];
     
     self.targetManager = [NEVPNManager sharedManager];
@@ -35,13 +28,11 @@
             self.targetManager=nil;
             for(NETunnelProviderManager* man in vpnManagers){
                 if([man.localizedDescription isEqualToString:@"Magent"]){
-                    NSLog(@"2222222222");
                     self.targetManager=man;
                     self.flag=true;
                     break;
                 }
             }
-            //self.targetManager=vpnManagers[0];
             if(self.targetManager==nil){
                 [self setTargetManger:(nil)];
             }
@@ -52,29 +43,9 @@
         NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
         NSError * startError;
         if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
-            NSLog(@"1111111111");
             [session startVPNTunnelWithOptions:nil andReturnError:&startError];
-            NSLog(@"%@",startError);
         }
     }];
-    
-    /*
-    while(!self.flag){
-        [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
-            NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
-            if(vpnManagers.count>0){
-                self.targetManager=nil;
-                for(NETunnelProviderManager* man in vpnManagers){
-                    if([man.localizedDescription isEqualToString:@"Magent"]){
-                        self.targetManager=man;
-                        self.flag=true;
-                        break;
-                    }
-                }
-            }
-        }];
-    }
-     */
  
     _logoutButton=[UIButton buttonWithType:UIButtonTypeRoundedRect];
     [_logoutButton setFrame:CGRectMake(20, 240, self.view.frame.size.width-40, 50)];
@@ -128,7 +99,6 @@
             NSError * startError;
             if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
                 [session startVPNTunnelWithOptions:nil andReturnError:&startError];
-                NSLog(@"%@",startError);
             }
             
             [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
@@ -137,25 +107,19 @@
                     self.targetManager=nil;
                     for(NETunnelProviderManager* man in vpnManagers){
                         if([man.localizedDescription isEqualToString:@"Magent"]){
-                            NSLog(@"2222222222");
                             self.targetManager=man;
                             break;
                         }
                     }
-                    //self.targetManager=vpnManagers[0];
                     if(self.targetManager==nil){
-                        NSLog(@"NULL");
                     }
                 }else{
-                    NSLog(@"NULL");
                 }
                 
                 NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
                 NSError * startError;
                 if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
-                    NSLog(@"3333333333");
                     [session startVPNTunnelWithOptions:nil andReturnError:&startError];
-                    NSLog(@"%@",startError);
                 }
             }];
 

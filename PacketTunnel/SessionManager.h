@@ -11,7 +11,6 @@
 #endif /* SessionManager_h */
 #import "UDPSession.h"
 #import "TCPSession.h"
-#import "MMWormhole.h"
 @import NetworkExtension;
 @interface SessionManager : NSObject
 @property (nonatomic) NEPacketTunnelFlow* packetFlow;
@@ -19,7 +18,6 @@
 @property (nonatomic) NSMutableDictionary *udpdict;
 @property (nonatomic) dispatch_queue_t globalQueue;
 @property (nonatomic) NSMutableDictionary* dict;
-@property (nonatomic) MMWormhole* wormhole;
 +(SessionManager*)sharedInstance;
 -(instancetype)init;
 +(void)setupWithPacketTunnelFlow:(NEPacketTunnelFlow *)packetFlow;

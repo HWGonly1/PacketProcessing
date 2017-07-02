@@ -27,7 +27,6 @@
     self.tcpSocket=[[GCDAsyncSocket alloc]initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     [self.tcpSocket connectToHost:ip onPort:port error:&error];
     if(error!=nil){
-        [[SessionManager sharedInstance].wormhole passMessageObject:error identifier:@"VPNStatus"];
     }
     self.connected=[self.tcpSocket isConnected];
     self.syncSendAmount=[[NSObject alloc]init];

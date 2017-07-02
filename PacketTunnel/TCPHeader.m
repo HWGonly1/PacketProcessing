@@ -28,20 +28,14 @@
     self.isSelectiveackPermitted=false;
     self.timeStampSender=0;
     self.timeStampReplyTo=0;
-    
     self.sourcePort=0;
     self.sourcePort|=data[0];
     self.sourcePort<<=8;
     self.sourcePort|=data[1];
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INITSRC:%d",self.sourcePort]  identifier:@"VPNStatus"];
-
     self.destinationPort=0;
     self.destinationPort|=data[2];
     self.destinationPort<<=8;
     self.destinationPort|=data[3];
-
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INITDEST:%d",self.destinationPort]  identifier:@"VPNStatus"];
-
     self.sequenceNumber=0;
     self.sequenceNumber|=data[4];
     self.sequenceNumber<<=8;
@@ -50,8 +44,6 @@
     self.sequenceNumber|=data[6];
     self.sequenceNumber<<=8;
     self.sequenceNumber|=data[7];
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"INITSEQ:%d",self.sequenceNumber]  identifier:@"VPNStatus"];
-
     self.ackNum=0;
     self.ackNum|=data[8];
     self.ackNum<<=8;
@@ -89,11 +81,6 @@
     }
     else{
         int length=(self.dataOffset-5)*4;
-        /*
-        for(int i=0;i<length;i++){
-            [self.options addObject:[NSNumber numberWithShort:data[20+i]]];
-        }
-         */
         [self.options appendBytes:data+20 length:length];
     }
     [self setFlagBits];

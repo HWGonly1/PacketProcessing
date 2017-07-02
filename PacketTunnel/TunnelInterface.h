@@ -20,7 +20,6 @@
 #import "SessionManager.h"
 #import "UDPSession.h"
 #import "TCPSession.h"
-#import <MMWormhole.h>
 @import NetworkExtension;
 
 @interface TunnelInterface : NSObject

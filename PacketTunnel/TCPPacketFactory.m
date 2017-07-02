@@ -261,12 +261,6 @@
     [tcpheader setTimeStampSender:recordTime];
     //[tcpheader setTimeStampSender:([tcpheader timeStampReplyTo]+1000)];
 
-
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPLength:%d",[tcp getTCPHeaderLength]] identifier:@"VPNStatus"];
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPHeaderLength:%d",[tcpheader getTCPHeaderLength]] identifier:@"VPNStatus"];
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TimeReply:%d",[tcpheader getTimestampReplyTo]] identifier:@"VPNStatus"];
-    //[[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TimeSender:%d",[tcpheader getTimestampSender]] identifier:@"VPNStatus"];
-
     [packet setIpheader:ipheader];
     [packet setTcpheader:tcpheader];
 
@@ -362,8 +356,6 @@
     Byte* arr1=(Byte*)[buffer bytes];
     bool flag1=[PacketUtil isValidIPChecksum:[NSMutableData dataWithBytes:arr1 length:ipoffset] length:ipoffset];
     bool flag2=[PacketUtil isValidTCPChecksum:[ipheader getsourceIP] destination:[ipheader getdestinationIP] data:buffer tcplength:([buffer length]-ipoffset) tcpoffset:ipoffset];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"IPChecksum:%d",flag1] identifier:@"VPNStatus"];
-    [[SessionManager sharedInstance].wormhole passMessageObject:[NSString stringWithFormat:@"TCPChecksum:%d",flag2] identifier:@"VPNStatus"];
     */
     //测试结束
     return buffer;

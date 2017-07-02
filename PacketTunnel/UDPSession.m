@@ -10,20 +10,17 @@
 #import "PacketUtil.h"
 #import "UDPSession.h"
 #import "SessionManager.h"
-#import "MMWormhole.h"
 #import "UDPPacketFactory.h"
 #import "IPPacketFactory.h"
 @import NetworkExtension;
 
 @interface UDPSession () <GCDAsyncUdpSocketDelegate>
 @property (nonatomic) GCDAsyncUdpSocket* udpSocket;
-@property (nonatomic) MMWormhole* wormhole;
 @end
 
 @implementation UDPSession
 
 -(instancetype)init:(NSString*)sourceIP sourcePort:(uint16_t)sourcePort destIP:(NSString*)destIP destPort:(uint16_t)destPort{
-    self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     self.sourceIP=sourceIP;
     self.sourcePort=sourcePort;
     self.destIP=destIP;
@@ -42,11 +39,7 @@
     }while(error!=nil);
     
     [self.udpSocket beginReceiving:nil];
-    
-    //[self.wormhole passMessageObject:(error==nil)?@"Error NIL":@"Error NOT NIL" identifier:@"VPNStatus"];
-    
-    //[self.wormhole passMessageObject:error identifier:@"VPNStatus"];
-    
+
     //[self.udpSocket connectToHost:self.destIP onPort:self.destPort error:nil];
     return self;
 }
@@ -57,11 +50,9 @@
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address{
-    //[self.wormhole passMessageObject:@"UDPSocket Connected" identifier:@"VPNStatus"];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error{
-    //[self.wormhole passMessageObject:@"UDPSocket Disconnected" identifier:@"VPNStatus"];
     /*
      @synchronized ([SessionManager sharedInstance].udpdict) {
      [self.udpSocket close];
@@ -71,11 +62,9 @@
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag{
-    //[self.wormhole passMessageObject:@"UDPSocket DataSent" identifier:@"VPNStatus"];
 }
 
 -(void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
-    //[self.wormhole passMessageObject:@"UDPSocket DataReceived" identifier:@"VPNStatus"];
     @autoreleasepool {
         
         NSMutableData* rawdata=[[NSMutableData alloc] init];
@@ -95,12 +84,9 @@
          response[i]=(Byte)[packetdata[i] shortValue];
          }
          */
-        //[[SessionManager sharedInstance].wormhole passMessageObject:packetdata identifier:@"VPNStatus"];
         
         @synchronized ([SessionManager sharedInstance].packetFlow) {
-            [[SessionManager sharedInstance].wormhole passMessageObject:@"UDPSocket++++++++++"  identifier:@"VPNStatus"];
             [[SessionManager sharedInstance].packetFlow writePackets:@[packetdata] withProtocols:@[@(AF_INET)]];
-            [[SessionManager sharedInstance].wormhole passMessageObject:@"UDPSocket----------"  identifier:@"VPNStatus"];
         }
         data=nil;
     }
