@@ -11,5 +11,4 @@
 @interface PacketTunnelProvider : NEPacketTunnelProvider
 //@property NWTCPConnection *connection;
 //@property (strong) void (^pendingStartCompletion)(NSError *);
-@property (nonatomic) MMWormhole *wormhole;
 @end

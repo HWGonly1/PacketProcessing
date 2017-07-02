@@ -51,7 +51,7 @@
     //NSLog(@"UID:%lld",[[defaults objectForKey:@"CFSMagentUserID"] longLongValue]);
     
     //bool success=[[Message shareInstance] initialRegister:[[UIDevice currentDevice] systemVersion] enterpriseID:eid longLongValue] employeeID:uid IDFV:[GSKeyChainManager readUUID]];
-    bool success=false;
+    bool success=true;
     if(!success){
         //注册失败提示重新注册
         [self alertRegister];

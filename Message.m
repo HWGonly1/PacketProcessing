@@ -116,7 +116,6 @@
                     NSString* flag=[replyBody substringWithRange:NSMakeRange(start, end-start)];
                     if([flag isEqualToString:@""]){
                         _keepingAlive=true;
-                        
                     }
                     else{
                         [self errorSend:(short)4];
@@ -164,6 +163,17 @@
     }];
     [task resume];
     [session finishTasksAndInvalidate];
+}
+
+- (void)startLoop{
+    [NSThread detachNewThreadSelector:@selector(loopMethod) toTarget:self withObject:nil];
+}
+
+
+- (void)loopMethod{
+    [NSTimer scheduledTimerWithTimeInterval:60.0F target:self selector:@selector(keepAlive) userInfo:nil repeats:YES];
+    NSRunLoop *loop = [NSRunLoop currentRunLoop];
+    [loop run];
 }
 
 @end

@@ -16,6 +16,7 @@
 @interface AddViewController:UIViewController
 @property (nonatomic) NEVPNManager * targetManager;
 @property (nonatomic) NSArray<NEVPNManager *> * managers;
+@property (nonatomic) bool flag;
 @property (nonatomic,strong) UIButton* logoutButton;
 @property (nonatomic) UIViewController* initialview;
 @end

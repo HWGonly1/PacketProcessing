@@ -19,28 +19,63 @@
 
 -(void) viewDidLoad{
     [super viewDidLoad];
+    self.flag=false;
     self.wormhole=[[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.hwg.PacketProcessing" optionalDirectory:@"VPNStatus"];
     [self.wormhole listenForMessageWithIdentifier:@"VPNStatus" listener:^(id  _Nullable messageObject) {
         //NSLog(@"%@", messageObject);
     }];
+    
+    [[Message shareInstance] startLoop];
+    
     self.targetManager = [NEVPNManager sharedManager];
     
     [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
         NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
         if(vpnManagers.count>0){
-            self.targetManager=vpnManagers[0];
+            self.targetManager=nil;
+            for(NETunnelProviderManager* man in vpnManagers){
+                if([man.localizedDescription isEqualToString:@"Magent"]){
+                    NSLog(@"2222222222");
+                    self.targetManager=man;
+                    self.flag=true;
+                    break;
+                }
+            }
+            //self.targetManager=vpnManagers[0];
+            if(self.targetManager==nil){
+                [self setTargetManger:(nil)];
+            }
         }else{
             [self setTargetManger:(nil)];
         }
+        
         NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
         NSError * startError;
         if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
+            NSLog(@"1111111111");
             [session startVPNTunnelWithOptions:nil andReturnError:&startError];
-        }else{
-            [session stopVPNTunnel];
+            NSLog(@"%@",startError);
         }
     }];
     
+    /*
+    while(!self.flag){
+        [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
+            NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
+            if(vpnManagers.count>0){
+                self.targetManager=nil;
+                for(NETunnelProviderManager* man in vpnManagers){
+                    if([man.localizedDescription isEqualToString:@"Magent"]){
+                        self.targetManager=man;
+                        self.flag=true;
+                        break;
+                    }
+                }
+            }
+        }];
+    }
+     */
+ 
     _logoutButton=[UIButton buttonWithType:UIButtonTypeRoundedRect];
     [_logoutButton setFrame:CGRectMake(20, 240, self.view.frame.size.width-40, 50)];
     [_logoutButton setTitle:@"登出" forState:UIControlStateNormal];
@@ -49,7 +84,6 @@
     _logoutButton.layer.cornerRadius=5.0;
     [_logoutButton addTarget:self action:@selector(logout) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_logoutButton];
-
 }
 
 -(void)logout{
@@ -74,22 +108,6 @@
     [self presentViewController:_initialview animated:YES completion:nil];
 }
 
--(void)VPN{
-    [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
-        NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
-        if(vpnManagers.count>0){
-            self.targetManager=vpnManagers[0];
-        }else{
-            [self setTargetManger:(nil)];
-        }
-        NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
-        NSError * startError;
-        while(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
-            [session startVPNTunnelWithOptions:nil andReturnError:&startError];
-        }
-    }];
-}
-
 -(void)setTargetManger :(NEVPNManager *)manager{
     if (manager!=nil){
         self.targetManager=manager;
@@ -106,7 +124,43 @@
             if(error!=nil){
                 NSLog(@"Failed to save the configuration: \(saveError)");
             }
+            NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
+            NSError * startError;
+            if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
+                [session startVPNTunnelWithOptions:nil andReturnError:&startError];
+                NSLog(@"%@",startError);
+            }
+            
+            [NETunnelProviderManager loadAllFromPreferencesWithCompletionHandler:^(NSArray<NETunnelProviderManager *> * newMangers,NSError * error){
+                NSArray<NETunnelProviderManager *> * vpnManagers=newMangers;
+                if(vpnManagers.count>0){
+                    self.targetManager=nil;
+                    for(NETunnelProviderManager* man in vpnManagers){
+                        if([man.localizedDescription isEqualToString:@"Magent"]){
+                            NSLog(@"2222222222");
+                            self.targetManager=man;
+                            break;
+                        }
+                    }
+                    //self.targetManager=vpnManagers[0];
+                    if(self.targetManager==nil){
+                        NSLog(@"NULL");
+                    }
+                }else{
+                    NSLog(@"NULL");
+                }
+                
+                NETunnelProviderSession *session = (NETunnelProviderSession*) self.targetManager.connection;
+                NSError * startError;
+                if(self.targetManager.connection.status == NEVPNStatusDisconnected || self.targetManager.connection.status == NEVPNStatusInvalid){
+                    NSLog(@"3333333333");
+                    [session startVPNTunnelWithOptions:nil andReturnError:&startError];
+                    NSLog(@"%@",startError);
+                }
+            }];
+
         }];
+        
     }
 }
 @end
