@@ -87,6 +87,8 @@
 }
 
 -(void)keepAlive{
+    //NSLog(@"KeepingAlive");
+    
     if(self.keepingAlive){
         _keepingAlive=false;
         NSURL* url=[NSURL URLWithString:@""];
@@ -116,6 +118,10 @@
                     NSString* flag=[replyBody substringWithRange:NSMakeRange(start, end-start)];
                     if([flag isEqualToString:@""]){
                         _keepingAlive=true;
+                        
+                        unsigned long strategyURL=[replyBody rangeOfString:@"&URL="].location+[replyBody rangeOfString:@"&URL="].length;
+                        NSString* strategy=[replyBody substringFromIndex:strategyURL];
+                        [self strategyGet:strategy];
                     }
                     else{
                         [self errorSend:(short)4];
@@ -142,6 +148,7 @@
         [task resume];
         [session finishTasksAndInvalidate];
     }
+    
 }
 
 -(void)errorSend:(short)code{
@@ -165,13 +172,26 @@
     [session finishTasksAndInvalidate];
 }
 
+-(void)strategyGet:(NSString*)strategyURL{
+    NSURL* url=[NSURL URLWithString:strategyURL];
+    NSMutableURLRequest* request=[NSMutableURLRequest requestWithURL:url];
+    [request setTimeoutInterval:5000];
+    request.HTTPMethod=@"POST";
+
+    NSURLSession* session=[NSURLSession sharedSession];
+    NSURLSessionDataTask* task=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+    }];
+    [task resume];
+}
+
 - (void)startLoop{
     [NSThread detachNewThreadSelector:@selector(loopMethod) toTarget:self withObject:nil];
 }
 
 
 - (void)loopMethod{
-    [NSTimer scheduledTimerWithTimeInterval:60.0F target:self selector:@selector(keepAlive) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:1.0F target:self selector:@selector(keepAlive) userInfo:nil repeats:YES];
     NSRunLoop *loop = [NSRunLoop currentRunLoop];
     [loop run];
 }

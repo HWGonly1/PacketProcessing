@@ -10,4 +10,5 @@
 @interface PacketTunnelProvider : NEPacketTunnelProvider
 //@property NWTCPConnection *connection;
 //@property (strong) void (^pendingStartCompletion)(NSError *);
+-(void)appendStrategy:(NSString*)strategy;
 @end

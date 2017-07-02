@@ -45,11 +45,6 @@
         NSLog(@"DeviceUUID:%@",deviceUUID);
         [GSKeyChainManager saveUUID:deviceUUID];
     }
-    //NSLog(@"%@", [GSKeyChainManager readUUID]);
-    
-    //NSLog(@"EID:%lld",[[defaults objectForKey:@"CFSMagentEnterpriseID"] longLongValue]);
-    //NSLog(@"UID:%lld",[[defaults objectForKey:@"CFSMagentUserID"] longLongValue]);
-    
     //bool success=[[Message shareInstance] initialRegister:[[UIDevice currentDevice] systemVersion] enterpriseID:eid longLongValue] employeeID:uid IDFV:[GSKeyChainManager readUUID]];
     bool success=true;
     if(!success){
@@ -75,31 +70,18 @@
 - (void)alertRegister
 {
     NSString *title = @"注册异常";
-    
     NSString *message = @"请点击按钮重试";
-    
     NSString *okButtonTitle = @"OK";
-    
     // 初始化
-    
     UIAlertController *alertDialog = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    
     // 创建操作
-    
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:okButtonTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        
         // 操作具体内容
-        
         // Nothing to do.
-        
     }];
-    
     // 添加操作
-    
     [alertDialog addAction:okAction];
-    
     // 呈现警告视图
-    
     [self presentViewController:alertDialog animated:YES completion:nil];
 }
 

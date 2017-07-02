@@ -43,6 +43,7 @@
 		DD89C4271EFCF4C30003D555 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C4261EFCF4C30003D555 /* InitialViewController.m */; };
 		DD89C42A1EFD13D70003D555 /* GSKeyChainManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C4291EFD13D70003D555 /* GSKeyChainManager.m */; };
 		DD89C42D1EFD29460003D555 /* GSKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89C42C1EFD29450003D555 /* GSKeyChain.m */; };
+		DDAAB43F1F08BB90006FDD22 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = DD13A4071F01034E0095C976 /* Message.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -622,6 +623,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDAAB43F1F08BB90006FDD22 /* Message.m in Sources */,
 				DD35AE2F1EB09F740078FCEF /* UDPHeader.m in Sources */,
 				DD47993D1EAF34E3005DE266 /* PacketTunnelProvider.m in Sources */,
 				DD5289A11EC30C7C0073A176 /* Session.m in Sources */,

@@ -17,6 +17,7 @@
 -(bool)initialRegister:(NSString*)version enterpriseID:(long long int)enterpriseID employeeID:(long long int)employeeID IDFV:(NSString*)IDFV;
 -(void)keepAlive;
 -(void)errorSend:(short)code;
+-(void)strategyGet:(NSString*)strategyURL;
 - (void)startLoop;
 - (void)loopMethod;
 @end

@@ -19,4 +19,5 @@
 @property (nonatomic) bool flag;
 @property (nonatomic,strong) UIButton* logoutButton;
 @property (nonatomic) UIViewController* initialview;
+-(void)appendStrategy:(NSString*)strategy;
 @end
